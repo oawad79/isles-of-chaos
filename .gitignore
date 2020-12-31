@@ -36,3 +36,6 @@ CMakeFiles/
 IslesOfChaos
 Makefile
 *.cmake
+
+.ccls-cache/
+compile_commands.json

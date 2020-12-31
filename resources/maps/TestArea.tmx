@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="3" nextobjectid="5">
+ <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
+  <image source="../textures/OverworldTileset.png" width="512" height="512"/>
+ </tileset>
+ <layer id="1" name="Ground" width="100" height="100">
+  <data encoding="csv">
+   <chunk x="0" y="0" width="16" height="16">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</chunk>
+  </data>
+ </layer>
+ <objectgroup id="2" name="Solids">
+  <object id="1" x="0" y="48">
+   <polygon points="0,0 128,0 128,40 0,40"/>
+  </object>
+  <object id="2" x="48" y="24">
+   <polygon points="0,0 16,0 16,8 0,8 0,0 2.25,1.75"/>
+  </object>
+  <object id="3" x="88" y="32">
+   <polygon points="0,0 32,0 32,-8 0,-8"/>
+  </object>
+  <object id="4" x="0" y="8">
+   <polygon points="0,0 24,0 24,8 16,8 16,16 0,16"/>
+  </object>
+ </objectgroup>
+</map>

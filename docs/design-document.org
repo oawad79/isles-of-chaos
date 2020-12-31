@@ -1,0 +1,19 @@
+#+TITLE: Design Document
+
+* Introduction
+* Story and Quests
+** Outline
+A couple traveling to the new land, gets hit with a storm, they get shipwrecked on an island (tutorial islands). Traveling through the jungle, the main characters spouse gets extremely ill. They eventually stumble apon a friendly shaman, he offeres to remove the illness if the player will find the 4 pieces of a special necklace. To prevent your spouse from dying before you finish your quest, he turns her to stone.
+* Gameplay
+** Core
+** Combat Details
+** Rpg Mechanics
+** Controls
+* Visual Design
+** Art Style
+** UI/UX Design
+* World Building
+** World Map
+** Zones
+*** Tutorial Islands
+- Small fishing village
