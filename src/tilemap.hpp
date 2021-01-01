@@ -21,9 +21,16 @@ extern "C" {
 
 using Tile = uint32_t;
 
+enum class SolidType {
+    RECTANGLE,
+    POLYGON
+};
+
 struct Polygon {
     int id{-1};
+    SolidType type{SolidType::POLYGON};
     Vector2 position{0, 0};
+    Vector2 size{0, 0};
     std::vector<Vector2> points{};
 };
 

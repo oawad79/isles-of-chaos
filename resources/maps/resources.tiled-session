@@ -1,14 +1,28 @@
 {
-    "activeFile": "",
+    "activeFile": "TestArea.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "TestArea.tmx": {
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": -5,
+                "y": 67.25
+            }
+        },
+        "TestArea.tmx#OverworldTileset": {
+            "scaleInDock": 3
+        }
     },
     "openFiles": [
+        "TestArea.tmx"
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
+        "TestArea.tmx"
     ],
     "tileset.embedInMap": true,
     "tileset.tileSize": {

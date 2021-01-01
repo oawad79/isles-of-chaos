@@ -32,7 +32,7 @@ struct Sprite {
     Rectangle region;
     Vector2 offset;
     Vector2 scale;
-    Color tint{RAYWHITE};
+    Color tint{WHITE};
     Color tint2;
 
     virtual ~Sprite() = default;

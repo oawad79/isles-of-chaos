@@ -12,8 +12,6 @@ struct Player {
     int health{3};
 };
 
-entt::entity SpawnPlayer(entt::registry& reg, float x, float y);
-
-void UpdatePlayer(entt::registry& reg);
+void UpdatePlayer(uptr<Game>& game, entt::registry& reg);
 
 #endif // SKYVAULT_PLAYER_HPP

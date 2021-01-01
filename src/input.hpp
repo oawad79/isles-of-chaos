@@ -18,6 +18,7 @@
     I(ATTACK)\
     I(ACTION)\
     I(CLIMB)\
+    I(JUMP)\
     I(PAUSE)\
     I(NUM_INPUT_TYPES)
 
@@ -41,6 +42,7 @@ struct Input {
     auto Climb() -> bool;
     auto Up() -> bool;
     auto Down() -> bool;
+    auto Jump() -> bool;
 
 private:
     Input(const Input&) = delete;
@@ -57,6 +59,7 @@ private:
         {InputMap::ATTACK, KEY_M},
         {InputMap::ACTION, KEY_PERIOD},
         {InputMap::CLIMB, KEY_W},
+        {InputMap::JUMP, KEY_Z},
         {InputMap::PAUSE, KEY_ESCAPE},
     };
 };

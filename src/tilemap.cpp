@@ -170,16 +170,25 @@ uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path) {
                             }
 
                             map->billboards.push_back(billboard);
+                        } else if (strcmp(type, "ladder") == 0) {
+                            Object obj;
+                            obj.id = id;
+                            obj.type = std::string{type};
+                            obj.x = polypos.x;
+                            obj.y = polypos.y;
+                            obj.width = size.x;
+                            obj.height = size.y;
+                            map->objects.push_back(std::move(obj));
                         }
                     } else {
-                        Object obj;
+                        Polygon obj;
                         obj.id = id;
-                        obj.x = polypos.x;
-                        obj.y = polypos.y;
-                        obj.width = size.x;
-                        obj.height = size.y;
-    //                    obj.type = std::string{object->Attribute("type")};
-                        map->objects.push_back(std::move(obj));
+                        obj.type = SolidType::RECTANGLE;
+                        obj.position.x = polypos.x;
+                        obj.position.y = polypos.y;
+                        obj.size.x = size.x;
+                        obj.size.y = size.y;
+                        map->geometry.push_back(std::move(obj));
                     }
                 }
 
@@ -198,14 +207,14 @@ void DrawTilemap(const uptr<Tilemap>& tilemap, SpriteRenderer& ren) {
 
     for (const auto& bill : tilemap->billboards) {
         DrawSprite(
-                ren,
-                (Sprite)bill,
-                Body{
+            ren,
+            (Sprite)bill,
+            Body{
                 bill.position.x,
                 bill.position.y,
                 bill.region.width,
                 bill.region.height,
-                });
+            });
     }
 
     for (const auto& layer : tilemap->layers) {
@@ -235,9 +244,9 @@ void DrawTilemap(const uptr<Tilemap>& tilemap, SpriteRenderer& ren) {
                         tileset->texture,
                         region,
                         Vector2{
-                            ox + (float)x*tileset->tilewidth,
-                            oy + (float)y*tileset->tileheight},
-                        RAYWHITE);
+                            floor(ox + (float)x*tileset->tilewidth),
+                            floor(oy + (float)y*tileset->tileheight)},
+                        WHITE);
                 }
             }
         }

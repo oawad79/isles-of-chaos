@@ -12,10 +12,6 @@
 #define GENERATE_STRING(STR) #STR,
 #endif//GENERATE_STRING
 
-#ifndef GENERATE_MAP
-#define GENERATE_MAP(V) { #V, EntT::V },
-#endif//GENERATE_MAP
-
 template <typename T>
 using uptr = std::unique_ptr<T>;
 

@@ -12,7 +12,7 @@
 
 struct Physics {
     Vector2 velocity{Vector2{0.0f, 0.0f}};
-    float friction{0.02f};
+    float friction{0.01f};
 
     bool on_ground{false};
     bool on_ladder{false};
@@ -22,4 +22,4 @@ struct Physics {
 };
 
 void UpdatePhysics(uptr<Game>& game, entt::registry& reg);
-void DrawDebugPhysicsInfo(uptr<Game>& game, entt::registry& reg);
+void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg);

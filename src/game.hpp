@@ -22,6 +22,7 @@ struct Game {
     SpriteRenderer spriteRenderer;
     uptr<Tilemap> tilemap;
 
+    Camera2D mainCamera = {0};
     RenderTexture2D mainCanvas;
 };
 

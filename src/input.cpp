@@ -38,6 +38,10 @@ auto Input::Down() -> bool {
     return IsKeyDown(keymapping[InputMap::MOVE_DOWN]);
 }
 
+auto Input::Jump() -> bool {
+    return IsKeyPressed(keymapping[InputMap::JUMP]);
+}
+
 auto Input::ShouldPause() -> bool {
     return IsKeyPressed(keymapping[InputMap::PAUSE]);
 }

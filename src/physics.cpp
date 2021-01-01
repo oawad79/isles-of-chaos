@@ -1,6 +1,6 @@
 #include "physics.hpp"
 
-constexpr float GRAVITY {0.0f};
+constexpr float GRAVITY {900.0f};
 
 float IntervalDistance(float min_a, float max_a, float min_b, float max_b) {
     if (max_a < min_b) return min_a - max_a;
@@ -76,6 +76,8 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
         Rectangle ybody {body.x, body.y + physics.velocity.y * dt, body.width, body.height};
 
         physics.colliding_with_solid = false;
+        physics.on_ground = false;
+        physics.on_ladder = false;
 
         if (game->tilemap.get() != nullptr) {
             for (const auto& poly: game->tilemap->geometry) {
@@ -84,11 +86,15 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
                 if (xcoll) {
                     xbody = body;
+                    physics.velocity.x = 0;
                 }
 
                 if (ycoll) {
                     ybody = body;
-                    physics.velocity.y = 0;
+                    if (ybody.y + ybody.height / 2 < ywhere.y) {
+                        physics.on_ground = true;
+                        physics.velocity.y = 0;
+                    }
                 }
 
                 if (xcoll || ycoll) {
@@ -115,7 +121,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
     }
 }
 
-void DrawDebugPhysicsInfo(uptr<Game>& game, entt::registry& reg) {
+void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
     for (const auto& poly: game->tilemap->geometry) {
         for (size_t i = 0; i < poly.points.size(); i++) {
             Vector2 a = poly.points[i];
@@ -138,9 +144,9 @@ void DrawDebugPhysicsInfo(uptr<Game>& game, entt::registry& reg) {
     }
 
     for (const auto& obj : game->tilemap->objects) {
-        Color color = RAYWHITE;
+        Color color = WHITE;
 
-        if (obj.type == "Ladder") {
+        if (obj.type == "ladder") {
             color = YELLOW;
         }
 
@@ -155,5 +161,13 @@ void DrawDebugPhysicsInfo(uptr<Game>& game, entt::registry& reg) {
 
         DrawRectangleLinesEx(body, 1, physics.colliding_with_solid?RED:GREEN);
         DrawCircle(physics.solid_collision_point.x, physics.solid_collision_point.y, 2, YELLOW);
+
+        if (physics.on_ground) {
+            DrawLine(
+                body.x,
+                body.y+body.height-1,
+                body.x+body.width-1,
+                body.y+body.height-1, BLUE);
+        }
     }
 }

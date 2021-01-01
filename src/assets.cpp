@@ -4,6 +4,7 @@ void LoadAllAssets() {
 
     // Load Textures
     Assets::I()->textures[Textures::TEX_OVERWORLD] = LoadTexture("resources/textures/OverworldTileset.png");
+    Assets::I()->textures[Textures::TEX_GUI] = LoadTexture("resources/textures/Gui.png");
 
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 

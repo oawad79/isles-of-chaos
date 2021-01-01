@@ -83,7 +83,12 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             const auto sh = sprite->region.height;
 
             if (sprite->T == Type::RECTANGLE) {
-                DrawRectangle(body.x, body.y, body.width, body.height, sprite->tint);
+                DrawRectangle(
+                    ceil(body.x),
+                    ceil(body.y),
+                    body.width,
+                    body.height,
+                    sprite->tint);
             }
 
             if (sprite->T == Type::SPRITE) {
