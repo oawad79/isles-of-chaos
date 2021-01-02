@@ -21,11 +21,11 @@
             "scaleInDock": 3
         },
         "TestArea2.tmx": {
-            "scale": 11,
-            "selectedLayer": 0,
+            "scale": 4,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": -262.3636363636364,
-                "y": -19.954545454545453
+                "x": -194.5,
+                "y": -24.375
             }
         },
         "TestArea2.tmx#OverworldTileset": {

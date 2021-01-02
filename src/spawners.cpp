@@ -16,7 +16,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& spr = game->reg.emplace<SimpleAnimation>(self);
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
-    spr.region = {0, 20, 12, 20};
+    spr.region = {0, 0, 12, 20};
     spr.number_of_frames = 3;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
 

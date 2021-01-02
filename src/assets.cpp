@@ -1,15 +1,67 @@
 #include "assets.hpp"
 
+void LoadItemDB() {
+    using namespace tinyxml2;
+
+    XMLDocument doc;
+    doc.LoadFile("resources/data/itemdb.xml");
+    auto* root = doc.FirstChild();
+    auto* items = root->NextSiblingElement();
+
+    auto* consumables = items->FirstChildElement("consumables");
+    auto* weapons = items->FirstChildElement("weapons");
+    auto* armor = items->FirstChildElement("armor");
+
+    auto loadItem = [&](XMLElement* itemXml, ItemCatagory catagory) {
+        Item item;
+        item.catagory = catagory;
+        item.name = std::string{itemXml->Attribute("name")};
+        item.descr = std::string{itemXml->Attribute("descr")};
+
+        itemXml->QueryIntAttribute("id", &item.id);
+        itemXml->QueryFloatAttribute("effectValue", &item.effectValue);
+        itemXml->QueryIntAttribute("value", &item.value);
+
+        std::stringstream ss(itemXml->Attribute("region"));
+        ss >> item.region.x;
+        ss >> item.region.y;
+        ss >> item.region.width;
+        ss >> item.region.height;
+
+        if (catagory == ItemCatagory::Consumable) {
+            std::string consumableEffect
+                = std::string{itemXml->Attribute("consumableEffect")};
+            if (ConsumableEffectM.find(consumableEffect) ==
+                ConsumableEffectM.end()) {
+                std::cout << "ERROR::LoadItemDB:: Invalid consumable effect: " << consumableEffect << std::endl;
+            } else {
+                item.consumableEffect = ConsumableEffectM[consumableEffect];
+            }
+        }
+    };
+
+    // Loading consumables
+    {
+        auto* itemXml = consumables->FirstChildElement("item");
+        while (itemXml) {
+            loadItem(itemXml, ItemCatagory::Consumable);
+            itemXml = itemXml->NextSiblingElement();
+        }
+    }
+}
+
 void LoadTexture(Textures which, const char* path) {
     Assets::I()->textures[which] = LoadTexture(path);
 }
 
 void LoadAllAssets() {
+    LoadItemDB();
 
     // Load Textures
     Assets::I()->textures[Textures::TEX_OVERWORLD] = LoadTexture("resources/textures/OverworldTileset.png");
     Assets::I()->textures[Textures::TEX_BG] = LoadTexture("resources/textures/Background1.png");
     Assets::I()->textures[Textures::TEX_GUI] = LoadTexture("resources/textures/Gui.png");
+    Assets::I()->textures[Textures::TEX_EQUIPMENT] = LoadTexture("resources/textures/Equipment.png");
     Assets::I()->textures[Textures::TEX_PLAYER] = LoadTexture("resources/textures/Player.png");
     Assets::I()->textures[Textures::TEX_ENTITIES] = LoadTexture("resources/textures/Entities.png");
 
