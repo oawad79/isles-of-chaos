@@ -39,10 +39,13 @@ struct Input {
     Vector2 GetMovementVector();
 
     auto ShouldPause() -> bool;
+    auto Ascend() -> bool;
+    auto Descend() -> bool;
     auto Climb() -> bool;
     auto Up() -> bool;
     auto Down() -> bool;
     auto Jump() -> bool;
+    auto EnterDoor() -> bool;
 
 private:
     Input(const Input&) = delete;
@@ -52,14 +55,14 @@ private:
     static std::once_flag once;
 
     std::map<InputMap, KeyboardKey> keymapping {
-        {InputMap::MOVE_LEFT, KEY_LEFT},
-        {InputMap::MOVE_RIGHT, KEY_RIGHT},
-        {InputMap::MOVE_UP, KEY_UP},
-        {InputMap::MOVE_DOWN, KEY_DOWN},
+        {InputMap::MOVE_LEFT, KEY_A},
+        {InputMap::MOVE_RIGHT, KEY_D},
+        {InputMap::MOVE_UP, KEY_W},
+        {InputMap::MOVE_DOWN, KEY_S},
         {InputMap::ATTACK, KEY_M},
         {InputMap::ACTION, KEY_PERIOD},
         {InputMap::CLIMB, KEY_W},
-        {InputMap::JUMP, KEY_Z},
+        {InputMap::JUMP, KEY_SPACE},
         {InputMap::PAUSE, KEY_ESCAPE},
     };
 };

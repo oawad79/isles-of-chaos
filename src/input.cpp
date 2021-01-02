@@ -38,8 +38,20 @@ auto Input::Down() -> bool {
     return IsKeyDown(keymapping[InputMap::MOVE_DOWN]);
 }
 
+auto Input::EnterDoor() -> bool {
+    return IsKeyPressed(keymapping[InputMap::MOVE_UP]);
+}
+
 auto Input::Jump() -> bool {
     return IsKeyPressed(keymapping[InputMap::JUMP]);
+}
+
+auto Input::Ascend() -> bool {
+    return IsKeyDown(keymapping[InputMap::MOVE_UP]);
+}
+
+auto Input::Descend() -> bool {
+    return IsKeyDown(keymapping[InputMap::MOVE_DOWN]);
 }
 
 auto Input::ShouldPause() -> bool {

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <filesystem>
 #include <sstream>
+#include <optional>
 #include <entt.hpp>
 
 extern "C" {
@@ -18,27 +19,65 @@ extern "C" {
 #include "tinyxml2.hpp"
 #include "utils.hpp"
 #include "sprite.hpp"
+#include "consts.hpp"
+#include "enttypes.hpp"
 
 using Tile = uint32_t;
 
 enum class SolidType {
-    RECTANGLE,
-    POLYGON
+    Rectangle,
+    Polygon
 };
 
-struct Polygon {
+enum class FeatureType {
+    None,
+    Ladder,
+    Port,
+    Door,
+};
+
+struct Polygon : Rectangle {
+    Vector2 offset{0, 0};
+
     int id{-1};
-    SolidType type{SolidType::POLYGON};
-    Vector2 position{0, 0};
-    Vector2 size{0, 0};
+    SolidType type{SolidType::Rectangle};
     std::vector<Vector2> points{};
+
+    inline auto bounds() const { return Rectangle{
+        x + offset.x,
+        y + offset.y,
+        width,
+        height
+    }; }
 };
 
 struct Line { Vector2 a{0, 0}, b{0, 0}; };
 
-struct Object : Rectangle {
-    int id{-1};
-    std::string type{""};
+struct SpawnLocation : Rectangle {
+    Vector2 offset{0, 0};
+
+    EntType type{EntType::None};
+
+    inline auto bounds() const { return Rectangle{
+        x + offset.x,
+        y + offset.y,
+        width,
+        height
+    }; }
+};
+
+struct Feature : Rectangle {
+    Vector2 offset{0, 0};
+
+    FeatureType type{FeatureType::None};
+    std::string target{""};
+
+    inline auto bounds() const { return Rectangle{
+        x + offset.x,
+        y + offset.y,
+        width,
+        height
+    }; }
 };
 
 struct Chunk {
@@ -59,18 +98,36 @@ struct Billboard : Sprite {
 };
 
 struct Tilemap {
+    std::string path{""};
+    std::string name{""};
+
+    Vector2 position{0, 0};
+
     Tileset tileset;
     std::vector<std::vector<Chunk*>> layers;
     std::vector<Polygon> geometry;
-    std::vector<Object> objects;
+    std::vector<SpawnLocation> objects;
+    std::vector<Feature> features; // Ladders / Doors / Ports
     std::vector<Billboard> billboards;
 
     RenderTexture2D target;
+    float alpha {1.0f};
 
     ~Tilemap();
 };
 
-uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path);
+std::optional<Feature> GetPortWithTarget(
+    const Tilemap* tilemap,
+    const std::string& target);
+
+void UpdateTilemapGeometryPositions(Tilemap* tilemap);
+void SetPosition(Tilemap* tilemap, Vector2 newPos);
+
+Tilemap* LoadTilemap(const std::string& path);
 Tileset LoadTileset(tinyxml2::XMLElement* el);
 
-void DrawTilemap(const uptr<Tilemap>& tilemap, SpriteRenderer& ren);
+void DrawTilemapToTarget(const uptr<Tilemap>& tilemap, const Camera2D camera, SpriteRenderer& ren);
+void DrawTilemap(const uptr<Tilemap>& tilemap);
+
+void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRenderer& ren);
+void DrawTilemap(const Tilemap* tilemap);

@@ -1,4 +1,8 @@
 {
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
     "activeFile": "TestArea.tmx",
     "expandedProjectPaths": [
         "."
@@ -6,22 +10,38 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "TestArea.tmx": {
-            "scale": 4,
-            "selectedLayer": 1,
+            "scale": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": -5,
-                "y": 67.25
+                "x": 168.33333333333334,
+                "y": 140.16666666666669
             }
         },
         "TestArea.tmx#OverworldTileset": {
             "scaleInDock": 3
+        },
+        "TestArea2.tmx": {
+            "scale": 11,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -262.3636363636364,
+                "y": -19.954545454545453
+            }
+        },
+        "TestArea2.tmx#OverworldTileset": {
+            "scaleInDock": 1
         }
     },
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
     "openFiles": [
         "TestArea.tmx"
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
+        "TestArea2.tmx",
         "TestArea.tmx"
     ],
     "tileset.embedInMap": true,

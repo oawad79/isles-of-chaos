@@ -14,7 +14,10 @@
 
 enum Textures {
     TEX_NONE,
+    TEX_BG,
     TEX_GUI,
+    TEX_ENTITIES,
+    TEX_PLAYER,
     TEX_OVERWORLD,
     TEX_NUM_TEXTURES
 };

@@ -4,7 +4,7 @@
 void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto dt = GetFrameTime();
 
-    constexpr auto xsmooth{10.0f};
+    constexpr auto xsmooth{20.0f};
     constexpr auto ysmooth{2.0f};
 
     const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * dt * xsmooth;
@@ -30,6 +30,18 @@ void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
 
         if (Input::I()->Jump() && physics.on_ground) {
             physics.velocity.y -= 18000.0f * dt;
+        }
+
+        if (Input::I()->Ascend() && physics.on_ladder) {
+            physics.velocity.y -= 1000.0f * dt;
+        }
+
+        if (Input::I()->Descend() && physics.on_ladder) {
+            physics.velocity.y += 1000.0f * dt;
+        }
+
+        if (Input::I()->Descend() && physics.on_ladder && physics.on_ground) {
+            body.y += 100.0f * dt;
         }
 
         UpdateCameraTracking(body, physics, game->mainCamera);

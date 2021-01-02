@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "body.hpp"
-#include "tilemap.hpp"
+#include "level.hpp"
 #include "utils.hpp"
 #include "game.hpp"
 

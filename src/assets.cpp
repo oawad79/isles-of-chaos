@@ -1,10 +1,17 @@
 #include "assets.hpp"
 
+void LoadTexture(Textures which, const char* path) {
+    Assets::I()->textures[which] = LoadTexture(path);
+}
+
 void LoadAllAssets() {
 
     // Load Textures
     Assets::I()->textures[Textures::TEX_OVERWORLD] = LoadTexture("resources/textures/OverworldTileset.png");
+    Assets::I()->textures[Textures::TEX_BG] = LoadTexture("resources/textures/Background1.png");
     Assets::I()->textures[Textures::TEX_GUI] = LoadTexture("resources/textures/Gui.png");
+    Assets::I()->textures[Textures::TEX_PLAYER] = LoadTexture("resources/textures/Player.png");
+    Assets::I()->textures[Textures::TEX_ENTITIES] = LoadTexture("resources/textures/Entities.png");
 
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 

@@ -33,10 +33,20 @@ Tileset LoadTileset(tinyxml2::XMLElement* el) {
     return result;
 }
 
-uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path) {
-    auto map = std::make_unique<Tilemap>();
+Tilemap* LoadTilemap(const std::string& path) {
 
-    map->target = LoadRenderTexture(1280, 720);
+    if (std::filesystem::exists(path) == false) {
+        std::cout << "ERROR::Tilemap::LoadTilemap:: map does not exist: "
+                  << path
+                  << std::endl;
+        return nullptr;
+    }
+
+    auto map = new Tilemap();
+
+    map->path = path;
+    map->name = std::filesystem::path(path).stem();
+    map->target = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
 
     using namespace tinyxml2;
 
@@ -110,7 +120,9 @@ uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path) {
                     TraceLog(LOG_INFO, "%s: %s", "Loading polygon", points_txt.c_str());
 
                     Polygon polygon;
-                    polygon.position = polypos;
+                    polygon.type = SolidType::Polygon;
+                    polygon.x = polypos.x;
+                    polygon.y = polypos.y;
                     polygon.id = id;
 
                     std::stringstream ss(points_txt);
@@ -170,24 +182,56 @@ uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path) {
                             }
 
                             map->billboards.push_back(billboard);
-                        } else if (strcmp(type, "ladder") == 0) {
-                            Object obj;
-                            obj.id = id;
-                            obj.type = std::string{type};
-                            obj.x = polypos.x;
-                            obj.y = polypos.y;
-                            obj.width = size.x;
-                            obj.height = size.y;
-                            map->objects.push_back(std::move(obj));
+                        } else if (strcmp(type, "Port") == 0) {
+                            Feature feat;
+                            feat.type = FeatureType::Port;
+                            feat.x = polypos.x;
+                            feat.y = polypos.y;
+                            feat.width = size.x;
+                            feat.height = size.y;
+
+                            const auto* props = object->FirstChildElement();
+                            auto* prop = props->FirstChildElement();
+                            if (prop) {
+                                const auto* name = prop->Attribute("name");
+                                if (strcmp(name, "target") == 0) {
+                                    feat.target = std::string{prop->Attribute("value")};
+                                } else {
+                                    std::cout << "WARNING:: Port is missing a target property, got: '"
+                                              << name
+                                              << std::endl;
+                                }
+                                prop = prop->NextSiblingElement();
+                            } else {
+                                std::cout << "WARNING:: Port is missing a target property" << std::endl;
+                            }
+
+                            map->features.push_back(std::move(feat));
+                        } else if (strcmp(type, "Ladder") == 0) {
+                            Feature feat;
+                            feat.type = FeatureType::Ladder;
+                            feat.x = polypos.x;
+                            feat.y = polypos.y;
+                            feat.width = size.x;
+                            feat.height = size.y;
+                            map->features.push_back(std::move(feat));
+                        } else {
+                            SpawnLocation loc;
+                            loc.type = GetEntType(std::string{type});
+                            loc.x = polypos.x;
+                            loc.y = polypos.y;
+                            loc.width = size.x;
+                            loc.height = size.y;
+                            map->objects.push_back(std::move(loc));
                         }
                     } else {
                         Polygon obj;
                         obj.id = id;
-                        obj.type = SolidType::RECTANGLE;
-                        obj.position.x = polypos.x;
-                        obj.position.y = polypos.y;
-                        obj.size.x = size.x;
-                        obj.size.y = size.y;
+                        obj.type = SolidType::Rectangle;
+                        obj.x = polypos.x;
+                        obj.y = polypos.y;
+                        obj.width = size.x;
+                        obj.height = size.y;
                         map->geometry.push_back(std::move(obj));
                     }
                 }
@@ -202,53 +246,112 @@ uptr<Tilemap> LoadTilemap(entt::registry& reg, const std::string& path) {
     return map;
 }
 
-void DrawTilemap(const uptr<Tilemap>& tilemap, SpriteRenderer& ren) {
-    const auto* tileset = &tilemap->tileset;
+void DrawTilemapToTarget(const uptr<Tilemap>& tilemap, const Camera2D camera, SpriteRenderer& ren) {
+    DrawTilemapToTarget(tilemap.get(), camera, ren);
+}
 
-    for (const auto& bill : tilemap->billboards) {
-        DrawSprite(
-            ren,
-            (Sprite)bill,
-            Body{
-                bill.position.x,
-                bill.position.y,
-                bill.region.width,
-                bill.region.height,
-            });
-    }
+void DrawTilemap(const uptr<Tilemap>& tilemap) {
+    DrawTilemap(tilemap.get());
+}
 
-    for (const auto& layer : tilemap->layers) {
-        for (const auto& chunk : layer) {
-            for (int y = 0; y < chunk->size.y; y++) {
-                for (int x = 0; x < chunk->size.x; x++) {
-                    int index = x + y * chunk->size.x;
+void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRenderer& ren) {
+    const auto [ox, oy] = tilemap->position;
+    BeginTextureMode(tilemap->target);
+        BeginMode2D(camera);
+        ClearBackground({0,0,0,0});
+        const auto* tileset = &tilemap->tileset;
 
-                    Tile tile = chunk->tiles[index];
+        for (const auto& bill : tilemap->billboards) {
+            DrawSprite(
+                ren,
+                (Sprite)bill,
+                Body{
+                    bill.position.x + ox,
+                    bill.position.y + oy,
+                    bill.region.width,
+                    bill.region.height,
+                });
+        }
 
-                    if (tile == 0) continue;
-                    --tile;
+        for (const auto& layer : tilemap->layers) {
+            for (const auto& chunk : layer) {
+                for (int y = 0; y < chunk->size.y; y++) {
+                    for (int x = 0; x < chunk->size.x; x++) {
+                        int index = x + y * chunk->size.x;
 
-                    float rx = tile%(tileset->texture.width/tileset->tilewidth);
-                    float ry = tile/(tileset->texture.width/tileset->tilewidth);
+                        Tile tile = chunk->tiles[index];
 
-                    Rectangle region{
-                        rx*tileset->tilewidth,
-                        ry*tileset->tileheight,
-                        (float)tileset->tilewidth,
-                        (float)tileset->tileheight };
+                        if (tile == 0) continue;
+                        --tile;
 
-                    const float ox = tileset->tilewidth * (chunk->offset.x);
-                    const float oy = tileset->tileheight * (chunk->offset.y);
+                        float rx = tile%(tileset->texture.width/tileset->tilewidth);
+                        float ry = tile/(tileset->texture.width/tileset->tilewidth);
 
-                    DrawTextureRec(
-                        tileset->texture,
-                        region,
-                        Vector2{
-                            floor(ox + (float)x*tileset->tilewidth),
-                            floor(oy + (float)y*tileset->tileheight)},
-                        WHITE);
+                        Rectangle region{
+                            rx*tileset->tilewidth,
+                            ry*tileset->tileheight,
+                            (float)tileset->tilewidth,
+                            (float)tileset->tileheight };
+
+                        const float cox = tileset->tilewidth * (chunk->offset.x);
+                        const float coy = tileset->tileheight * (chunk->offset.y);
+
+                        DrawTextureRec(
+                            tileset->texture,
+                            region,
+                            Vector2{
+                                floor(cox + (float)x*tileset->tilewidth + ox),
+                                floor(coy + (float)y*tileset->tileheight + oy)},
+                            WHITE);
+                    }
                 }
             }
         }
+        EndMode2D();
+    EndTextureMode();
+}
+
+void DrawTilemap(const Tilemap* tilemap) {
+    DrawTexturePro(
+        tilemap->target.texture,
+        {0,0,CANVAS_WIDTH,-CANVAS_HEIGHT},
+        {0,0,CANVAS_WIDTH,CANVAS_HEIGHT},
+        Vector2Zero(),
+        0.0f,
+        {255, 255, 255,
+         static_cast<unsigned char>(255.0f * tilemap->alpha)});
+}
+
+std::optional<Feature> GetPortWithTarget(
+    const Tilemap* tilemap,
+    const std::string& target) {
+
+    for (const auto& feat : tilemap->features) {
+        if (feat.type == FeatureType::Port) {
+            if (feat.target == target) return std::optional{feat};
+        }
     }
+
+    return std::nullopt;
+}
+
+void UpdateTilemapGeometryPositions(Tilemap* tilemap) {
+    const auto [x, y] = tilemap->position;
+    for (auto& feat : tilemap->features) {
+        feat.offset.x = x;
+        feat.offset.y = y;
+    }
+    for (auto& geom : tilemap->geometry) {
+        geom.offset.x = x;
+        geom.offset.y = y;
+    }
+    for (auto& spawn : tilemap->objects) {
+        spawn.offset.x = x;
+        spawn.offset.y = y;
+    }
+}
+
+void SetPosition(Tilemap* tilemap, Vector2 newPos) {
+    tilemap->position = newPos;
+    UpdateTilemapGeometryPositions(tilemap);
 }
