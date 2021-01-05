@@ -1,14 +1,14 @@
 #ifndef SKYVAULT_GAME_H_
 #define SKYVAULT_GAME_H_
 
+#include <vector>
 #include <entt.hpp>
 
 #include "utils.hpp"
 #include "sprite.hpp"
-#include "tilemap.hpp"
-
-constexpr auto CANVAS_WIDTH { 256 };
-constexpr auto CANVAS_HEIGHT { 144 };
+#include "scene.hpp"
+#include "level.hpp"
+#include "consts.hpp"
 
 enum class AppState {
     Running,
@@ -20,12 +20,22 @@ struct Game {
     AppState state{AppState::Running};
     entt::registry reg;
     SpriteRenderer spriteRenderer;
-    uptr<Tilemap> tilemap;
+    uptr<Level> level;
+
+    bool physicsPaused{false};
+
+    std::vector<SceneLayer*> scenes;
 
     Camera2D mainCamera = {0};
     RenderTexture2D mainCanvas;
 };
 
 void LoadGame(uptr<Game>& game);
+void PushScene(uptr<Game>& game, SceneLayer* scene);
+void PopScene(uptr<Game>& game);
+void GotoScene(uptr<Game>& game, SceneLayer* scene);
+
+void UpdateGame(uptr<Game>& game);
+void RenderGame(const uptr<Game>& game);
 
 #endif // SKYVAULT_GAME_H_

@@ -1,7 +1,7 @@
 #ifndef SKYVAULT_SPAWNERS_HPP
 #define SKYVAULT_SPAWNERS_HPP
 
-#include <map>
+#include <vector>
 #include <functional>
 
 #include <raylib.h>
@@ -10,6 +10,7 @@
 #include "game.hpp"
 #include "utils.hpp"
 #include "enttypes.hpp"
+#include "tilemap.hpp"
 
 #include "player.hpp"
 #include "body.hpp"
@@ -23,17 +24,22 @@ using Spawner = std::function<
     )
 >;
 
-#define GENERATE_SPAWNER(T) { #T, Spawn##T },
+#define GENERATE_SPAWNER(T) { Spawn##T },
 
+entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnTest(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);
 
-static std::map<const std::string, Spawner> SpawnerMap = {
+void SpawnEntitiesFromTileMap(const Tilemap* map, const uptr<Game>& game);
+
+static std::vector<Spawner> SpawnerMap = {
   X_ENT_TYPES(GENERATE_SPAWNER)
 };
 
 entt::entity Spawn(
-    const std::string& which,
+    const EntType which,
     const uptr<Game>& game,
     const Vector2 position);
 

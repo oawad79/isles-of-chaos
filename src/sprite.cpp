@@ -47,12 +47,13 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         deffered_sprites.push_back({body, &spr});
     }
 
-    std::sort(deffered_sprites.begin(), deffered_sprites.end(),
-    [](auto& a, auto &b){
-        const auto& [abody, _1] = a;
-        const auto& [bbody, _2] = b;
-        return abody.center().y < bbody.center().y;
-    });
+    // Sort by y-axis, not useful for sidescrollers
+    // std::sort(deffered_sprites.begin(), deffered_sprites.end(),
+    // [](auto& a, auto &b){
+    //     const auto& [abody, _1] = a;
+    //     const auto& [bbody, _2] = b;
+    //     return abody.center().y < bbody.center().y;
+    // });
 
     // Shader shader = Assets::I()->shaders[SHADER_CHARACTERS];
     // BeginShaderMode(shader);
@@ -95,7 +96,10 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 DrawTexturePro(
                     sprite->texture,
                     sprite->region,
-                    body,
+                    {ceil(body.x),
+                     ceil(body.y),
+                     body.width,
+                     body.height},
                     Vector2{0, 0},
                     0.0f,
                     sprite->tint

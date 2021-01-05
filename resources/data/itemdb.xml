@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <consumables>
+    <item id="1"
+          name="Small Health Vial"
+          descr="Small potion that heals you"
+          catagory="Consumable"
+          consumableEffect="Heal"
+          effectValue="10.0"
+          region="8 0 5 8"
+          value="1"/>
+    <item id="2"
+          name="Health Potion"
+          descr="Potion that heals you"
+          catagory="Consumable"
+          consumableEffect="Heal"
+          effectValue="50.0"
+          region="13 0 8 8"
+          value="4"/>
+  </consumables>
+</items>

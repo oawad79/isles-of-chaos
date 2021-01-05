@@ -2,21 +2,33 @@
 #define SKYVAULT_ENTTYPES_HPP
 
 #include <vector>
+#include <string>
 #include <map>
 
 #include "utils.hpp"
 
 #define X_ENT_TYPES(E) \
+    E(None)            \
     E(Player)          \
-    E(Test)
+    E(Test)            \
+    E(Ghost)           \
+    E(Pot)
 
-enum class EntTypes {X_ENT_TYPES(GENERATE_ENUM)};
-#define GENERATE_MAP(V) { #V, EntTypes::V },
+enum class EntType {X_ENT_TYPES(GENERATE_ENUM)};
+#define GENERATE_MAP(V) { #V, EntType::V },
 
-static const std::vector<std::string> EntTypesS = {X_ENT_TYPES(GENERATE_STRING)};
-static std::map<std::string, EntTypes> EntTypesM = {
+static const std::vector<std::string> EntTypeS = {X_ENT_TYPES(GENERATE_STRING)};
+static std::map<std::string, EntType> EntTypeM = {
     X_ENT_TYPES(GENERATE_MAP)
 };
+
+static EntType GetEntType(const std::string& tstr) {
+    if (EntTypeM.find(tstr) == EntTypeM.end()) {
+        return EntType::None;
+    }
+
+    return EntTypeM[tstr];
+}
 
 #undef GENERATE_MAP
 

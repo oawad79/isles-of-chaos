@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Door" color="#8b2612"/>
+ <objecttype name="Ladder" color="#a48300"/>
+ <objecttype name="Player" color="#0afff7"/>
+ <objecttype name="Port" color="#a4154c"/>
+</objecttypes>

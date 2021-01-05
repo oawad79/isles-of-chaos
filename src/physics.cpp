@@ -40,10 +40,10 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
             b = poly.points[i + 1];
         }
 
-        a.x += poly.position.x;
-        a.y += poly.position.y;
-        b.x += poly.position.x;
-        b.y += poly.position.y;
+        a.x += poly.x;
+        a.y += poly.y;
+        b.x += poly.x;
+        b.y += poly.y;
 
         auto a1 = LineIntersection(left_wall.a, left_wall.b, a, b);
         auto a2 = LineIntersection(right_wall.a, right_wall.b, a, b);
@@ -60,9 +60,13 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
 }
 
 void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
+    if (game->physicsPaused) return;
+
     auto view = reg.view<Physics, Body>();
 
     const float dt = GetFrameTime();
+
+    const auto* tilemap = GetTilemap(game->level);
 
     for (auto& e : view) {
         auto& physics = reg.get<Physics>(e);
@@ -79,34 +83,55 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
         physics.on_ground = false;
         physics.on_ladder = false;
 
-        if (game->tilemap.get() != nullptr) {
-            for (const auto& poly: game->tilemap->geometry) {
-                const auto [xcoll, xwhere] = CheckCollisionRecPoly(xbody, poly);
-                const auto [ycoll, ywhere] = CheckCollisionRecPoly(ybody, poly);
-
-                if (xcoll) {
-                    xbody = body;
-                    physics.velocity.x = 0;
-                }
-
-                if (ycoll) {
-                    ybody = body;
-                    if (ybody.y + ybody.height / 2 < ywhere.y) {
-                        physics.on_ground = true;
-                        physics.velocity.y = 0;
+        if (tilemap != nullptr) {
+            for (const auto& poly: tilemap->geometry) {
+                if (poly.type == SolidType::Polygon) {
+                    const auto [xcoll, xwhere] = CheckCollisionRecPoly(xbody, poly);
+                    const auto [ycoll, ywhere] = CheckCollisionRecPoly(ybody, poly);
+                    if (xcoll) { xbody = body; physics.velocity.x = 0; }
+                    if (ycoll) {
+                        ybody = body;
+                        if (ybody.y + ybody.height / 2 < ywhere.y) {
+                            physics.on_ground = true;
+                            physics.velocity.y = 0;
+                        }
                     }
-                }
+                    if (xcoll || ycoll) {
+                        physics.colliding_with_solid = true;
+                        physics.solid_collision_point = xcoll?xwhere:ywhere;
+                    }
+                } else {
+                    const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
+                    const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
 
-                if (xcoll || ycoll) {
-                    physics.colliding_with_solid = true;
-                    physics.solid_collision_point = xcoll?xwhere:ywhere;
+                    if (xcoll) {
+                        xbody = body;
+                        physics.velocity.x = 0.0f;
+                    }
+
+                    if (ycoll) {
+                        ybody = body;
+                        physics.velocity.y = 0.0f;
+                        physics.on_ground = true;
+                    }
+
+                    if (xcoll || ycoll) physics.colliding_with_solid = true;
                 }
             }
 
             physics.on_ladder = false;
-            for (const auto& obj : game->tilemap->objects) {
-                if (obj.type == "Ladder") {
-                    if (CheckCollisionRecs(body, obj)) {
+            for (const auto& obj : tilemap->features) {
+                if (obj.type == FeatureType::Ladder) {
+                    if (CheckCollisionRecs(body, obj.bounds())) {
+                        if (body.y + body.height / 2 < obj.y + obj.height / 2) {
+                            const auto depth = (ybody.y + body.height) - obj.y;
+                            if (depth < 1.0f) {
+                                physics.on_ground = true;
+                                physics.velocity.y = 0.0f;
+                                ybody.y -= depth;
+                            }
+                        }
+
                         physics.on_ladder = true;
                     }
                 }
@@ -122,36 +147,49 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 }
 
 void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
-    for (const auto& poly: game->tilemap->geometry) {
-        for (size_t i = 0; i < poly.points.size(); i++) {
-            Vector2 a = poly.points[i];
-            Vector2 b;
+    const auto* tilemap = GetTilemap(game->level);
+    for (const auto& poly: tilemap->geometry) {
+        if (poly.type == SolidType::Polygon) {
+            for (size_t i = 0; i < poly.points.size(); i++) {
+                Vector2 a = poly.points[i];
+                Vector2 b;
 
-            if (i >= poly.points.size() - 1) {
-                b = poly.points[0];
-            } else {
-                b = poly.points[i + 1];
+                if (i >= poly.points.size() - 1) {
+                    b = poly.points[0];
+                } else {
+                    b = poly.points[i + 1];
+                }
+
+                a.x += poly.x;
+                a.y += poly.y;
+                b.x += poly.x;
+                b.y += poly.y;
+
+                DrawLineEx(a, b, 1, RED);
             }
-
-            a.x += poly.position.x;
-            a.y += poly.position.y;
-
-            b.x += poly.position.x;
-            b.y += poly.position.y;
-
-            DrawLineEx(a, b, 1, RED);
+        } else {
+            DrawRectangleLinesEx(poly.bounds(), 1.0f, RED);
         }
     }
 
-    for (const auto& obj : game->tilemap->objects) {
+    for (const auto& obj : tilemap->features) {
+        auto text = std::string{"None"};
         Color color = WHITE;
 
-        if (obj.type == "ladder") {
+        if (obj.type == FeatureType::Ladder) {
             color = YELLOW;
+            text = "Ladder";
         }
 
-        DrawRectangleLines(obj.x, obj.y, obj.width, obj.height, color);
-        DrawText(obj.type.c_str(), obj.x, obj.y - 9, 8, color);
+        if (obj.type == FeatureType::Port) {
+            color = BLUE;
+            text = "Port:" + obj.target;
+        }
+
+        const auto b = obj.bounds();
+
+        DrawRectangleLines(b.x, b.y, b.width, b.height, color);
+        DrawText(text.c_str(), b.x, b.y - 9, 4, color);
     }
 
     auto view = reg.view<Physics, Body>();

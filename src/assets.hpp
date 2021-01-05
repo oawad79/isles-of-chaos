@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <algorithm>
@@ -7,14 +8,22 @@
 #include <map>
 #include <vector>
 #include <raylib.h>
+#include <string>
+#include <sstream>
 #include <filesystem>
 #include <chrono>
 
+#include "tinyxml2.hpp"
 #include "utils.hpp"
+#include "item.hpp"
 
 enum Textures {
     TEX_NONE,
+    TEX_BG,
     TEX_GUI,
+    TEX_EQUIPMENT,
+    TEX_ENTITIES,
+    TEX_PLAYER,
     TEX_OVERWORLD,
     TEX_NUM_TEXTURES
 };
@@ -54,6 +63,8 @@ struct Assets {
 
     Shader shaders[SHADER_NUM_SHADERS];
     ShaderAssetInfo shaders_info[SHADER_NUM_SHADERS];
+
+    std::map<int, Item> itemDb;
 
 private:
     Assets(const Assets&) = delete;
