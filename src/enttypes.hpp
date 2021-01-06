@@ -12,7 +12,8 @@
     E(Player)          \
     E(Test)            \
     E(Ghost)           \
-    E(Pot)
+    E(Pot)             \
+    E(Item)
 
 enum class EntType {X_ENT_TYPES(GENERATE_ENUM)};
 #define GENERATE_MAP(V) { #V, EntType::V },

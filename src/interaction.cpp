@@ -56,7 +56,7 @@ void DrawInteraction(const uptr<Game>& game, entt::registry& reg) {
                     gui,
                     Rectangle{0, 0, 8, 8},
                     Rectangle{
-                        body.center().x - body.width / 4 - 4,
+                        body.center().x - body.width / 2,
                         body.y - 10,
                         8,
                         8

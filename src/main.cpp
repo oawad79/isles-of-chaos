@@ -12,6 +12,7 @@
 #include "spawners.hpp"
 #include "interaction.hpp"
 #include "assets.hpp"
+#include "gui.hpp"
 #include "input.hpp"
 #include "enttypes.hpp"
 
@@ -23,15 +24,22 @@ std::once_flag Assets::once;
 uptr<Input> Input::it;
 std::once_flag Input::once;
 
+GuiState guiState;
+
 void Update(uptr<Game>& game) {
-    UpdateSprites(game->reg);
-    UpdatePlayer(game, game->reg);
-    UpdatePhysics(game, game->reg);
-    UpdateInteraction(game, game->reg);
+    if (game->state == AppState::Running) {
+        UpdateSprites(game->reg);
+        UpdatePlayer(game, game->reg);
+        UpdatePhysics(game, game->reg);
+        UpdateInteraction(game, game->reg);
+    }
+
     UpdateGame(game);
+    UpdateGui(game, guiState);
 }
 
-void RenderGUI(const uptr<Game>& game) {
+void RenderGui(const uptr<Game>& game) {
+    DrawGui(game, guiState);
 }
 
 void Render(const uptr<Game>& game) {
@@ -54,8 +62,8 @@ void Render(const uptr<Game>& game) {
             DrawInteraction(game, game->reg);
             if (IsKeyDown(KEY_TAB))
                 DrawDebugPhysicsInfo(game, game->reg);
-            RenderGUI(game);
         EndMode2D();
+        RenderGui(game);
     EndTextureMode();
 }
 

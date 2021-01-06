@@ -46,6 +46,10 @@ auto Input::Jump() -> bool {
     return IsKeyPressed(keymapping[InputMap::JUMP]);
 }
 
+auto Input::OpenInv() -> bool {
+    return IsKeyPressed(keymapping[InputMap::OPEN_INVENTORY]);
+}
+
 auto Input::Ascend() -> bool {
     return IsKeyDown(keymapping[InputMap::MOVE_UP]);
 }

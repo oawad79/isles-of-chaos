@@ -23,6 +23,8 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);
 
+    game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+
     return self;
 }
 
@@ -86,10 +88,52 @@ entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position) {
+    return entt::entity{0};
+}
+
+entt::entity SpawnItemWithId(
+  const uptr<Game>& game,
+  const Vector2 position,
+  const std::string& id) {
+    auto self = game->reg.create();
+
+    const auto itemData = Assets::I()->getItemInfo(id);
+    game->reg.emplace<Item>(self, itemData);
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = itemData.region.width;
+    body.height = itemData.region.height;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
+    spr.region = itemData.region;
+
+    auto& physics = game->reg.emplace<Physics>(self);
+
+    auto& inter = game->reg.emplace<Interaction>(self);
+    inter.action = [&](auto e, entt::registry& r){
+        auto item = r.get<Item>(e);
+        r.view<Player, Inventory>().each([&](auto& p, auto& inv){
+            inv.putItem(item);
+        });
+        r.destroy(e);
+    };
+
+    return self;
+}
 
 void SpawnEntitiesFromTileMap(const Tilemap* map, const uptr<Game>& game) {
     for (const auto& obj : map->objects) {
-        Spawn(obj.type, game, {obj.x, obj.y});
+        if (obj.type == EntType::Item) {
+            SpawnItemWithId(game, {obj.x, obj.y}, obj.id);
+        } else {
+            Spawn(obj.type, game, {obj.x, obj.y});
+        }
     }
 }
 

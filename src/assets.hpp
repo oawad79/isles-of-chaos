@@ -24,6 +24,7 @@ enum Textures {
     TEX_EQUIPMENT,
     TEX_ENTITIES,
     TEX_PLAYER,
+    TEX_ITEMS,
     TEX_OVERWORLD,
     TEX_NUM_TEXTURES
 };
@@ -64,7 +65,9 @@ struct Assets {
     Shader shaders[SHADER_NUM_SHADERS];
     ShaderAssetInfo shaders_info[SHADER_NUM_SHADERS];
 
-    std::map<int, Item> itemDb;
+    Item getItemInfo(std::string id);
+
+    std::map<std::string, Item> itemDb;
 
 private:
     Assets(const Assets&) = delete;

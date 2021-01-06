@@ -57,6 +57,7 @@ struct SpawnLocation : Rectangle {
     Vector2 offset{0, 0};
 
     EntType type{EntType::None};
+    std::string id{""}; // Used for items
 
     inline auto bounds() const { return Rectangle{
         x + offset.x,

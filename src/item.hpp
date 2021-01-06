@@ -64,7 +64,7 @@ static std::map<std::string, ConsumableEffect>  ConsumableEffectM = {
 #undef GENERATE_MAP
 
 struct Item {
-    int id{0};
+    std::string id{"item"};
 
     std::string name{"Item"}, descr{"An item"};
 

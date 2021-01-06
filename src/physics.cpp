@@ -1,6 +1,6 @@
 #include "physics.hpp"
 
-constexpr float GRAVITY {900.0f};
+constexpr float GRAVITY {1000.0f};
 
 float IntervalDistance(float min_a, float max_a, float min_b, float max_b) {
     if (max_a < min_b) return min_a - max_a;
@@ -104,15 +104,25 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
                     const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
 
-                    if (xcoll) {
+                    if (xcoll && poly.height != 0) {
                         xbody = body;
                         physics.velocity.x = 0.0f;
                     }
 
                     if (ycoll) {
-                        ybody = body;
-                        physics.velocity.y = 0.0f;
-                        physics.on_ground = true;
+
+                        if (poly.height == 0) {
+                            if (poly.bounds().y + poly.height > body.y + body.height - 1) {
+                                ybody = body;
+                                physics.velocity.y = 0.0f;
+                                physics.on_ground = true;
+                            }
+                        } else {
+                            ybody = body;
+                            physics.velocity.y = 0.0f;
+                            physics.on_ground = true;
+                        }
+
                     }
 
                     if (xcoll || ycoll) physics.colliding_with_solid = true;
@@ -168,7 +178,9 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
                 DrawLineEx(a, b, 1, RED);
             }
         } else {
-            DrawRectangleLinesEx(poly.bounds(), 1.0f, RED);
+            auto body = poly.bounds();
+            if (body.height == 0) body.height += 1;
+            DrawRectangleLinesEx(body, 1.0f, body.height == 1 ? YELLOW : RED);
         }
     }
 

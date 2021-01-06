@@ -11,15 +11,16 @@
 #include "utils.hpp"
 
 #define FOREACH_INPUT_TYPE(I)\
-    I(MOVE_LEFT)\
-    I(MOVE_RIGHT)\
-    I(MOVE_UP)\
-    I(MOVE_DOWN)\
-    I(ATTACK)\
-    I(ACTION)\
-    I(CLIMB)\
-    I(JUMP)\
-    I(PAUSE)\
+    I(MOVE_LEFT)             \
+    I(MOVE_RIGHT)            \
+    I(MOVE_UP)               \
+    I(MOVE_DOWN)             \
+    I(ATTACK)                \
+    I(ACTION)                \
+    I(CLIMB)                 \
+    I(JUMP)                  \
+    I(OPEN_INVENTORY)        \
+    I(PAUSE)                 \
     I(NUM_INPUT_TYPES)
 
 enum class InputMap {FOREACH_INPUT_TYPE(GENERATE_ENUM)};
@@ -45,6 +46,7 @@ struct Input {
     auto Up() -> bool;
     auto Down() -> bool;
     auto Jump() -> bool;
+    auto OpenInv() -> bool;
     auto EnterDoor() -> bool;
 
 private:
@@ -63,6 +65,7 @@ private:
         {InputMap::ACTION, KEY_PERIOD},
         {InputMap::CLIMB, KEY_W},
         {InputMap::JUMP, KEY_SPACE},
+        {InputMap::OPEN_INVENTORY, KEY_I},
         {InputMap::PAUSE, KEY_ESCAPE},
     };
 };

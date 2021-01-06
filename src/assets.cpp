@@ -1,5 +1,13 @@
 #include "assets.hpp"
 
+Item Assets::getItemInfo(std::string id) {
+    if (itemDb.find(id) == itemDb.end()) {
+        std::cout << "WARNING:: Cannot find item with id: '" << id << "'\n";
+        return Item();
+    }
+    return itemDb[id];
+}
+
 void LoadItemDB() {
     using namespace tinyxml2;
 
@@ -15,10 +23,10 @@ void LoadItemDB() {
     auto loadItem = [&](XMLElement* itemXml, ItemCatagory catagory) {
         Item item;
         item.catagory = catagory;
+        item.id = std::string{itemXml->Attribute("id")};
         item.name = std::string{itemXml->Attribute("name")};
         item.descr = std::string{itemXml->Attribute("descr")};
 
-        itemXml->QueryIntAttribute("id", &item.id);
         itemXml->QueryFloatAttribute("effectValue", &item.effectValue);
         itemXml->QueryIntAttribute("value", &item.value);
 
@@ -38,6 +46,8 @@ void LoadItemDB() {
                 item.consumableEffect = ConsumableEffectM[consumableEffect];
             }
         }
+
+        Assets::I()->itemDb[item.id] = item;
     };
 
     // Loading consumables
@@ -64,6 +74,7 @@ void LoadAllAssets() {
     Assets::I()->textures[Textures::TEX_EQUIPMENT] = LoadTexture("resources/textures/Equipment.png");
     Assets::I()->textures[Textures::TEX_PLAYER] = LoadTexture("resources/textures/Player.png");
     Assets::I()->textures[Textures::TEX_ENTITIES] = LoadTexture("resources/textures/Entities.png");
+    Assets::I()->textures[Textures::TEX_ITEMS] = LoadTexture("resources/textures/Items.png");
 
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 
