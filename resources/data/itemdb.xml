@@ -28,5 +28,21 @@
           effectValue="20.0"
           region="0 0 13 3"
           value="4"/>
+    <item id="small-dagger"
+          name="A Small Dagger"
+          descr="Sharp and deadly assassins tool"
+          catagory="Weapon"
+          weaponClass="dagger"
+          effectValue="5.0"
+          region="16 0 9 3"
+          value="4"/>
+    <item id="long-sword"
+          name="A long sword"
+          descr="A sword that is long"
+          catagory="Weapon"
+          weaponClass="sword"
+          effectValue="25.0"
+          region="0 4 18 5"
+          value="4"/>
   </weapons>
 </items>

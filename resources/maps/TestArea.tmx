@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#50fff9" nextlayerid="8" nextobjectid="117">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#50fff9" nextlayerid="8" nextobjectid="127">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -27,7 +27,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,5,5,5,5,5,5,5,0,0,0,0,0,0,0,
-5,5,5,5,5,5,5,5,5,5,5,0,0,0,0,5,
+5,5,5,5,5,5,5,5,5,5,5,5,5,5,0,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -299,9 +299,9 @@
 </chunk>
    <chunk x="0" y="0" width="16" height="16">
 1,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,
-2,1,10,67,67,67,0,0,0,0,0,0,4,4,0,0,
-8,10,0,0,0,0,0,0,0,0,0,0,3,3,0,5,
-0,0,0,0,0,0,0,0,0,67,67,3,9,10,5,0,
+2,1,10,67,67,67,0,0,0,0,0,0,3,3,0,0,
+8,10,0,0,0,0,0,0,0,67,67,3,9,10,0,5,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,11,
@@ -664,10 +664,10 @@
    <chunk x="0" y="0" width="16" height="16">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,4,0,4,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,66,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,66,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,65,66,
+0,0,0,0,4,0,4,0,0,0,0,0,0,0,65,66,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -743,7 +743,7 @@
   <object id="81" x="160" y="88" width="88" height="40"/>
   <object id="82" x="168" y="128" width="80" height="8"/>
   <object id="86" type="Ladder" x="136" y="112" width="16" height="56"/>
-  <object id="88" x="72.0909" y="29" width="16"/>
+  <object id="88" x="72.125" y="21.125" width="16"/>
   <object id="92" x="280" y="56" width="112" height="104"/>
   <object id="94" type="Ladder" x="304" y="16" width="16" height="40"/>
   <object id="95" x="255.818" y="16" width="48.1818"/>
@@ -755,16 +755,24 @@
   <object id="102" type="Ladder" x="208" y="-56" width="16" height="24"/>
   <object id="103" type="Ladder" x="176" y="-32" width="16" height="32"/>
   <object id="104" x="224" y="-56" width="16"/>
-  <object id="105" x="96" y="16" width="16" height="16"/>
-  <object id="106" x="88" y="24" width="8" height="8"/>
   <object id="108" name="Small Sword" type="Item" x="51.0909" y="37.4545" width="16" height="8">
    <properties>
     <property name="id" value="small-sword"/>
    </properties>
   </object>
+  <object id="117" name="Small Sword" type="Item" x="94.75" y="-1.25" width="16" height="8">
+   <properties>
+    <property name="id" value="small-dagger"/>
+   </properties>
+  </object>
+  <object id="118" name="Small Sword" type="Item" x="92.25" y="38.25" width="16" height="8">
+   <properties>
+    <property name="id" value="long-sword"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="4" name="Items"/>
- <objectgroup id="2" name="Solids" visible="0">
+ <objectgroup id="2" name="Solids">
   <object id="14" x="0" y="16" width="16" height="8"/>
   <object id="17" x="-72" y="104" width="16" height="24"/>
   <object id="18" x="-56" y="112" width="16" height="16"/>
@@ -806,5 +814,7 @@
   <object id="85" x="224" y="136" width="24" height="56"/>
   <object id="89" x="24" y="13" width="24"/>
   <object id="90" x="144" y="0" width="112" height="48"/>
+  <object id="121" x="96" y="8" width="16" height="16"/>
+  <object id="122" x="88" y="16" width="8" height="8"/>
  </objectgroup>
 </map>

@@ -153,6 +153,11 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
         physics.velocity.x *= std::pow(physics.friction, dt);
         physics.velocity.y *= std::pow(physics.friction, dt);
+
+        if (physics.velocity.x > 0)
+            physics.facingX = RIGHT;
+        else
+            physics.facingX = LEFT;
     }
 }
 

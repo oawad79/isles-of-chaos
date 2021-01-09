@@ -56,8 +56,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
     }
 
     for (const auto& [body, deff] : deffered_sprites) {
+        const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
         if (deff->T == Type::ANIMATION) {
-            const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
             const auto sw = sprite->region.width;
             const auto sh = sprite->region.height;
 
@@ -68,8 +68,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 {
                     sprite->region.x + sw * sprite->current_frame,
                     sprite->region.y,
-                    sprite->region.width,
-                    sprite->region.height,
+                    sprite->region.width * sprite->scale.x,
+                    sprite->region.height * sprite->scale.y,
                 },
                 {
                     ox + body.x - sw / 4,
@@ -102,7 +102,12 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 const auto [_rx, _ry, rw, rh] = sprite->region;
                 DrawTexturePro(
                     sprite->texture,
-                    sprite->region,
+                    {
+                        sprite->region.x,
+                        sprite->region.y,
+                        sprite->region.width * sprite->scale.x,
+                        sprite->region.height * sprite->scale.y,
+                    },
                     {ceil(body.x + ox + rw/2),
                      ceil(body.y + oy + rh/2),
                      body.width,

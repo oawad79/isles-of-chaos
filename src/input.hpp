@@ -49,6 +49,8 @@ struct Input {
     auto OpenInv() -> bool;
     auto EnterDoor() -> bool;
 
+    auto Attack() -> bool;
+
 private:
     Input(const Input&) = delete;
     Input& operator=(const Input&) = delete;
@@ -69,3 +71,5 @@ private:
         {InputMap::PAUSE, KEY_ESCAPE},
     };
 };
+
+void DrawDebugInputOverlay();

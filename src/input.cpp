@@ -1,5 +1,8 @@
 #include "input.hpp"
 
+void DrawDebugInputOverlay() {
+
+}
 
 Vector2 Input::GetMovementVector() {
     auto result = Vector2{0, 0};
@@ -60,4 +63,8 @@ auto Input::Descend() -> bool {
 
 auto Input::ShouldPause() -> bool {
     return IsKeyPressed(keymapping[InputMap::PAUSE]);
+}
+
+auto Input::Attack() -> bool {
+    return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }

@@ -119,7 +119,7 @@ void UpdateGui(const uptr<Game>& game, GuiState& state) {
 
                     if (IsKeyDown(KEY_LEFT_SHIFT) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                         if (CheckCollisionPointRec(MouseCanvasPosition(game),
-                                                {cx, cy, cellSize, cellSize})) {
+                                                   {cx, cy, cellSize, cellSize})) {
                             // Equip the item
                             if (auto o = inventory.getItem(x, y)) {
                                 const Item item = o.value();

@@ -10,6 +10,7 @@
 #include "player.hpp"
 #include "physics.hpp"
 #include "spawners.hpp"
+#include "timed.hpp"
 #include "interaction.hpp"
 #include "assets.hpp"
 #include "gui.hpp"
@@ -32,6 +33,7 @@ void Update(uptr<Game>& game) {
         UpdatePlayer(game, game->reg);
         UpdatePhysics(game, game->reg);
         UpdateInteraction(game, game->reg);
+        UpdateTimed(game->reg);
     }
 
     UpdateGame(game);

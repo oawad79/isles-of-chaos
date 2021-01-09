@@ -10,14 +10,15 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 8;
-    body.height = 12;
+    body.width = 10;
+    body.height = 20;
 
     auto& spr = game->reg.emplace<SimpleAnimation>(self);
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
     spr.region = {0, 0, 12, 20};
     spr.number_of_frames = 3;
+    spr.offset.x = 2;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
 
     auto& player = game->reg.emplace<Player>(self);

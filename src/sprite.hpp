@@ -32,7 +32,7 @@ struct Sprite {
     Texture2D texture;
     Rectangle region;
     Vector2 offset{0, 0};
-    Vector2 scale;
+    Vector2 scale{1, 1};
     float rotation{0};
     Color tint{WHITE};
     Color tint2;
