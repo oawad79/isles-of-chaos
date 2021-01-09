@@ -5,8 +5,10 @@ void LoadSpriteRenderer(SpriteRenderer& self) {
 
 void UpdateSprites(entt::registry& reg) {
     const float dt = GetFrameTime();
+    const float time = GetTime();
 
     auto sim_anims = reg.view<Body, SimpleAnimation>();
+    auto items = reg.view<Sprite, Item>();
 
     for (auto& ent : sim_anims) {
         auto& sprite = reg.get<SimpleAnimation>(ent);
@@ -22,6 +24,12 @@ void UpdateSprites(entt::registry& reg) {
                 sprite.time += dt;
             }
         }
+    }
+
+    for (auto& ent : items) {
+        auto& sprite = reg.get<Sprite>(ent);
+        sprite.offset.y = -sprite.region.height + cosf(time*10.0f) * sprite.region.height / 2.0f;
+        sprite.rotation = cosf(time*2.5f) * 25.0f;
     }
 }
 
@@ -47,22 +55,13 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         deffered_sprites.push_back({body, &spr});
     }
 
-    // Sort by y-axis, not useful for sidescrollers
-    // std::sort(deffered_sprites.begin(), deffered_sprites.end(),
-    // [](auto& a, auto &b){
-    //     const auto& [abody, _1] = a;
-    //     const auto& [bbody, _2] = b;
-    //     return abody.center().y < bbody.center().y;
-    // });
-
-    // Shader shader = Assets::I()->shaders[SHADER_CHARACTERS];
-    // BeginShaderMode(shader);
-
     for (const auto& [body, deff] : deffered_sprites) {
         if (deff->T == Type::ANIMATION) {
             const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
             const auto sw = sprite->region.width;
             const auto sh = sprite->region.height;
+
+            const auto [ox, oy] = sprite->offset;
 
             DrawTexturePro(
                 sprite->texture,
@@ -72,7 +71,12 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     sprite->region.width,
                     sprite->region.height,
                 },
-                Rectangle{body.x - sw / 4, body.y - sh + body.height, sw, sh},
+                {
+                    ox + body.x - sw / 4,
+                    oy + body.y - sh + body.height,
+                    sw,
+                    sh
+                },
                 Vector2{0, 0},
                 0.0f,
                 sprite->tint
@@ -82,6 +86,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             const auto* sprite = deff;
             const auto sw = sprite->region.width;
             const auto sh = sprite->region.height;
+
+            const auto [ox, oy] = sprite->offset;
 
             if (sprite->T == Type::RECTANGLE) {
                 DrawRectangle(
@@ -93,15 +99,16 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             }
 
             if (sprite->T == Type::SPRITE) {
+                const auto [_rx, _ry, rw, rh] = sprite->region;
                 DrawTexturePro(
                     sprite->texture,
                     sprite->region,
-                    {ceil(body.x),
-                     ceil(body.y),
+                    {ceil(body.x + ox + rw/2),
+                     ceil(body.y + oy + rh/2),
                      body.width,
                      body.height},
-                    Vector2{0, 0},
-                    0.0f,
+                    Vector2{rw/2, rh/2},
+                    sprite->rotation,
                     sprite->tint
                 );
             }
@@ -109,6 +116,4 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
     }
 
     self.sprites_to_draw.clear();
-
-    // EndShaderMode();
 }

@@ -6,6 +6,7 @@
 #include <tuple>
 #include <entt.hpp>
 
+#include "item.hpp"
 #include "body.hpp"
 #include "utils.hpp"
 #include "assets.hpp"
@@ -30,8 +31,9 @@ struct Sprite {
     Type T {Type::RECTANGLE};
     Texture2D texture;
     Rectangle region;
-    Vector2 offset;
+    Vector2 offset{0, 0};
     Vector2 scale;
+    float rotation{0};
     Color tint{WHITE};
     Color tint2;
 
