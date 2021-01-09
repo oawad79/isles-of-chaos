@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#50fff9" nextlayerid="8" nextobjectid="107">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#50fff9" nextlayerid="8" nextobjectid="117">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -757,9 +757,14 @@
   <object id="104" x="224" y="-56" width="16"/>
   <object id="105" x="96" y="16" width="16" height="16"/>
   <object id="106" x="88" y="24" width="8" height="8"/>
+  <object id="108" name="Small Sword" type="Item" x="51.0909" y="37.4545" width="16" height="8">
+   <properties>
+    <property name="id" value="small-sword"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="4" name="Items"/>
- <objectgroup id="2" name="Solids">
+ <objectgroup id="2" name="Solids" visible="0">
   <object id="14" x="0" y="16" width="16" height="8"/>
   <object id="17" x="-72" y="104" width="16" height="24"/>
   <object id="18" x="-56" y="112" width="16" height="16"/>

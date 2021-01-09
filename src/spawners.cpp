@@ -110,7 +110,13 @@ entt::entity SpawnItemWithId(
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
-    spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
+
+    if (itemData.catagory == ItemCatagory::Consumable) {
+        spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
+    } else if (itemData.catagory == ItemCatagory::Weapon) {
+        spr.texture = Assets::I()->textures[Textures::TEX_EQUIPMENT];
+    }
+
     spr.region = itemData.region;
 
     auto& physics = game->reg.emplace<Physics>(self);

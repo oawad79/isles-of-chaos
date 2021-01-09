@@ -45,6 +45,8 @@ void LoadItemDB() {
             } else {
                 item.consumableEffect = ConsumableEffectM[consumableEffect];
             }
+        } else if (catagory == ItemCatagory::Weapon) {
+
         }
 
         Assets::I()->itemDb[item.id] = item;
@@ -55,6 +57,14 @@ void LoadItemDB() {
         auto* itemXml = consumables->FirstChildElement("item");
         while (itemXml) {
             loadItem(itemXml, ItemCatagory::Consumable);
+            itemXml = itemXml->NextSiblingElement();
+        }
+    }
+
+    {
+        auto* itemXml = weapons->FirstChildElement("item");
+        while (itemXml) {
+            loadItem(itemXml, ItemCatagory::Weapon);
             itemXml = itemXml->NextSiblingElement();
         }
     }

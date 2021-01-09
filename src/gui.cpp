@@ -18,15 +18,16 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
             float cx = scx;
             float cy = scy;
 
-            const auto tex = Assets::I()->textures[Textures::TEX_ITEMS];
+            const auto consu = Assets::I()->textures[Textures::TEX_ITEMS];
+            const auto equip = Assets::I()->textures[Textures::TEX_EQUIPMENT];
 
             for (int y = 0; y < inventory.maxRows; y++) {
                 for (int x = 0; x < inventory.maxColumns; x++) {
                     DrawRectangle(cx, cy, cellSize, cellSize, {0, 0, 0, 100});
                     DrawRectangleLines(cx, cy, cellSize, cellSize, BLACK);
-
                     auto o = inventory.getItem(x, y);
                     if (o) {
+                        auto tex = o->catagory == ItemCatagory::Consumable ? consu : equip;
                         auto item = o.value();
 
                         DrawTexturePro(
