@@ -11,6 +11,8 @@
 #include "physics.hpp"
 #include "spawners.hpp"
 #include "timed.hpp"
+#include "character.hpp"
+#include "actor.hpp"
 #include "interaction.hpp"
 #include "assets.hpp"
 #include "gui.hpp"
@@ -34,6 +36,8 @@ void Update(uptr<Game>& game) {
         UpdatePhysics(game, game->reg);
         UpdateInteraction(game, game->reg);
         UpdateTimed(game->reg);
+        UpdateCharacter(game->reg);
+        UpdateActor(game->reg);
     }
 
     UpdateGame(game);

@@ -3,6 +3,7 @@
 
 entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Facing facing) {
     auto self = game->reg.create();
+    game->reg.emplace<Item>(self, item);
     game->reg.emplace<Body>(self, Body{
         x,
         y,

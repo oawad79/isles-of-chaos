@@ -13,9 +13,10 @@
 #include "tilemap.hpp"
 
 #include "character.hpp"
+#include "actor.hpp"
 #include "player.hpp"
 #include "body.hpp"
-#include "physics.hpp"
+#include "physics_type.hpp"
 #include "interaction.hpp"
 #include "inventory.hpp"
 

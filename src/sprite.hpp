@@ -7,8 +7,10 @@
 #include <entt.hpp>
 
 #include "item.hpp"
+#include "physics_type.hpp"
 #include "body.hpp"
 #include "utils.hpp"
+#include "character.hpp"
 #include "assets.hpp"
 
 enum Type {
@@ -35,7 +37,7 @@ struct Sprite {
     Vector2 scale{1, 1};
     float rotation{0};
     Color tint{WHITE};
-    Color tint2;
+    Color tint2{WHITE};
 
     virtual ~Sprite() = default;
 };

@@ -23,8 +23,11 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
 
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);
+    auto& health = game->reg.emplace<Health>(self);
 
-    game->reg.emplace<Character>(self);
+    auto& chr = game->reg.emplace<Character>(self);
+    chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
+
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 
     return self;
@@ -63,10 +66,14 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position) {
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    spr.offset.x += 4;
     spr.region = (Rectangle){0, 16, 16, 16};
     spr.number_of_frames = 4;
 
     auto& physics = game->reg.emplace<Physics>(self);
+    game->reg.emplace<Health>(self);
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::ENEMY;
     return self;
 }
 

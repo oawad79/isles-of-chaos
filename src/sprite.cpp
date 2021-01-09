@@ -8,10 +8,19 @@ void UpdateSprites(entt::registry& reg) {
     const float time = GetTime();
 
     auto sim_anims = reg.view<Body, SimpleAnimation>();
-    auto items = reg.view<Sprite, Item>();
+    auto items = reg.view<Sprite, Item, Physics>();
 
     for (auto& ent : sim_anims) {
         auto& sprite = reg.get<SimpleAnimation>(ent);
+
+        if (reg.has<Health>(ent)) {
+            auto& health = reg.get<Health>(ent);
+            if (!health.canHit()) {
+                sprite.tint2 = RED;
+            } else {
+                sprite.tint2 = WHITE;
+            }
+        }
 
         if (sprite.T != Type::ANIMATION) continue;
 
@@ -56,8 +65,14 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
     }
 
     for (const auto& [body, deff] : deffered_sprites) {
-        const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
+        const auto tint = Color{
+          (unsigned char)((deff->tint.r + deff->tint2.r) / 2),
+          (unsigned char)((deff->tint.g + deff->tint2.g) / 2),
+          (unsigned char)((deff->tint.b + deff->tint2.b) / 2),
+          (unsigned char)((deff->tint.a + deff->tint2.a) / 2),
+        };
         if (deff->T == Type::ANIMATION) {
+            const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
             const auto sw = sprite->region.width;
             const auto sh = sprite->region.height;
 
@@ -79,7 +94,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 },
                 Vector2{0, 0},
                 0.0f,
-                sprite->tint
+                tint
             );
 
         } else {
@@ -95,7 +110,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     ceil(body.y),
                     body.width,
                     body.height,
-                    sprite->tint);
+                    tint);
             }
 
             if (sprite->T == Type::SPRITE) {
@@ -114,7 +129,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                      body.height},
                     Vector2{rw/2, rh/2},
                     sprite->rotation,
-                    sprite->tint
+                    tint
                 );
             }
         }
