@@ -9,12 +9,23 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
-        "TestArea.tmx": {
-            "scale": 3,
+        "StartIsland1.tmx": {
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 168.33333333333334,
-                "y": 140.16666666666669
+                "x": -290.5,
+                "y": -156.75
+            }
+        },
+        "StartIsland1.tmx#Tileset": {
+            "scaleInDock": 2
+        },
+        "TestArea.tmx": {
+            "scale": 4,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 128.5,
+                "y": 188.625
             }
         },
         "TestArea.tmx#OverworldTileset": {
@@ -41,6 +52,7 @@
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
+        "StartIsland1.tmx",
         "TestArea2.tmx",
         "TestArea.tmx"
     ],

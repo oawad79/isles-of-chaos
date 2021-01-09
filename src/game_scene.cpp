@@ -1,7 +1,7 @@
 #include "game_scene.hpp"
 
 void GameScene::load(uptr<Game>& game) {
-    game->level = LoadLevel("resources/maps/TestArea.tmx");
+    game->level = LoadLevel("resources/maps/StartIsland1.tmx");
     SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
 }
 
