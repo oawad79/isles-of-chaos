@@ -12,6 +12,7 @@
 #include "enttypes.hpp"
 #include "tilemap.hpp"
 
+#include "character.hpp"
 #include "player.hpp"
 #include "body.hpp"
 #include "physics.hpp"

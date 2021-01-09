@@ -38,4 +38,6 @@ void GotoScene(uptr<Game>& game, SceneLayer* scene);
 void UpdateGame(uptr<Game>& game);
 void RenderGame(const uptr<Game>& game);
 
+Vector2 MouseCanvasPosition(const uptr<Game>& game);
+
 #endif // SKYVAULT_GAME_H_

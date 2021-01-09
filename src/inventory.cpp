@@ -9,7 +9,7 @@ bool Inventory::putItem(Item item){
     for (int r = 0; r < maxRows; r++) {
         for (int c = 0; c < maxColumns; c++) {
             if (getItem(c, r) == std::nullopt) {
-                putItemAt(item, c, r);
+                putItemAt(std::optional{item}, c, r);
                 return true;
             }
         }
@@ -17,9 +17,15 @@ bool Inventory::putItem(Item item){
     return false;
 }
 
-bool Inventory::putItemAt(Item item, unsigned int column, unsigned int row) {
+bool Inventory::clearItemAt(unsigned int column, unsigned int row) {
     if (column >= maxColumns || row >= maxRows) return false;
-    slots[column + row * maxColumns] = std::optional{item};
+    slots[column + row * maxColumns] = std::nullopt;
+    return true;
+}
+
+bool Inventory::putItemAt(std::optional<Item> item, unsigned int column, unsigned int row) {
+    if (column >= maxColumns || row >= maxRows) return false;
+    slots[column + row * maxColumns] = item;
     return true;
 }
 

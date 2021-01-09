@@ -24,6 +24,7 @@
           name="A Small Sword"
           descr="Sharp and reliable SWord"
           catagory="Weapon"
+          weaponClass="sword"
           effectValue="20.0"
           region="0 0 13 3"
           value="4"/>

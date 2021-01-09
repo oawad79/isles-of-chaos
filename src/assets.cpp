@@ -46,7 +46,15 @@ void LoadItemDB() {
                 item.consumableEffect = ConsumableEffectM[consumableEffect];
             }
         } else if (catagory == ItemCatagory::Weapon) {
-
+            std::string weaponClass
+                = std::string{itemXml->Attribute("weaponClass")};
+            if (WeaponClassM.find(weaponClass) == WeaponClassM.end()) {
+                std::cout << "ERROR::LoadItemDB:: Invalid weapon class: "
+                          << weaponClass
+                          << std::endl;
+            } else {
+                item.weaponClass = WeaponClassM[weaponClass];
+            }
         }
 
         Assets::I()->itemDb[item.id] = item;

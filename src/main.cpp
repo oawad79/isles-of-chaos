@@ -74,6 +74,7 @@ int main(const int argc, const char *argv[]) {
 
     InitWindow(1280, 720, "Hello World");
     // SetTargetFPS(60);
+    HideCursor();
 
     auto game = std::make_unique<Game>();
 

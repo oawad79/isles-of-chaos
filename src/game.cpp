@@ -33,3 +33,17 @@ void RenderGame(const uptr<Game>& game) {
     for (auto* scene : game->scenes)
         scene->render(game);
 }
+
+Vector2 MouseCanvasPosition(const uptr<Game>& game) {
+    const float mx = GetMouseX();
+    const float my = GetMouseY();
+
+    const float aspect = (float)CANVAS_HEIGHT / (float)CANVAS_WIDTH;
+    const float width = GetScreenWidth();
+    const float height = GetScreenHeight();
+
+    const float ws = (float)CANVAS_WIDTH / (float)width;
+    const float hs = (float)CANVAS_HEIGHT / (float)height;
+
+    return {mx*ws, my*hs};
+}

@@ -5,6 +5,7 @@
 #include "input.hpp"
 #include "player.hpp"
 #include "inventory.hpp"
+#include "character.hpp"
 
 struct GuiState {
     bool playerInvOpen{false};

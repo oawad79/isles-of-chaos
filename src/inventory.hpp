@@ -17,7 +17,8 @@ struct Inventory {
     size_t maxRows{3};
 
     bool putItem(Item item);
-    bool putItemAt(Item item, unsigned int column, unsigned int row);
+    bool clearItemAt(unsigned int column, unsigned int row);
+    bool putItemAt(std::optional<Item> item, unsigned int column, unsigned int row);
     std::optional<Item> getItem(unsigned int column, unsigned int row);
     void grow(size_t newMaxColumns, size_t newMaxRows);
     void clear();

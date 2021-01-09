@@ -23,6 +23,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);
 
+    game->reg.emplace<Character>(self);
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 
     return self;
