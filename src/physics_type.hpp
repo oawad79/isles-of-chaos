@@ -15,6 +15,8 @@ struct Physics {
     bool on_ground{false};
     bool on_ladder{false};
 
+    float on_ground_timer{0.0f};
+
     bool colliding_with_solid{false};
     Vector2 solid_collision_point {Vector2{0, 0}};
     Facing facingX{RIGHT}; // Default facing right

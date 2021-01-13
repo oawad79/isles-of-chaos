@@ -10,7 +10,8 @@
 #include "player.hpp"
 
 enum InteractionMode {
-    CALL_WHEN_INTERSECTED,
+    CALL_WHEN_ENTERED,
+    CALL_WHEN_EXITED,
     CALL_WHEN_INTERACTED,
 };
 

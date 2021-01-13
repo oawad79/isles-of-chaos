@@ -8,6 +8,7 @@
 #include "level.hpp"
 #include "player.hpp"
 #include "body.hpp"
+#include "interaction.hpp"
 #include "spawners.hpp"
 
 class GameScene : public SceneLayer {

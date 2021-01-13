@@ -59,6 +59,11 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
     return {false, Vector2{0, 0}};
 }
 
+void SetOnGround(Physics& phys) {
+    phys.on_ground = true;
+    // phys.on_ground_timer = 2.0f;
+}
+
 void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
     if (game->physicsPaused) return;
 
@@ -80,7 +85,12 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
         Rectangle ybody {body.x, body.y + physics.velocity.y * dt, body.width, body.height};
 
         physics.colliding_with_solid = false;
-        physics.on_ground = false;
+
+        // if (physics.on_ground_timer <= 0)
+        //     physics.on_ground = false;
+        // else
+        //     physics.on_ground_timer -= GetFrameTime();
+
         physics.on_ladder = false;
 
         if (tilemap != nullptr) {
@@ -92,7 +102,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     if (ycoll) {
                         ybody = body;
                         if (ybody.y + ybody.height / 2 < ywhere.y) {
-                            physics.on_ground = true;
+                            SetOnGround(physics);
                             physics.velocity.y = 0;
                         }
                     }
@@ -115,12 +125,12 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                             if (poly.bounds().y + poly.height > body.y + body.height - 1) {
                                 ybody = body;
                                 physics.velocity.y = 0.0f;
-                                physics.on_ground = true;
+                                SetOnGround(physics);
                             }
                         } else {
                             ybody = body;
                             physics.velocity.y = 0.0f;
-                            physics.on_ground = true;
+                            SetOnGround(physics);
                         }
 
                     }
@@ -136,7 +146,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                         if (body.y + body.height / 2 < obj.y + obj.height / 2) {
                             const auto depth = (ybody.y + body.height) - obj.y;
                             if (depth < 1.0f) {
-                                physics.on_ground = true;
+                                SetOnGround(physics);
                                 physics.velocity.y = 0.0f;
                                 ybody.y -= depth;
                             }

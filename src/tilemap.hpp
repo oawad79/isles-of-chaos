@@ -34,6 +34,8 @@ enum class FeatureType {
     Ladder,
     Port,
     Door,
+    Checkpoint,
+    Kill,
 };
 
 struct Polygon : Rectangle {
@@ -98,6 +100,10 @@ struct Billboard : Sprite {
     Vector2 position;
 };
 
+struct Layer : std::vector<Chunk*> {
+    Color tint{WHITE};
+};
+
 struct Tilemap {
     std::string path{""};
     std::string name{""};
@@ -105,7 +111,7 @@ struct Tilemap {
     Vector2 position{0, 0};
 
     Tileset tileset;
-    std::vector<std::vector<Chunk*>> layers;
+    std::vector<Layer> layers;
     std::vector<Polygon> geometry;
     std::vector<SpawnLocation> objects;
     std::vector<Feature> features; // Ladders / Doors / Ports

@@ -76,10 +76,10 @@ void Render(const uptr<Game>& game) {
 int main(const int argc, const char *argv[]) {
     std::cout << "Hello Isles of Chaos!" << std::endl;
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(1280, 720, "Hello World");
-    // SetTargetFPS(60);
+    SetTargetFPS(60);
     HideCursor();
 
     auto game = std::make_unique<Game>();

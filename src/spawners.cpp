@@ -7,6 +7,8 @@ entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position) {
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 
+    std::cout << "Spawning Player\n" << std::endl;
+
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;

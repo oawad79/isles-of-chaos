@@ -15,7 +15,7 @@ void UpdateInteraction(uptr<Game>& game, entt::registry& reg) {
             bool hot = CheckCollisionRecs(body, player_body);
 
             if (!interaction.last_intersection) {
-                if (interaction.mode == CALL_WHEN_INTERSECTED && hot) {
+                if (interaction.mode == CALL_WHEN_ENTERED && hot) {
                     interaction.action(e, reg);
                     interaction.last_intersection = true;
                 }
@@ -30,6 +30,9 @@ void UpdateInteraction(uptr<Game>& game, entt::registry& reg) {
             }
 
             if (interaction.last_intersection && !hot) {
+                if (interaction.mode == CALL_WHEN_EXITED) {
+                    interaction.action(e, reg);
+                }
                 interaction.last_intersection = false;
             }
         }

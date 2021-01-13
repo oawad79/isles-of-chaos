@@ -66,7 +66,13 @@ Tilemap* LoadTilemap(const std::string& path) {
 
     auto* layer = mapd->FirstChildElement("layer");
     while (layer) {
-        map->layers.push_back(std::vector<Chunk*>());
+        auto theLayer = Layer();
+        const char* ctint = layer->Attribute("tintcolor");
+        if (ctint) {
+            auto tint = std::string{ctint};
+            theLayer.tint = ColorFromHexString(tint);
+        }
+        map->layers.push_back(theLayer);
 
         std::string name{layer->Name()};
 
@@ -157,7 +163,8 @@ Tilemap* LoadTilemap(const std::string& path) {
                     const char* type = object->Attribute("type");
 
                     if (type) {
-                        if (strcmp(type, "billboard") == 0) {
+                        const auto stype = std::string{type};
+                        if (stype == "billboard") {
                             Billboard billboard;
 
                             billboard.texture = map->tileset.texture;
@@ -182,7 +189,23 @@ Tilemap* LoadTilemap(const std::string& path) {
                             }
 
                             map->billboards.push_back(billboard);
-                        } else if (strcmp(type, "Port") == 0) {
+                        } else if (stype == "Checkpoint") {
+                            Feature feat;
+                            feat.type = FeatureType::Checkpoint;
+                            feat.x = polypos.x;
+                            feat.y = polypos.y;
+                            feat.width = size.x;
+                            feat.height = size.y;
+                            map->features.push_back(std::move(feat));
+                        } else if (stype == "Kill") {
+                            Feature feat;
+                            feat.type = FeatureType::Kill;
+                            feat.x = polypos.x;
+                            feat.y = polypos.y;
+                            feat.width = size.x;
+                            feat.height = size.y;
+                            map->features.push_back(std::move(feat));
+                        } else if (stype == "Port") {
                             Feature feat;
                             feat.type = FeatureType::Port;
                             feat.x = polypos.x;
@@ -207,7 +230,7 @@ Tilemap* LoadTilemap(const std::string& path) {
                             }
 
                             map->features.push_back(std::move(feat));
-                        } else if (strcmp(type, "Ladder") == 0) {
+                        } else if (stype == "Ladder") {
                             Feature feat;
                             feat.type = FeatureType::Ladder;
                             feat.x = polypos.x;
@@ -217,7 +240,7 @@ Tilemap* LoadTilemap(const std::string& path) {
                             map->features.push_back(std::move(feat));
                         } else {
                             SpawnLocation loc;
-                            loc.type = GetEntType(std::string{type});
+                            loc.type = GetEntType(stype);
                             loc.x = polypos.x;
                             loc.y = polypos.y;
                             loc.width = size.x;
@@ -255,6 +278,8 @@ Tilemap* LoadTilemap(const std::string& path) {
         layer = layer->NextSiblingElement();
     }
 
+    std::cout << "TILEMAP::Loaded:: " << path << std::endl;
+
     return map;
 }
 
@@ -286,6 +311,7 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
         }
 
         for (const auto& layer : tilemap->layers) {
+            const auto tint = layer.tint;
             for (const auto& chunk : layer) {
                 for (int y = 0; y < chunk->size.y; y++) {
                     for (int x = 0; x < chunk->size.x; x++) {
@@ -314,7 +340,7 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                             Vector2{
                                 floor(cox + (float)x*tileset->tilewidth + ox),
                                 floor(coy + (float)y*tileset->tileheight + oy)},
-                            WHITE);
+                            tint);
                     }
                 }
             }

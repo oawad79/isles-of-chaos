@@ -2,7 +2,22 @@
 
 void GameScene::load(uptr<Game>& game) {
     game->level = LoadLevel("resources/maps/StartIsland1.tmx");
-    SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
+    const auto* tilemap = GetTilemap(game->level);
+
+    SpawnEntitiesFromTileMap(tilemap, game);
+
+    // Spawn checkpoints and kill zones
+    for (const auto& feat : tilemap->features){
+        if (feat.type == FeatureType::Checkpoint) {
+            auto e = game->reg.create();
+            auto& b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+            auto& i = game->reg.emplace<Interaction>(e);
+            i.mode = InteractionMode::CALL_WHEN_ENTERED;
+            i.action = [&](auto e, entt::registry& reg) {
+
+            };
+        }
+    }
 }
 
 void GameScene::update(uptr<Game>& game) {
