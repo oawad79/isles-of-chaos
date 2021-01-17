@@ -28,7 +28,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& health = game->reg.emplace<Health>(self);
 
     auto& chr = game->reg.emplace<Character>(self);
-    chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
+    // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
 
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 
@@ -122,6 +122,20 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 16;
+    body.height = 16;
+
+    game->reg.emplace<Water>(self);
+
+    return self;
+}
+
 entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position) {
     return entt::entity{0};
 }
@@ -171,6 +185,11 @@ void SpawnEntitiesFromTileMap(const Tilemap* map, const uptr<Game>& game) {
     for (const auto& obj : map->objects) {
         if (obj.type == EntType::Item) {
             SpawnItemWithId(game, {obj.x, obj.y}, obj.id);
+        } else if (obj.type == EntType::Water) {
+            const auto ent = SpawnWater(game, {obj.x, obj.y});
+            auto& body = game->reg.get<Body>(ent);
+            body.width = obj.width;
+            body.height = obj.height;
         } else {
             Spawn(obj.type, game, {obj.x, obj.y});
         }

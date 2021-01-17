@@ -38,6 +38,7 @@ void Update(uptr<Game>& game) {
         UpdateTimed(game->reg);
         UpdateCharacter(game->reg);
         UpdateActor(game->reg);
+        UpdateWater(game->reg);
     }
 
     UpdateGame(game);
@@ -65,6 +66,7 @@ void Render(const uptr<Game>& game) {
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);
             DrawSprites(game->spriteRenderer, game->reg);
+            DrawWater(game->reg);
             DrawInteraction(game, game->reg);
             if (IsKeyDown(KEY_TAB))
                 DrawDebugPhysicsInfo(game, game->reg);

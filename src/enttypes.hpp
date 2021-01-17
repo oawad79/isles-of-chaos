@@ -14,6 +14,7 @@
     E(Zambie)          \
     E(Ghost)           \
     E(Pot)             \
+    E(Water)           \
     E(Item)
 
 enum class EntType {X_ENT_TYPES(GENERATE_ENUM)};

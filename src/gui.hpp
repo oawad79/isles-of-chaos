@@ -9,6 +9,13 @@
 
 struct GuiState {
     bool playerInvOpen{false};
+
+    Rectangle healthRegion{64, 16, 32, 16};
+    int healthFrame{0};
+    float healthFrameTimer{0.0f};
+    float speed{6.0f};
+    float frameScaler{0.0f}; // Goes from -2.0 to 2.0
+    float frameTarget{0.0f};
 };
 
 void UpdateGui(const uptr<Game>& game, GuiState& state);

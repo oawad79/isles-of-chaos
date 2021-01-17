@@ -16,6 +16,7 @@
 #include "actor.hpp"
 #include "player.hpp"
 #include "body.hpp"
+#include "water.hpp"
 #include "physics_type.hpp"
 #include "interaction.hpp"
 #include "inventory.hpp"
@@ -36,6 +37,7 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position);
 
 entt::entity SpawnItemWithId(
   const uptr<Game>& game,

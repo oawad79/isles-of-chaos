@@ -35,6 +35,25 @@ DeferStruct<F> DeferFunc(F f) {
 template <typename T>
 using uptr = std::unique_ptr<T>;
 
+template <typename T>
+inline T BounceOut(T k) {
+    if (k < (1.0f/2.75f)) return 7.5625f*k*k;
+    else if (k < (2.0f/2.75f)) return 7.5625f*(k -= (1.5f/2.75f))*k + 0.75f;
+    else if (k < (2.5f/2.75f)) return 7.5625f *(k -= (2.25f/2.75f))*k + 0.9375f;
+    else return 7.5625f*(k -= (2.625f/2.75f))*k + 0.984375f;
+}
+
+template <typename T>
+inline T BounceIn(T k) {
+    return (T)1.0 - BounceOut((T)1.0 - k);
+}
+
+template <typename T>
+inline T Bounce(T k) {
+    if (k < 0.5f) return BounceIn(k*2.0f)*0.5f;
+    return BounceOut(k*2.0f - 1.0f)*0.5f + 0.5f;
+}
+
 template<typename T>
 T lerp(T a, T b, T t) {
     return a + (b - a) * t;

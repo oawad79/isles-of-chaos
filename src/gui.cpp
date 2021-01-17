@@ -3,6 +3,38 @@
 constexpr auto cellSize {16};
 constexpr auto margin{1};
 
+void UpdateHud(const uptr<Game>& game, GuiState& state) {
+    game->reg.view<Player, Health>().each([&](auto& p, auto& health){
+        const auto d = Input::I()->GetMovementVector();
+        state.frameTarget = d.x * 2.0f;
+        state.frameScaler = lerp(state.frameScaler, state.frameTarget, GetFrameTime() * state.speed);
+
+        const float sign = state.frameScaler < 0 ? -1 : 1;
+        const float f = sign < 0 ? -state.frameScaler : state.frameScaler;
+        if (f < 0.1) state.frameScaler = 0.0f;
+        if (f > 1.8 && sign > 1) state.frameScaler = 2.0f;
+    });
+}
+
+void DrawHud(const uptr<Game>& game, GuiState& state, const Texture& tex){
+    game->reg.view<Player, Health>().each([&](auto& p, auto& health){
+        int frame = floor(state.frameScaler);
+        if (state.frameScaler > 1.8) frame = 2;
+        const auto [rx, ry, rw, rh] = state.healthRegion;
+        DrawTexturePro(
+            tex,
+            {rx + frame * 32,
+             ry,
+             rw,
+             rh},
+            {8, 8, 32, 16},
+            {0, 0},
+            0.0f,
+            WHITE);
+    });
+}
+
+
 struct InvSpacial {
     Vector2 startPos;
     Vector2 equipStartPos;
@@ -99,6 +131,8 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
 }
 
 void UpdateGui(const uptr<Game>& game, GuiState& state) {
+    UpdateHud(game, state);
+
     game->reg
         .view<Player, Inventory, Character>()
         .each([&state, &game](auto& player, Inventory& inventory, Character& character){
@@ -152,8 +186,11 @@ void UpdateGui(const uptr<Game>& game, GuiState& state) {
 }
 
 void DrawGui(const uptr<Game>& game, GuiState& state) {
+    const auto tex = Assets::I()->textures[Textures::TEX_GUI];
     DrawInventory(game, state);
 
     const auto [cx, cy] = MouseCanvasPosition(game);
     DrawCircle(cx, cy, 2, BLUE);
+
+    DrawHud(game, state, tex);
 }
