@@ -8,7 +8,20 @@ void UpdateSprites(entt::registry& reg) {
     const float time = GetTime();
 
     auto sim_anims = reg.view<Body, SimpleAnimation>();
+    auto sprites = reg.view<Body, Sprite>();
     auto items = reg.view<Sprite, Item, Physics>();
+
+    for (auto& ent : sprites) {
+        auto& sprite = reg.get<Sprite>(ent);
+        if (reg.has<Health>(ent)) {
+            auto& health = reg.get<Health>(ent);
+            if (!health.canHit()) {
+                sprite.tint2 = RED;
+            } else {
+                sprite.tint2 = WHITE;
+            }
+        }
+    }
 
     for (auto& ent : sim_anims) {
         auto& sprite = reg.get<SimpleAnimation>(ent);

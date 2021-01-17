@@ -61,7 +61,7 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
 
 void SetOnGround(Physics& phys) {
     phys.on_ground = true;
-    // phys.on_ground_timer = 2.0f;
+    phys.on_ground_timer = 0.1f;
 }
 
 void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
@@ -86,10 +86,10 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
         physics.colliding_with_solid = false;
 
-        // if (physics.on_ground_timer <= 0)
-        //     physics.on_ground = false;
-        // else
-        //     physics.on_ground_timer -= GetFrameTime();
+        if (physics.on_ground_timer <= 0)
+            physics.on_ground = false;
+        else
+            physics.on_ground_timer -= GetFrameTime();
 
         physics.on_ladder = false;
 

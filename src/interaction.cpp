@@ -54,7 +54,7 @@ void DrawInteraction(const uptr<Game>& game, entt::registry& reg) {
 
             bool hot = CheckCollisionRecs(body, player_body);
 
-            if (hot) {
+            if (hot && interaction.icon != ActionIcon::NONE) {
                 DrawTexturePro(
                     gui,
                     Rectangle{0, 0, 8, 8},

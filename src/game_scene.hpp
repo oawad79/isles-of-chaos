@@ -20,11 +20,14 @@ public:
 private:
     entt::entity player{0};
 
+    void handlePorts(uptr<Game>& game);
+
     bool enteringPort{false};
     bool fadeOut{false};
     float fadeTimer = 0.0f;
     std::string nextTilemap{""};
     Vector2 nextOffset{0, 0};
+    Vector2 respawnLocation{0, 0};
 };
 
 #endif // SKYVAULT_GAME_SCENE_HPP

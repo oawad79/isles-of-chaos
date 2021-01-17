@@ -14,6 +14,24 @@
 #define GENERATE_STRING(STR) #STR,
 #endif//GENERATE_STRING
 
+// Defer
+template <typename F>
+struct DeferStruct {
+    F f;
+    DeferStruct(F f) : f(f) {}
+    ~DeferStruct() { f(); }
+};
+
+template <typename F>
+DeferStruct<F> DeferFunc(F f) {
+    return DeferStruct<F>(f);
+}
+
+#define DEFER_1(x,y) x##y
+#define DEFER_2(x,y) DEFER_1(x, y)
+#define DEFER_3(x) DEFER_2(x, __COUNTER__)
+#define defer(code) auto DEFER_3(_defer_) = DeferFunc([&](){code;})
+
 template <typename T>
 using uptr = std::unique_ptr<T>;
 

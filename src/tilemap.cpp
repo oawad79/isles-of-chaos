@@ -215,18 +215,18 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                             const auto* props = object->FirstChildElement();
                             auto* prop = props->FirstChildElement();
-                            if (prop) {
-                                const auto* name = prop->Attribute("name");
-                                if (strcmp(name, "target") == 0) {
+                            while (prop) {
+                                const auto name = std::string{prop->Attribute("name")};
+                                if (name == "target") {
                                     feat.target = std::string{prop->Attribute("value")};
+                                } else if (name == "id") {
+                                    feat.id = std::string{prop->Attribute("value")};
                                 } else {
-                                    std::cout << "WARNING:: Port is missing a target property, got: '"
+                                    std::cout << "WARNING:: Port has unsupported property: "
                                               << name
                                               << std::endl;
                                 }
                                 prop = prop->NextSiblingElement();
-                            } else {
-                                std::cout << "WARNING:: Port is missing a target property" << std::endl;
                             }
 
                             map->features.push_back(std::move(feat));
@@ -362,11 +362,13 @@ void DrawTilemap(const Tilemap* tilemap) {
 
 std::optional<Feature> GetPortWithTarget(
     const Tilemap* tilemap,
-    const std::string& target) {
+    const std::string& target,
+    const std::string& id) {
 
     for (const auto& feat : tilemap->features) {
         if (feat.type == FeatureType::Port) {
-            if (feat.target == target) return std::optional{feat};
+            if (feat.target == target && feat.id == id)
+                return std::optional{feat};
         }
     }
 

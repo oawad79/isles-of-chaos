@@ -31,6 +31,7 @@ using Spawner = std::function<
 
 entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnTest(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);

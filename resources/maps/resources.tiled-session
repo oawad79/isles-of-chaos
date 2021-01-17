@@ -3,22 +3,33 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "StartIsland1.tmx",
+    "activeFile": "StartIsland1Bg.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "StartIsland1.tmx": {
-            "scale": 3,
-            "selectedLayer": 3,
+            "scale": 5.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": -405.66666666666663,
-                "y": -162.83333333333331
+                "x": -256,
+                "y": -127.9090909090909
             }
         },
         "StartIsland1.tmx#Tileset": {
             "scaleInDock": 2
+        },
+        "StartIsland1Bg.tmx": {
+            "scale": 11,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": -117.72727272727273,
+                "y": -168.5909090909091
+            }
+        },
+        "StartIsland1Bg.tmx#OverworldTileset": {
+            "scaleInDock": 1
         },
         "TestArea.tmx": {
             "scale": 4,
@@ -49,12 +60,14 @@
     "map.tileWidth": 8,
     "openFiles": [
         "TestArea.tmx",
-        "StartIsland1.tmx"
+        "StartIsland1.tmx",
+        "StartIsland1Bg.tmx"
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
         "TestArea.tmx",
         "StartIsland1.tmx",
+        "StartIsland1Bg.tmx",
         "TestArea2.tmx"
     ],
     "tileset.embedInMap": true,

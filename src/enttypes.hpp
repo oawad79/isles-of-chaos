@@ -11,6 +11,7 @@
     E(None)            \
     E(Player)          \
     E(Test)            \
+    E(Zambie)          \
     E(Ghost)           \
     E(Pot)             \
     E(Item)

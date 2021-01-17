@@ -6,6 +6,12 @@ void GameScene::load(uptr<Game>& game) {
 
     SpawnEntitiesFromTileMap(tilemap, game);
 
+    float playerHeight = 64;
+    game->reg.view<Player, Body>().each([this, &playerHeight](auto& p, auto& body){
+        respawnLocation = Vector2{body.x, body.y};
+        playerHeight = body.height;
+    });
+
     // Spawn checkpoints and kill zones
     for (const auto& feat : tilemap->features){
         if (feat.type == FeatureType::Checkpoint) {
@@ -13,14 +19,34 @@ void GameScene::load(uptr<Game>& game) {
             auto& b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
             auto& i = game->reg.emplace<Interaction>(e);
             i.mode = InteractionMode::CALL_WHEN_ENTERED;
-            i.action = [&](auto e, entt::registry& reg) {
+            i.icon = ActionIcon::NONE;
+            i.action = [this, playerHeight](auto e, entt::registry& reg) {
+                const auto& b = reg.get<Body>(e);
+                respawnLocation = Vector2{b.x + b.width / 2, b.y + b.height - playerHeight};
+            };
+        }
 
+        if (feat.type == FeatureType::Kill) {
+            auto e = game->reg.create();
+            auto& b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+            auto& i = game->reg.emplace<Interaction>(e);
+            i.mode = InteractionMode::CALL_WHEN_ENTERED;
+            i.icon = ActionIcon::NONE;
+            i.action = [&](auto e, entt::registry& reg) {
+                game->reg.view<Player, Body>().each([this](auto& p, auto& body){
+                    body.x = respawnLocation.x;
+                    body.y = respawnLocation.y;
+                });
             };
         }
     }
 }
 
 void GameScene::update(uptr<Game>& game) {
+    handlePorts(game);
+}
+
+void GameScene::handlePorts(uptr<Game>& game) {
     auto* tilemap = GetTilemap(game->level);
     if (enteringPort && tilemap) {
         if (fadeOut) {
@@ -67,7 +93,9 @@ void GameScene::update(uptr<Game>& game) {
                             = GetTilemap(game->level, nextTilemap);
                         SetPosition(tmap, {0, 0});
 
-                        if (const auto returnPortO = GetPortWithTarget(tmap, tilemap->name)){
+                        std::cout << feat.id << std::endl;
+
+                        if (const auto returnPortO = GetPortWithTarget(tmap, tilemap->name, feat.id)){
                             const auto returnPort = returnPortO.value();
                             const auto f = feat.bounds();
 

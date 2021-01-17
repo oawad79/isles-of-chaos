@@ -15,9 +15,16 @@ enum InteractionMode {
     CALL_WHEN_INTERACTED,
 };
 
+enum class ActionIcon {
+    NONE,
+    INTERACT,
+    TALK,
+};
+
 struct Interaction {
     InteractionMode mode {CALL_WHEN_INTERACTED};
     bool last_intersection{false};
+    ActionIcon icon{ActionIcon::INTERACT};
     std::function<void(entt::entity, entt::registry&)> action;
 };
 

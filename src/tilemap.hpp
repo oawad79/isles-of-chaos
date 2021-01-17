@@ -74,6 +74,7 @@ struct Feature : Rectangle {
 
     FeatureType type{FeatureType::None};
     std::string target{""};
+    std::string id{""};
 
     inline auto bounds() const { return Rectangle{
         x + offset.x,
@@ -125,7 +126,8 @@ struct Tilemap {
 
 std::optional<Feature> GetPortWithTarget(
     const Tilemap* tilemap,
-    const std::string& target);
+    const std::string& target,
+    const std::string& id);
 
 void UpdateTilemapGeometryPositions(Tilemap* tilemap);
 void SetPosition(Tilemap* tilemap, Vector2 newPos);

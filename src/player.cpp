@@ -53,6 +53,7 @@ void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
 
         if (Input::I()->Jump() && physics.on_ground) {
             physics.velocity.y -= 18000.0f * dt;
+            physics.on_ground = false;
         }
 
         if (Input::I()->Ascend() && physics.on_ladder) {
