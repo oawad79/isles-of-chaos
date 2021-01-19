@@ -3,6 +3,7 @@
 
 #include <entt.hpp>
 
+#include "enttypes.hpp"
 #include "physics_type.hpp"
 #include "body.hpp"
 #include "player.hpp"
@@ -10,11 +11,17 @@
 
 enum class ActorType {
     NPC,
-    ENEMY
+    ENEMY_START,
+
+    ZAMBIE,
+
+    ENEMY_END,
 };
 
-enum class AState {
+enum class ActorState {
     IDLE,
+    WONDER,
+    WAITING,
     TRACKING,
     JUMPING,
     ATTACKING,
@@ -27,7 +34,9 @@ enum class AiType {
 struct Actor {
     ActorType type{ActorType::NPC};
     AiType ai{AiType::NONE};
-    AState state{AState::IDLE};
+    ActorState state{ActorState::IDLE};
+    Vector2 target[8];
+    float timer[8];
 };
 
 void UpdateActor(entt::registry& reg);

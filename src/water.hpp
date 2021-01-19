@@ -3,10 +3,9 @@
 
 #include "entt.hpp"
 #include "body.hpp"
+#include "assets.hpp"
 
-struct Water {
-
-};
+struct Water {};
 
 void UpdateWater(entt::registry& reg);
 void DrawWater(entt::registry& reg);

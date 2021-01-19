@@ -10,22 +10,22 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "StartIsland1.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 6,
+            "scale": 2,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": -192,
-                "y": -127.66666666666669
+                "x": -128,
+                "y": -127.75
             }
         },
         "StartIsland1.tmx#Tileset": {
-            "scaleInDock": 2
+            "scaleInDock": 4
         },
         "StartIsland1Bg.tmx": {
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
                 "x": -128,
-                "y": -127.875
+                "y": -191.875
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {

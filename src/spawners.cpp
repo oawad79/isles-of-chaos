@@ -28,7 +28,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& health = game->reg.emplace<Health>(self);
 
     auto& chr = game->reg.emplace<Character>(self);
-    // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
+    chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
 
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 
@@ -74,8 +74,10 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position) {
 
     auto& physics = game->reg.emplace<Physics>(self);
     game->reg.emplace<Health>(self);
+
     auto& actor = game->reg.emplace<Actor>(self);
-    actor.type = ActorType::ENEMY;
+    actor.type = ActorType::ZAMBIE;
+
     return self;
 }
 
@@ -116,8 +118,9 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
 
     auto& physics = game->reg.emplace<Physics>(self);
     game->reg.emplace<Health>(self);
+
     auto& actor = game->reg.emplace<Actor>(self);
-    actor.type = ActorType::ENEMY;
+    actor.type = ActorType::ZAMBIE;
 
     return self;
 }

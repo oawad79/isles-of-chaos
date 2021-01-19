@@ -1,4 +1,5 @@
 #include "character.hpp"
+#include "enttypes.hpp"
 
 void Health::hit(float damage) {
     if (!canHit()) return;
@@ -19,7 +20,7 @@ bool Health::canHit(){
 }
 
 void UpdateCharacter(entt::registry& reg) {
-    auto health_ents = reg.view<Health>();
+    auto health_ents = reg.view<Health>(entt::exclude<Disabled>);
 
     for (auto& ent : health_ents) {
         auto& health = reg.get<Health>(ent);

@@ -7,9 +7,9 @@ void UpdateSprites(entt::registry& reg) {
     const float dt = GetFrameTime();
     const float time = GetTime();
 
-    auto sim_anims = reg.view<Body, SimpleAnimation>();
-    auto sprites = reg.view<Body, Sprite>();
-    auto items = reg.view<Sprite, Item, Physics>();
+    auto sim_anims = reg.view<Body, SimpleAnimation>(entt::exclude<Disabled>);
+    auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled>);
+    auto items = reg.view<Sprite, Item, Physics>(entt::exclude<Disabled>);
 
     for (auto& ent : sprites) {
         auto& sprite = reg.get<Sprite>(ent);
@@ -60,8 +60,8 @@ void DrawSprite(SpriteRenderer& self, const Sprite sprite, const Body body) {
 }
 
 void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
-    auto sprites = reg.view<Body, Sprite>();
-    auto sim_anims = reg.view<Body, SimpleAnimation>();
+    auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled>);
+    auto sim_anims = reg.view<Body, SimpleAnimation>(entt::exclude<Disabled>);
 
     std::vector<std::tuple<Body, Sprite*>> deffered_sprites;
 

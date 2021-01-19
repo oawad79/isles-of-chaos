@@ -4,6 +4,8 @@
 #include <entt.hpp>
 #include <raylib.h>
 
+#include "enttypes.hpp"
+
 struct TimedDestroy {
     float lifeTime{1.0f};
 };

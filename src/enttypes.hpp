@@ -33,6 +33,8 @@ static EntType GetEntType(const std::string& tstr) {
     return EntTypeM[tstr];
 }
 
+struct Disabled {};
+
 #undef GENERATE_MAP
 
 #endif // SKYVAULT_ENTTYPES_HPP

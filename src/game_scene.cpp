@@ -1,6 +1,9 @@
 #include "game_scene.hpp"
 
+GameScene::GameScene(entt::registry& reg) {}
+
 void GameScene::load(uptr<Game>& game) {
+
     game->level = LoadLevel("resources/maps/StartIsland1.tmx");
     const auto* tilemap = GetTilemap(game->level);
 
@@ -51,6 +54,11 @@ void GameScene::handlePorts(uptr<Game>& game) {
     if (enteringPort && tilemap) {
         if (fadeOut) {
             if (fadeTimer <= 0.01f) {
+
+                // Store a snapshot of the entities
+                if (archived) unarchiveEntities(game);
+                else archiveEntities(game);
+
                 game->level->currentTilemap = nextTilemap;
 
                 nextTilemap = "";
@@ -126,4 +134,19 @@ void GameScene::render(const uptr<Game>& game) {
 
 void GameScene::destroy(uptr<Game>& game) {
     game->reg.clear();
+}
+
+void GameScene::archiveEntities(uptr<Game>& game) {
+    game->reg.each([&game](auto entity){
+        if (game->reg.has<Player>(entity)) return;
+        game->reg.emplace_or_replace<Disabled>(entity);
+    });
+    archived = true;
+}
+
+void GameScene::unarchiveEntities(uptr<Game>& game) {
+    game->reg.each([&game](auto entity){
+        game->reg.remove_if_exists<Disabled>(entity);
+    });
+    archived = false;
 }

@@ -13,6 +13,7 @@
 
 class GameScene : public SceneLayer {
 public:
+    GameScene(entt::registry& reg);
     void load(uptr<Game>& game) override;
     void update(uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
@@ -21,6 +22,10 @@ private:
     entt::entity player{0};
 
     void handlePorts(uptr<Game>& game);
+
+    void archiveEntities(uptr<Game>& game);
+    void unarchiveEntities(uptr<Game>& game);
+    bool archived{false};
 
     bool enteringPort{false};
     bool fadeOut{false};

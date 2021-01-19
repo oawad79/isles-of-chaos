@@ -89,7 +89,7 @@ int main(const int argc, const char *argv[]) {
     LoadGame(game);
     LoadAllAssets();
 
-    GotoScene(game, new GameScene());
+    GotoScene(game, new GameScene(game->reg));
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {
         const auto screenWidth = GetScreenWidth();

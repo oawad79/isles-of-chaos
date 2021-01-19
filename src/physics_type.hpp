@@ -2,6 +2,7 @@
 #define SKYVAULT_PHYSICS_TYPE_HPP
 
 #include <raylib.h>
+#include <cmath>
 
 enum Facing {
     LEFT = -1,
@@ -18,8 +19,19 @@ struct Physics {
     float on_ground_timer{0.0f};
 
     bool colliding_with_solid{false};
+
     Vector2 solid_collision_point {Vector2{0, 0}};
+    Vector2 solid_collision_point_left {Vector2{0, 0}};
+    Vector2 solid_collision_point_right {Vector2{0, 0}};
+
     Facing facingX{RIGHT}; // Default facing right
+
+    inline Vector2 Speed() {
+        return {
+            std::abs(velocity.x),
+            std::abs(velocity.y)
+        };
+    }
 };
 
 #endif // SKYVAULT_PHYSICS_TYPE_PP

@@ -28,7 +28,7 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     constexpr auto ysmooth{2.0f};
 
     const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * dt * xsmooth;
-    const auto ideal_y = body.y + physics.velocity.y * dt * ysmooth;
+    const auto ideal_y = body.y + dt * ysmooth;
 
     camera.target.x = (int)lerp(camera.target.x, ideal_x, xsmooth * dt);
     camera.target.y = (int)lerp(camera.target.y, ideal_y, ysmooth * dt);

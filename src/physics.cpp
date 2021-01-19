@@ -25,10 +25,10 @@ LineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2) {
 
 std::tuple<bool, Vector2>
 CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
-    Line left_wall = {{r.x, r.y}, {r.x, r.y + r.height}};
-    Line right_wall = {{r.x+r.width, r.y}, {r.x+r.width, r.y+r.width}};
-    Line top_wall = {{r.x, r.y}, {r.x+r.width, r.y}};
-    Line bottom_wall = {{r.x, r.y+r.height}, {r.x+r.width, r.y+r.height}};
+    const Line left_wall = {{r.x, r.y}, {r.x, r.y + r.height}};
+    const Line right_wall = {{r.x+r.width, r.y}, {r.x+r.width, r.y+r.height}};
+    const Line top_wall = {{r.x, r.y}, {r.x+r.width, r.y}};
+    const Line bottom_wall = {{r.x, r.y+r.height}, {r.x+r.width, r.y+r.height}};
 
     for (size_t i = 0; i < poly.points.size(); i++) {
         Vector2 a = poly.points[i];
@@ -45,10 +45,10 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
         b.x += poly.x;
         b.y += poly.y;
 
-        auto a1 = LineIntersection(left_wall.a, left_wall.b, a, b);
-        auto a2 = LineIntersection(right_wall.a, right_wall.b, a, b);
-        auto a3 = LineIntersection(top_wall.a, top_wall.b, a, b);
-        auto a4 = LineIntersection(bottom_wall.a, bottom_wall.b, a, b);
+        const auto a1 = LineIntersection(left_wall.a, left_wall.b, a, b);
+        const auto a2 = LineIntersection(right_wall.a, right_wall.b, a, b);
+        const auto a3 = LineIntersection(top_wall.a, top_wall.b, a, b);
+        const auto a4 = LineIntersection(bottom_wall.a, bottom_wall.b, a, b);
 
         if (std::get<0>(a1)) return a1;
         if (std::get<0>(a2)) return a2;
@@ -67,7 +67,7 @@ void SetOnGround(Physics& phys) {
 void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
     if (game->physicsPaused) return;
 
-    auto view = reg.view<Physics, Body>();
+    auto view = reg.view<Physics, Body>(entt::exclude<Disabled>);
 
     const float dt = GetFrameTime();
 
@@ -98,18 +98,56 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                 if (poly.type == SolidType::Polygon) {
                     const auto [xcoll, xwhere] = CheckCollisionRecPoly(xbody, poly);
                     const auto [ycoll, ywhere] = CheckCollisionRecPoly(ybody, poly);
-                    if (xcoll) { xbody = body; physics.velocity.x = 0; }
+
                     if (ycoll) {
                         ybody = body;
                         if (ybody.y + ybody.height / 2 < ywhere.y) {
                             SetOnGround(physics);
+                            ybody.y = ywhere.y - ybody.height;
+                            physics.solid_collision_point_left = ywhere;
                             physics.velocity.y = 0;
                         }
                     }
+
                     if (xcoll || ycoll) {
                         physics.colliding_with_solid = true;
                         physics.solid_collision_point = xcoll?xwhere:ywhere;
                     }
+
+                    // if (xcoll) {
+                    //     xbody = body;
+                    //     bool stop = true;
+
+                    //     if (xwhere.x < body.center().x) {
+                    //         const auto p = Rectangle{
+                    //             body.center().x - (body.width/2 + physics.velocity.x * dt * 2.0f + 1.0f),
+                    //             body.y,
+                    //             1,
+                    //             body.height
+                    //         };
+                    //         const auto [coll, where] = CheckCollisionRecPoly(p, poly);
+                    //         if (coll){
+                    //             stop = false;
+                    //             physics.solid_collision_point_left = where;
+                    //             ybody.y = where.y - body.height;
+                    //         }
+                    //     } else {
+                    //         const auto p = Rectangle{
+                    //             body.center().x + body.width/2 + physics.velocity.x * dt * 2.0f,
+                    //             body.y,
+                    //             1,
+                    //             body.height
+                    //         };
+                    //         const auto [coll, where] = CheckCollisionRecPoly(p, poly);
+                    //         if (coll){
+                    //             stop = false;
+                    //             physics.solid_collision_point_right = where;
+                    //             ybody.y = where.y - body.height;
+                    //         }
+                    //     }
+
+                    //     if (stop) physics.velocity.x = 0;
+                    // }
                 } else {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
                     const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
@@ -120,7 +158,6 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     }
 
                     if (ycoll) {
-
                         if (poly.height == 0) {
                             if (poly.bounds().y + poly.height > body.y + body.height - 1) {
                                 ybody = body;
@@ -226,6 +263,12 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
 
         DrawRectangleLinesEx(body, 1, physics.colliding_with_solid?RED:GREEN);
         DrawCircle(physics.solid_collision_point.x, physics.solid_collision_point.y, 2, YELLOW);
+
+        DrawCircle(physics.solid_collision_point_left.x, physics.solid_collision_point_left.y, 2, BLUE);
+        DrawLine(physics.solid_collision_point_left.x, physics.solid_collision_point_left.y - 8, physics.solid_collision_point_left.x, physics.solid_collision_point_left.y, BLUE);
+
+        DrawCircle(physics.solid_collision_point_right.x, physics.solid_collision_point_right.y, 2, BLUE);
+        DrawLine(physics.solid_collision_point_right.x, physics.solid_collision_point_right.y - 8, physics.solid_collision_point_right.x, physics.solid_collision_point_right.y, BLUE);
 
         if (physics.on_ground) {
             DrawLine(

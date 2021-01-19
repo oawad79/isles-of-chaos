@@ -1,7 +1,7 @@
 #include "interaction.hpp"
 
 void UpdateInteraction(uptr<Game>& game, entt::registry& reg) {
-    auto view = reg.view<Body, Interaction>();
+    auto view = reg.view<Body, Interaction>(entt::exclude<Disabled>);
 
     auto player_view = reg.view<Player>();
 

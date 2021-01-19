@@ -6,6 +6,7 @@
 #include <tuple>
 #include <entt.hpp>
 
+#include "enttypes.hpp"
 #include "item.hpp"
 #include "physics_type.hpp"
 #include "body.hpp"
