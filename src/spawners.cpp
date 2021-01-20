@@ -20,7 +20,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     spr.tint = WHITE;
     spr.region = {0, 0, 12, 20};
     spr.number_of_frames = 3;
-    spr.offset.x = 2;
+    spr.offset.x = -1;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
 
     auto& player = game->reg.emplace<Player>(self);
@@ -77,6 +77,34 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position) {
 
     auto& actor = game->reg.emplace<Actor>(self);
     actor.type = ActorType::ZAMBIE;
+
+    return self;
+}
+
+entt::entity SpawnDreadShark(const uptr<Game>& game, const Vector2 position) {
+    const auto self = game->reg.create();
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 32;
+    body.height = 48;
+
+    auto& spr = game->reg.emplace<SimpleAnimation>(self);
+    spr.T = Type::ANIMATION;
+    // spr.offset.x += 5;
+    // spr.offset.y += 6;
+    spr.tint = WHITE;
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    spr.region = (Rectangle){64, 16, 32, 48};
+    spr.number_of_frames = 1;
+
+    game->reg.emplace<Health>(self);
+
+    auto& phy = game->reg.emplace<Physics>(self);
+    phy.type = PhysicsType::KINEMATIC;
+
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::DREAD_SHARK;
 
     return self;
 }

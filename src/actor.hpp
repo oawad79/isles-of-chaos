@@ -14,6 +14,7 @@ enum class ActorType {
     ENEMY_START,
 
     ZAMBIE,
+    DREAD_SHARK,
 
     ENEMY_END,
 };
@@ -22,8 +23,10 @@ enum class ActorState {
     IDLE,
     WONDER,
     WAITING,
+    FALLING,
     TRACKING,
     JUMPING,
+    JUMP,
     ATTACKING,
 };
 

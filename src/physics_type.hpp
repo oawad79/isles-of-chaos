@@ -4,14 +4,24 @@
 #include <raylib.h>
 #include <cmath>
 
+enum class PhysicsType {
+    DYNAMIC,
+    KINEMATIC,
+    STATIC,
+};
+
 enum Facing {
     LEFT = -1,
     RIGHT = 1
 };
 
 struct Physics {
-    Vector2 velocity{Vector2{0.0f, 0.0f}};
+    PhysicsType type{PhysicsType::DYNAMIC};
+
+    Vector2 velocity{0.0f, 0.0f};
     float friction{0.01f};
+
+    Vector2 gravityScale{1.0f, 1.0f};
 
     bool on_ground{false};
     bool on_ladder{false};

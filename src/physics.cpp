@@ -78,7 +78,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
         auto& body = reg.get<Body>(e);
 
         if (!physics.on_ladder) {
-            physics.velocity.y += GRAVITY * dt;
+            physics.velocity.y += GRAVITY * dt * physics.gravityScale.y;
         }
 
         Rectangle xbody {body.x + physics.velocity.x * dt, body.y, body.width, body.height};
@@ -99,7 +99,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     const auto [xcoll, xwhere] = CheckCollisionRecPoly(xbody, poly);
                     const auto [ycoll, ywhere] = CheckCollisionRecPoly(ybody, poly);
 
-                    if (ycoll) {
+                    if (ycoll && physics.type != PhysicsType::KINEMATIC) {
                         ybody = body;
                         if (ybody.y + ybody.height / 2 < ywhere.y) {
                             SetOnGround(physics);
@@ -152,12 +152,12 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
                     const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
 
-                    if (xcoll && poly.height != 0) {
+                    if (xcoll && poly.height != 0 && physics.type != PhysicsType::KINEMATIC) {
                         xbody = body;
                         physics.velocity.x = 0.0f;
                     }
 
-                    if (ycoll) {
+                    if (ycoll && physics.type != PhysicsType::KINEMATIC) {
                         if (poly.height == 0) {
                             if (poly.bounds().y + poly.height > body.y + body.height - 1) {
                                 ybody = body;

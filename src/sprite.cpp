@@ -89,6 +89,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             const auto sw = sprite->region.width;
             const auto sh = sprite->region.height;
 
+            const auto [_rx, _ry, rw, rh] = sprite->region;
+
             const auto [ox, oy] = sprite->offset;
 
             DrawTexturePro(
@@ -100,13 +102,13 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     sprite->region.height * sprite->scale.y,
                 },
                 {
-                    ox + body.x - sw / 4,
-                    oy + body.y - sh + body.height,
+                    ceil(body.x + ox + rw/2),
+                    ceil(body.y + oy + rh/2),
                     sw,
                     sh
                 },
-                Vector2{0, 0},
-                0.0f,
+                Vector2{rw/2, rh/2},
+                sprite->rotation,
                 tint
             );
 

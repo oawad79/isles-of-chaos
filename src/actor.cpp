@@ -35,11 +35,52 @@ void UpdateZambieAi(entt::registry& reg, Body& body, Physics& physics, Actor& ac
         default:
             break;
     }
+}
 
-    reg.view<Player, Body, Health>()
-        .each([&](auto& player, auto& pbody, auto& health){
+void UpdateDreadSharkAi(entt::registry& reg, Body& body, Physics& physics, Actor& actor, Sprite& sprite) {
+    constexpr auto JUMP_HEIGHT {160.0f};
+    switch(actor.state) {
+        case ActorState::IDLE: {
+            body.y += JUMP_HEIGHT;
+            actor.target[0].y = body.y;
+            actor.state = ActorState::JUMP;
+            break;
+        }
+        case ActorState::JUMP: {
+            physics.velocity.y = -JUMP_HEIGHT * (1.0f/GetFrameTime())/10.0f;
+            actor.state = ActorState::JUMPING;
+            break;
+        }
+        case ActorState::JUMPING: {
+            if (body.y > actor.target[0].y + 4.0f) {
+                body.y = actor.target[0].y - 4.0f;
+                physics.velocity.y = 0.0f;
+                physics.gravityScale.y = 0.0f;
+                actor.state = ActorState::WAITING;
+                actor.timer[0] = 1.0f;
+            }
+            break;
+        }
+        case ActorState::WAITING: {
 
-    });
+            if (actor.timer[0] <= 0) {
+                physics.gravityScale.y = 1.0f;
+                actor.state = ActorState::JUMP;
+            } else {
+                actor.timer[0] -= GetFrameTime();
+            }
+
+            break;
+        }
+        default: break;
+    }
+
+    if (physics.velocity.y < 0.0f) {
+        sprite.rotation = 0.0f;
+    } else {
+        sprite.rotation = lerp(sprite.rotation, -180.0f, 8.0f * GetFrameTime());
+    }
+
 }
 
 void UpdateActor(entt::registry& reg) {
@@ -64,6 +105,11 @@ void UpdateActor(entt::registry& reg) {
             switch (actor.type) {
                 case ActorType::ZAMBIE: {
                     UpdateZambieAi(reg, body, physics, actor);
+                    break;
+                }
+                case ActorType::DREAD_SHARK: {
+                    auto& sprite = reg.get<SimpleAnimation>(ent);
+                    UpdateDreadSharkAi(reg, body, physics, actor, sprite);
                     break;
                 }
                 default: break;
