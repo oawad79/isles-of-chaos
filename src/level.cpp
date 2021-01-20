@@ -11,6 +11,7 @@ void loadTilemapRecr(const uptr<Level>& level, const std::string& path) {
         }
     }
 }
+
 bool HasTilemap(const uptr<Level>& level, const std::string& name) {
     for (auto& tm : level->tilemaps) {
         if (tm->name == name)

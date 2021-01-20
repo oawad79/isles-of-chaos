@@ -26,6 +26,7 @@ enum Textures {
     TEX_PLAYER,
     TEX_ITEMS,
     TEX_OVERWORLD,
+    TEX_PARTICLES,
     TEX_NUM_TEXTURES
 };
 

@@ -40,10 +40,10 @@ CheckCollisionRecPoly(const Rectangle& r, const Polygon& poly) {
             b = poly.points[i + 1];
         }
 
-        a.x += poly.x;
-        a.y += poly.y;
-        b.x += poly.x;
-        b.y += poly.y;
+        a.x += poly.x + poly.offset.x;
+        a.y += poly.y + poly.offset.y;
+        b.x += poly.x + poly.offset.x;
+        b.y += poly.y + poly.offset.y;
 
         const auto a1 = LineIntersection(left_wall.a, left_wall.b, a, b);
         const auto a2 = LineIntersection(right_wall.a, right_wall.b, a, b);
@@ -113,41 +113,6 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                         physics.colliding_with_solid = true;
                         physics.solid_collision_point = xcoll?xwhere:ywhere;
                     }
-
-                    // if (xcoll) {
-                    //     xbody = body;
-                    //     bool stop = true;
-
-                    //     if (xwhere.x < body.center().x) {
-                    //         const auto p = Rectangle{
-                    //             body.center().x - (body.width/2 + physics.velocity.x * dt * 2.0f + 1.0f),
-                    //             body.y,
-                    //             1,
-                    //             body.height
-                    //         };
-                    //         const auto [coll, where] = CheckCollisionRecPoly(p, poly);
-                    //         if (coll){
-                    //             stop = false;
-                    //             physics.solid_collision_point_left = where;
-                    //             ybody.y = where.y - body.height;
-                    //         }
-                    //     } else {
-                    //         const auto p = Rectangle{
-                    //             body.center().x + body.width/2 + physics.velocity.x * dt * 2.0f,
-                    //             body.y,
-                    //             1,
-                    //             body.height
-                    //         };
-                    //         const auto [coll, where] = CheckCollisionRecPoly(p, poly);
-                    //         if (coll){
-                    //             stop = false;
-                    //             physics.solid_collision_point_right = where;
-                    //             ybody.y = where.y - body.height;
-                    //         }
-                    //     }
-
-                    //     if (stop) physics.velocity.x = 0;
-                    // }
                 } else {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
                     const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
@@ -222,10 +187,10 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
                     b = poly.points[i + 1];
                 }
 
-                a.x += poly.x;
-                a.y += poly.y;
-                b.x += poly.x;
-                b.y += poly.y;
+                a.x += poly.x + poly.offset.x;
+                a.y += poly.y + poly.offset.y;
+                b.x += poly.x + poly.offset.x;
+                b.y += poly.y + poly.offset.y;
 
                 DrawLineEx(a, b, 1, RED);
             }

@@ -8,6 +8,7 @@
 #include "body.hpp"
 #include "player.hpp"
 #include "item.hpp"
+#include "particles.hpp"
 
 enum class ActorType {
     NPC,

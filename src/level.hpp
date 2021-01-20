@@ -12,6 +12,7 @@
 /*
 ** Encapsulates the tilemaps, stitches them together
 */
+
 struct Level {
     std::vector<Tilemap*> tilemaps;
     std::string currentTilemap{""};
@@ -19,6 +20,7 @@ struct Level {
 
 Tilemap* GetTilemap(const uptr<Level>& level);
 Tilemap* GetTilemap(const uptr<Level>& level, const std::string& byName);
+
 bool HasTilemap(const uptr<Level>& level, const std::string& path);
 
 uptr<Level> LoadLevel(const std::string& path);

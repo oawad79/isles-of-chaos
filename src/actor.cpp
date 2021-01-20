@@ -95,8 +95,16 @@ void UpdateActor(entt::registry& reg) {
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;
                 if (CheckCollisionRecs(body, obody)) {
+                    const auto dir = body.center().x > obody.center().x ? 1 : -1;
                     if (reg.has<Health>(ent)) {
                         auto& health = reg.get<Health>(ent);
+
+                        if (health.canHit()) {
+                            SpawnHitParticles(reg, body.center());
+                            physics.velocity.x = 4000 * dir * GetFrameTime();
+                            physics.velocity.y = 9000 * dir * GetFrameTime();
+                        }
+
                         health.hit(damage);
                     }
                 }

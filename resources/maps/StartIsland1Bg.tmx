@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#1c5555" nextlayerid="7" nextobjectid="48">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#1c5555" nextlayerid="7" nextobjectid="49">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -86,7 +86,7 @@
 0,0,0,0,0,0,0,0,0,0,450,450,450,450,0,0,
 0,0,0,0,0,0,0,0,0,0,450,450,453,450,0,0,
 0,0,0,0,0,0,0,0,0,0,0,450,450,450,0,0,
-0,0,0,0,0,0,0,0,0,0,0,450,450,450,0,0,
+0,0,0,0,0,0,0,0,0,0,0,450,450,450,450,450,
 0,0,0,0,0,0,0,0,0,0,450,450,450,450,450,450,
 0,0,0,0,0,0,0,0,0,0,0,450,450,450,453,450,
 0,0,0,0,0,0,0,0,0,0,0,0,0,450,450,450,
@@ -436,7 +436,7 @@
 0,0,0,0,0,0,0,643,643,451,0,0,0,0,449,450,
 0,0,0,0,0,0,0,643,643,643,387,0,0,0,449,450,
 0,0,0,0,0,0,0,643,643,643,451,0,0,385,450,450,
-0,0,0,0,0,0,0,643,643,643,515,0,0,0,513,515,
+0,0,0,0,0,0,0,643,643,643,515,0,0,0,0,0,
 0,0,0,0,0,0,0,643,643,451,0,0,0,0,0,0,
 0,0,0,0,0,0,0,643,643,451,579,580,581,582,0,0,
 0,0,0,0,0,0,0,643,643,643,643,643,645,646,0,0,
@@ -692,7 +692,6 @@
   <object id="32" x="-704" y="-112" width="24" height="104"/>
   <object id="33" x="-720" y="-64" width="16" height="8"/>
   <object id="34" x="-712" y="-56" width="8" height="8"/>
-  <object id="36" x="-784" y="-72" width="16" height="16"/>
   <object id="37" name="Ghost" type="Ghost" x="-127.25" y="-157.75" width="16" height="16"/>
   <object id="38" x="-200" y="-256" width="16" height="176"/>
   <object id="39" x="-16" y="-256" width="16" height="176"/>

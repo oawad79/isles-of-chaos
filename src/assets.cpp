@@ -93,6 +93,7 @@ void LoadAllAssets() {
     Assets::I()->textures[Textures::TEX_PLAYER] = LoadTexture("resources/textures/Player.png");
     Assets::I()->textures[Textures::TEX_ENTITIES] = LoadTexture("resources/textures/Entities.png");
     Assets::I()->textures[Textures::TEX_ITEMS] = LoadTexture("resources/textures/Items.png");
+    Assets::I()->textures[Textures::TEX_PARTICLES] = LoadTexture("resources/textures/Particles.png");
 
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 

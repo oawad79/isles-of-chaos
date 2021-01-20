@@ -167,6 +167,10 @@ entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnParticle(const uptr<Game>& game, const Vector2 position) {
+    return game->reg.create();
+}
+
 entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position) {
     return entt::entity{0};
 }
@@ -212,19 +216,25 @@ entt::entity SpawnItemWithId(
     return self;
 }
 
-void SpawnEntitiesFromTileMap(const Tilemap* map, const uptr<Game>& game) {
+void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
+    if (map->spawnedEntities) return;
+
     for (const auto& obj : map->objects) {
+        const auto x = obj.x + obj.offset.x;
+        const auto y = obj.y + obj.offset.y;
         if (obj.type == EntType::Item) {
-            SpawnItemWithId(game, {obj.x, obj.y}, obj.id);
+            SpawnItemWithId(game, {x, y}, obj.id);
         } else if (obj.type == EntType::Water) {
-            const auto ent = SpawnWater(game, {obj.x, obj.y});
+            const auto ent = SpawnWater(game, {x, y});
             auto& body = game->reg.get<Body>(ent);
             body.width = obj.width;
             body.height = obj.height;
         } else {
-            Spawn(obj.type, game, {obj.x, obj.y});
+            Spawn(obj.type, game, {x, y});
         }
     }
+
+    map->spawnedEntities = true;
 }
 
 entt::entity Spawn(const EntType which, const uptr<Game>& game, const Vector2 position) {

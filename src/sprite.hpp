@@ -40,6 +40,9 @@ struct Sprite {
     Color tint{WHITE};
     Color tint2{WHITE};
 
+    float layer{0.0f};
+    float mass{1.0f};
+
     virtual ~Sprite() = default;
 };
 

@@ -121,6 +121,11 @@ struct Tilemap {
     RenderTexture2D target;
     float alpha {1.0f};
 
+    bool positionUpdated{false};
+
+    bool spawnedEntities{false};
+    int lastSpawnTime{0};
+
     ~Tilemap();
 };
 

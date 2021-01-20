@@ -63,6 +63,10 @@ inline float RandFloat(float a=0.0f, float b=1.0f) {
     return ((b - a) * ((float)rand() / (float)RAND_MAX)) + a;
 }
 
+inline int RandInt(int a = 0, int b = RAND_MAX) {
+    return (int)RandFloat((float)a, (float)b);
+}
+
 inline Color ColorFromHexString(const std::string& hexStr) {
     const int start = hexStr[0] == '#' ? 1 : 0;
     auto rs = hexStr.substr(start + 0, start + 1);

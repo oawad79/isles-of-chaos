@@ -1,0 +1,60 @@
+#ifndef SKYVAULT_PARTICLES_HPP
+#define SKYVAULT_PARTICLES_HPP
+
+#include <raylib.h>
+
+#include "body.hpp"
+#include "sprite.hpp"
+#include "timed.hpp"
+#include "assets.hpp"
+
+enum class AreaType {
+  RECTANGLE,
+  CIRCLE,
+};
+
+struct Emitter {
+  AreaType areaType {AreaType::RECTANGLE};
+  Rectangle region;
+  float radius;
+
+  float maxTime {0.02f};
+  float time {0.0};
+
+  int numPerSpawn{1};
+};
+
+struct Range1D { float min; float max; };
+
+union Range2D {
+  struct {
+    Range1D x;
+    Range1D y;
+  };
+
+  struct {
+    float xMin;
+    float xMax;
+    float yMin;
+    float yMax;
+  };
+};
+
+struct ParticleDesc {
+  Rectangle region;
+  Range2D velocityRange{0};
+  Range1D lifeRange{0};
+};
+
+constexpr Rectangle PARTICLE_HIT_REGIONS[] = {
+  {0, 0, 7, 7},
+  {0, 7, 7, 7},
+  {7, 0, 9, 9},
+  {16, 0, 13, 13},
+  {29, 0, 11, 11},
+};
+
+entt::entity SpawnParticleWithDesc(entt::registry& reg, ParticleDesc& desc, const Vector2 position);
+void SpawnHitParticles(entt::registry& reg, const Vector2 center);
+
+#endif // SKYVAULT_PARTICLES_HPP

@@ -56,12 +56,9 @@ void Render(const uptr<Game>& game) {
         DrawTilemapToTarget(tilemap, game->mainCamera, game->spriteRenderer);
     BeginTextureMode(game->mainCanvas);
         ClearBackground({0, 0, 0, 0});
-        DrawTexturePro(
+        DrawTexture(
             Assets::I()->textures[TEX_BG],
-            {0,0,256, 144},
-            {0,0,CANVAS_WIDTH,CANVAS_HEIGHT},
-            Vector2Zero(),
-            0.0f,
+            0,0,
             WHITE);
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);

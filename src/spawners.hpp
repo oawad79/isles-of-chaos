@@ -14,6 +14,7 @@
 
 #include "character.hpp"
 #include "actor.hpp"
+#include "particles.hpp"
 #include "player.hpp"
 #include "body.hpp"
 #include "water.hpp"
@@ -37,15 +38,17 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnDreadShark(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);
-entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position);
 
+entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnItemWithId(
   const uptr<Game>& game,
   const Vector2 position,
   const std::string& id);
 
-void SpawnEntitiesFromTileMap(const Tilemap* map, const uptr<Game>& game);
+entt::entity SpawnParticle(const uptr<Game>& game, const Vector2 position);
+
+void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game);
 
 static std::vector<Spawner> SpawnerMap = {
   X_ENT_TYPES(GENERATE_SPAWNER)

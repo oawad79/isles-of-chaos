@@ -5,7 +5,7 @@ GameScene::GameScene(entt::registry& reg) {}
 void GameScene::load(uptr<Game>& game) {
 
     game->level = LoadLevel("resources/maps/StartIsland1.tmx");
-    const auto* tilemap = GetTilemap(game->level);
+    auto* tilemap = GetTilemap(game->level);
 
     SpawnEntitiesFromTileMap(tilemap, game);
 
@@ -75,6 +75,9 @@ void GameScene::handlePorts(uptr<Game>& game) {
                 fadeTimer = 1.0f;
                 game->physicsPaused = false;
                 nextOffset = Vector2{0,0};
+
+                SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
+
                 return;
             }
         }
