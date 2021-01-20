@@ -120,13 +120,15 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     if (xcoll && poly.height != 0 && physics.type != PhysicsType::KINEMATIC) {
                         const float depth = body.y + body.height - poly.bounds().y;
 
-                        if (poly.type == SolidType::Rectangle && depth >= 0.5f) {
+                        if (poly.type == SolidType::Rectangle && depth >= 2.0f) {
                             xbody = body;
                             physics.velocity.x = 0.0f;
                         }
                     }
 
                     if (ycoll && physics.type != PhysicsType::KINEMATIC) {
+                        const float depth = body.y + body.height - poly.bounds().y;
+
                         if (poly.height == 0) {
                             if (poly.bounds().y + poly.height > body.y + body.height - 1) {
                                 ybody = body;
@@ -138,6 +140,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                                 ybody = body;
                                 physics.velocity.y = 0.0f;
                                 SetOnGround(physics);
+                                if (depth > 0) ybody.y -= 1;
                             } else {
                                 physics.velocity.y = -physics.velocity.y * 0.25f;
                                 ybody.y = poly.bounds().y + poly.height;
