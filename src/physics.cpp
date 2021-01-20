@@ -118,8 +118,12 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
 
                     if (xcoll && poly.height != 0 && physics.type != PhysicsType::KINEMATIC) {
-                        xbody = body;
-                        physics.velocity.x = 0.0f;
+                        const float depth = body.y + body.height - poly.bounds().y;
+
+                        if (poly.type == SolidType::Rectangle && depth >= 0.5f) {
+                            xbody = body;
+                            physics.velocity.x = 0.0f;
+                        }
                     }
 
                     if (ycoll && physics.type != PhysicsType::KINEMATIC) {
@@ -130,9 +134,14 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                                 SetOnGround(physics);
                             }
                         } else {
-                            ybody = body;
-                            physics.velocity.y = 0.0f;
-                            SetOnGround(physics);
+                            if (poly.bounds().y + poly.height > body.y + body.height - 1) {
+                                ybody = body;
+                                physics.velocity.y = 0.0f;
+                                SetOnGround(physics);
+                            } else {
+                                physics.velocity.y = -physics.velocity.y * 0.25f;
+                                ybody.y = poly.bounds().y + poly.height;
+                            }
                         }
 
                     }
