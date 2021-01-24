@@ -64,6 +64,11 @@ static std::map<std::string, ConsumableEffect>  ConsumableEffectM = {
 };
 #undef GENERATE_MAP
 
+enum ItemFlags {
+    ITEM_FLAG_NONE   = 1 << 0,
+    ITEM_FLAG_BOUNCE = 1 << 1,
+};
+
 struct Item {
     std::string id{"item"};
 
@@ -79,6 +84,7 @@ struct Item {
     float effectValue{1.0f};
 
     int value{1};
+    uint32_t flags{0};
 };
 
 #endif // SKYVAULT_ITEM_HPP

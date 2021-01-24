@@ -1250,19 +1250,19 @@
     <property name="loot" value="first-small-sword"/>
    </properties>
   </object>
-  <object id="110" name="Coin" type="Item" x="-163.091" y="-151.636" width="8" height="8">
+  <object id="110" name="Coin" type="Item" x="-164" y="-151.455" width="8" height="8">
    <properties>
     <property name="id" value="coin"/>
    </properties>
   </object>
-  <object id="111" name="Coin" type="Item" x="-149.455" y="-152.182" width="8" height="8">
+  <object id="111" name="Coin" type="Item" x="-153.455" y="-148.636" width="8" height="8">
    <properties>
     <property name="id" value="coin"/>
    </properties>
   </object>
-  <object id="112" name="Coin" type="Item" x="-176" y="-152" width="8" height="8">
+  <object id="112" name="HealthPotion" type="Item" x="-176" y="-152" width="8" height="8">
    <properties>
-    <property name="id" value="coin"/>
+    <property name="id" value="health-potion"/>
    </properties>
   </object>
  </objectgroup>

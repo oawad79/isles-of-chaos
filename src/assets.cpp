@@ -56,6 +56,7 @@ void LoadItemDB() {
             } else {
                 item.weaponClass = WeaponClassM[weaponClass];
             }
+            item.flags |= ITEM_FLAG_BOUNCE;
         }
 
         Assets::I()->itemDb[item.id] = item;

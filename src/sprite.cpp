@@ -49,9 +49,12 @@ void UpdateSprites(entt::registry& reg) {
     }
 
     for (auto& ent : items) {
-        auto& sprite = reg.get<Sprite>(ent);
-        sprite.offset.y = -sprite.region.height + cosf(time*10.0f) * sprite.region.height / 2.0f;
-        sprite.rotation = cosf(time*2.5f) * 25.0f;
+        auto& item = reg.get<Item>(ent);
+        if (item.flags & ITEM_FLAG_BOUNCE) {
+            auto& sprite = reg.get<Sprite>(ent);
+            sprite.offset.y = -sprite.region.height + cosf(time*10.0f) * sprite.region.height / 2.0f;
+            sprite.rotation = cosf(time*2.5f) * 25.0f;
+        }
     }
 }
 
