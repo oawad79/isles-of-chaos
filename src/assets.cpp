@@ -8,6 +8,14 @@ Item Assets::getItemInfo(std::string id) {
     return itemDb[id];
 }
 
+Loot Assets::getLootInfo(std::string id) {
+    if (lootDb.find(id) == lootDb.end()) {
+        std::cout << "WARNING:: Cannot find loot set with id: '" << id << "'\n";
+        return Loot();
+    }
+    return lootDb[id];
+}
+
 void LoadItemDB() {
     using namespace tinyxml2;
 
@@ -90,12 +98,53 @@ void LoadItemDB() {
     }
 }
 
+void LoadLootDB() {
+    using namespace tinyxml2;
+
+    XMLDocument doc;
+    doc.LoadFile("resources/data/lootsets.xml");
+
+    auto* root = doc.FirstChild();
+    auto* chestLootSets = root->NextSiblingElement("chest-loot-sets");
+
+    auto lootXml = chestLootSets->FirstChildElement("chest-loot");
+    while (lootXml) {
+        Loot loot;
+        loot.id = std::string{lootXml->Attribute("id")};
+
+        auto* itemDesc = lootXml->FirstChildElement();
+        while (itemDesc) {
+            Loot::Slot slot;
+            slot.itemId = std::string{itemDesc->Attribute("itemId")};
+
+            if (itemDesc->FindAttribute("chance")) {
+                itemDesc->QueryIntAttribute("chance", &slot.chancePercent);
+            }
+
+            if (itemDesc->FindAttribute("amount")) {
+                const char* amountS = itemDesc->Attribute("amount");
+                std::stringstream ss(std::string{amountS});
+                ss >> slot.amount.min;
+                ss >> slot.amount.max;
+                std::cout << "MIN::" << slot.amount.min << " MAX::" << slot.amount.max << std::endl;
+            }
+
+            loot.slots.emplace_back(slot);
+            itemDesc = itemDesc->NextSiblingElement();
+        }
+
+        Assets::I()->lootDb[loot.id] = loot;
+        lootXml = lootXml->NextSiblingElement();
+    }
+}
+
 void LoadTexture(Textures which, const char* path) {
     Assets::I()->textures[which] = LoadTexture(path);
 }
 
 void LoadAllAssets() {
     LoadItemDB();
+    LoadLootDB();
 
     // Load Textures
     Assets::I()->textures[Textures::TEX_OVERWORLD] = LoadTexture("resources/textures/OverworldTileset.png");

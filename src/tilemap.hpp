@@ -4,6 +4,7 @@
 #include <memory>
 #include <raylib.h>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <filesystem>
 #include <sstream>
@@ -60,6 +61,7 @@ struct SpawnLocation : Rectangle {
 
     EntType type{EntType::None};
     std::string id{""}; // Used for items
+    std::map<std::string, std::string> props;
 
     inline auto bounds() const { return Rectangle{
         x + offset.x,
@@ -133,7 +135,8 @@ struct Tilemap {
 std::optional<Feature> GetPortWithTarget(
     const Tilemap* tilemap,
     const std::string& target,
-    const std::string& id);
+    const std::string& id
+);
 
 void UpdateTilemapGeometryPositions(Tilemap* tilemap);
 void SetPosition(Tilemap* tilemap, Vector2 newPos);

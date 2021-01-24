@@ -5,6 +5,22 @@
 #include <raylib.h>
 #include <string>
 
+struct Range1D { float min; float max; };
+
+union Range2D {
+  struct {
+    Range1D x;
+    Range1D y;
+  };
+
+  struct {
+    float xMin;
+    float xMax;
+    float yMin;
+    float yMax;
+  };
+};
+
 // Enum tools
 #ifndef GENERATE_ENUM
 #define GENERATE_ENUM(ENUM) ENUM,

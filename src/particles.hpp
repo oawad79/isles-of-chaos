@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 
+#include "utils.hpp"
 #include "body.hpp"
 #include "sprite.hpp"
 #include "timed.hpp"
@@ -22,22 +23,6 @@ struct Emitter {
   float time {0.0};
 
   int numPerSpawn{1};
-};
-
-struct Range1D { float min; float max; };
-
-union Range2D {
-  struct {
-    Range1D x;
-    Range1D y;
-  };
-
-  struct {
-    float xMin;
-    float xMax;
-    float yMin;
-    float yMax;
-  };
 };
 
 struct Particle {};

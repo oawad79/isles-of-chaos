@@ -256,11 +256,15 @@ Tilemap* LoadTilemap(const std::string& path) {
                             const auto* props = object->FirstChildElement();
                             if (props) {
                                 auto* prop = props->FirstChildElement();
-                                if (prop) {
+                                while (prop) {
                                     const auto* name = prop->Attribute("name");
                                     if (strcmp(name, "id") == 0) {
                                         loc.id = std::string{prop->Attribute("value")};
+                                    } else {
+                                        loc.props[std::string{name}] = std::string{prop->Attribute("value")};
                                     }
+
+                                    prop = props->NextSiblingElement();
                                 }
                             }
 

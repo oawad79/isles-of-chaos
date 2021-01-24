@@ -181,6 +181,20 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
     spr.region = Rectangle{96, 32, 24, 16};
 
+    auto& inter = game->reg.emplace<Interaction>(self);
+    inter.action = [&](auto e, entt::registry& r){
+        const auto loot = r.get<Loot>(e);
+        const auto body = r.get<Body>(e);
+
+        for (const auto slot : loot.slots) {
+            for (int i = 0; i < RandInt(slot.amount.min, slot.amount.max); i++) {
+                SpawnItemWithId(game, body.center(), slot.itemId);
+            }
+        }
+
+        r.remove<Interaction>(e);
+    };
+
     auto& physics = game->reg.emplace<Physics>(self);
 
     return self;
@@ -254,7 +268,7 @@ entt::entity SpawnItemWithId(
 void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
     if (map->spawnedEntities) return;
 
-    for (const auto& obj : map->objects) {
+    for (auto& obj : map->objects) {
         const auto x = obj.x + obj.offset.x;
         const auto y = obj.y + obj.offset.y;
         if (obj.type == EntType::Item) {
@@ -264,6 +278,12 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             auto& body = game->reg.get<Body>(ent);
             body.width = obj.width;
             body.height = obj.height;
+        } else if (obj.type == EntType::Chest){
+            auto chest = Spawn(obj.type, game, {x, y});
+            if (obj.props.find("loot") == obj.props.end())
+                std::cout << "WARNING::: chest is missing loot" << std::endl;
+            else
+                game->reg.emplace<Loot>(chest, Assets::I()->getLootInfo(obj.props["loot"]));
         } else {
             Spawn(obj.type, game, {x, y});
         }

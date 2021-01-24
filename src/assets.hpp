@@ -16,6 +16,7 @@
 #include "tinyxml2.hpp"
 #include "utils.hpp"
 #include "item.hpp"
+#include "loot.hpp"
 
 enum Textures {
     TEX_NONE,
@@ -67,8 +68,10 @@ struct Assets {
     ShaderAssetInfo shaders_info[SHADER_NUM_SHADERS];
 
     Item getItemInfo(std::string id);
+    Loot getLootInfo(std::string id);
 
     std::map<std::string, Item> itemDb;
+    std::map<std::string, Loot> lootDb;
 
 private:
     Assets(const Assets&) = delete;

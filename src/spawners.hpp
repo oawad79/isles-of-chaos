@@ -12,6 +12,7 @@
 #include "enttypes.hpp"
 #include "tilemap.hpp"
 
+#include "loot.hpp"
 #include "character.hpp"
 #include "actor.hpp"
 #include "particles.hpp"

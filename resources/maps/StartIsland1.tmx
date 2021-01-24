@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="113">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="114">
  <tileset firstgid="1" name="Tileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -1245,24 +1245,14 @@
     <property name="id" value="long-sword"/>
    </properties>
   </object>
-  <object id="109" name="Chest w/ Smol Sword" type="Chest" x="-184" y="-296" width="24" height="16">
+  <object id="109" name="Test Chest" type="Chest" x="-168" y="-152" width="24" height="16">
+   <properties>
+    <property name="loot" value="test-chest"/>
+   </properties>
+  </object>
+  <object id="113" name="Chest w/ Smol Sword" type="Chest" x="-182.667" y="-297" width="24" height="16">
    <properties>
     <property name="loot" value="first-small-sword"/>
-   </properties>
-  </object>
-  <object id="110" name="Coin" type="Item" x="-164" y="-151.455" width="8" height="8">
-   <properties>
-    <property name="id" value="coin"/>
-   </properties>
-  </object>
-  <object id="111" name="Coin" type="Item" x="-153.455" y="-148.636" width="8" height="8">
-   <properties>
-    <property name="id" value="coin"/>
-   </properties>
-  </object>
-  <object id="112" name="HealthPotion" type="Item" x="-176" y="-152" width="8" height="8">
-   <properties>
-    <property name="id" value="health-potion"/>
    </properties>
   </object>
  </objectgroup>
