@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <items>
+  <moneys>
+    <item id="coin"
+          name="Coin"
+          descr="A small unit of monitary value"
+          catagory="Money"
+          effectValue="1.0"
+          region="0 8 8 8"/>
+  </moneys>
+
   <consumables>
     <item id="small-health-vial"
           name="Small Health Vial"

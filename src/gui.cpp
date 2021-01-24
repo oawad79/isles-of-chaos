@@ -119,7 +119,10 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
                     DrawRectangleLines(cx, cy, cellSize, cellSize, BLACK);
                     auto o = inventory.getItem(x, y);
                     if (o) {
-                        auto tex = o->catagory == ItemCatagory::Consumable ? consu : equip;
+                        auto tex = (
+                            o->catagory == ItemCatagory::Consumable || o->catagory == ItemCatagory::Money
+                        ) ? consu
+                          : equip;
                         auto item = o.value();
                         drawItem(cx, cy, tex, item);
                     }

@@ -24,7 +24,7 @@
             "scale": 3,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -639.3333333333333,
+                "x": -639.6666666666666,
                 "y": -99.16666666666666
             }
         },
@@ -32,11 +32,11 @@
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 1.5,
+            "scale": 4,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -591.3333333333333,
-                "y": 33.66666666666663
+                "x": 144.75,
+                "y": 114.625
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {

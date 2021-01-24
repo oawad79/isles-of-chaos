@@ -11,6 +11,7 @@
 
 #define X_ITEM_CATAGORY(E)\
     E(None)               \
+    E(Money)              \
     E(Consumable)         \
     E(Armor)              \
     E(Weapon)

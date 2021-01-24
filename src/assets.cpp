@@ -19,6 +19,7 @@ void LoadItemDB() {
     auto* consumables = items->FirstChildElement("consumables");
     auto* weapons = items->FirstChildElement("weapons");
     auto* armor = items->FirstChildElement("armor");
+    auto* moneys = items->FirstChildElement("moneys");
 
     auto loadItem = [&](XMLElement* itemXml, ItemCatagory catagory) {
         Item item;
@@ -69,10 +70,20 @@ void LoadItemDB() {
         }
     }
 
+    // Weapons
     {
         auto* itemXml = weapons->FirstChildElement("item");
         while (itemXml) {
             loadItem(itemXml, ItemCatagory::Weapon);
+            itemXml = itemXml->NextSiblingElement();
+        }
+    }
+
+    // Moneys
+    {
+        auto* itemXml = moneys->FirstChildElement("item");
+        while (itemXml) {
+            loadItem(itemXml, ItemCatagory::Money);
             itemXml = itemXml->NextSiblingElement();
         }
     }

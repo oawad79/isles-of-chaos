@@ -1,6 +1,6 @@
 #include "actor.hpp"
 
-void UpdateZambieAi(entt::registry& reg, Body& body, Physics& physics, Actor& actor) {
+void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics& physics, Actor& actor) {
     switch(actor.state) {
         case ActorState::IDLE: {
             actor.target[0] = Vector2{body.x + -200 + RandFloat() * 400, body.y};
@@ -34,6 +34,15 @@ void UpdateZambieAi(entt::registry& reg, Body& body, Physics& physics, Actor& ac
         }
         default:
             break;
+    }
+
+    auto& spr = reg.get<SimpleAnimation>(self);
+    spr.scale.x = physics.facingX;
+    if (std::abs(physics.velocity.x) < 0.1f) {
+        spr.playback = Playback::PAUSED;
+        spr.current_frame = 0;
+    } else {
+        spr.playback = Playback::FORWARD;
     }
 }
 
@@ -117,7 +126,7 @@ void UpdateActor(entt::registry& reg) {
 
             switch (actor.type) {
                 case ActorType::ZAMBIE: {
-                    UpdateZambieAi(reg, body, physics, actor);
+                    UpdateZambieAi(reg, ent,  body, physics, actor);
                     break;
                 }
                 case ActorType::DREAD_SHARK: {

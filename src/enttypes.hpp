@@ -16,6 +16,7 @@
     E(Pot)             \
     E(Water)           \
     E(DreadShark)      \
+    E(Chest)           \
     E(Particle)        \
     E(Item)
 

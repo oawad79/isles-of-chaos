@@ -1,5 +1,16 @@
 #include "spawners.hpp"
 
+entt::entity BasicBodyAndSprite(entt::registry& reg, const Body& body, const Rectangle region) {
+    auto self = reg.create();
+    reg.emplace<Body>(self, body);
+    auto& spr = reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.region = region;
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    return self;
+}
+
 entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position) {
     return entt::entity{0};
 }
@@ -135,20 +146,42 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 16;
-    body.height = 16;
+    body.width = 12;
+    body.height = 20;
 
-    auto& spr = game->reg.emplace<Sprite>(self);
-    spr.T = Type::SPRITE;
+    auto& spr = game->reg.emplace<SimpleAnimation>(self);
+    spr.T = Type::ANIMATION;
     spr.tint = WHITE;
+    spr.region = {96, 0, 12, 20};
+    spr.number_of_frames = 4;
+    spr.offset.x = -1;
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
-    spr.region = Rectangle{0, 0, 16, 16};
 
     auto& physics = game->reg.emplace<Physics>(self);
     game->reg.emplace<Health>(self);
 
     auto& actor = game->reg.emplace<Actor>(self);
     actor.type = ActorType::ZAMBIE;
+
+    return self;
+}
+
+entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 24;
+    body.height = 16;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    spr.region = Rectangle{96, 32, 24, 16};
+
+    auto& physics = game->reg.emplace<Physics>(self);
 
     return self;
 }
@@ -194,10 +227,12 @@ entt::entity SpawnItemWithId(
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
 
-    if (itemData.catagory == ItemCatagory::Consumable) {
+    if (itemData.catagory == ItemCatagory::Consumable || itemData.catagory == ItemCatagory::Money) {
         spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
     } else if (itemData.catagory == ItemCatagory::Weapon) {
         spr.texture = Assets::I()->textures[Textures::TEX_EQUIPMENT];
+    } else {
+        std::cout << "WARNING::: Unsupported item category\n" << std::endl;
     }
 
     spr.region = itemData.region;
