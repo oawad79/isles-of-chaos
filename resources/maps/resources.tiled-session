@@ -21,26 +21,26 @@
             "scaleInDock": 2
         },
         "StartIsland1Bg.tmx": {
-            "scale": 4,
+            "scale": 3,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -652.75,
-                "y": -56.875
+                "x": -639.3333333333333,
+                "y": -99.16666666666666
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 4,
-            "selectedLayer": 3,
+            "scale": 1.5,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": -186.25,
-                "y": 32.375
+                "x": -591.3333333333333,
+                "y": 33.66666666666663
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
-            "scaleInDock": 3
+            "scaleInDock": 2
         },
         "TestArea.tmx": {
             "scale": 2,

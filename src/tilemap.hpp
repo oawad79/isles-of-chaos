@@ -109,6 +109,7 @@ struct Tilemap {
     std::string path{""};
     std::string name{""};
 
+    Color backgroundColor{0, 0, 0, 0};
     Vector2 position{0, 0};
 
     Tileset tileset;

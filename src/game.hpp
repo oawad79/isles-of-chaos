@@ -22,6 +22,9 @@ struct Game {
     SpriteRenderer spriteRenderer;
     uptr<Level> level;
 
+    const Color startBackgroundClearColor{0,0,0,0};
+    Color backgroundClearColor{0, 0, 0, 0};
+
     bool physicsPaused{false};
 
     std::vector<SceneLayer*> scenes;

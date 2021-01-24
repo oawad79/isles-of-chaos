@@ -55,11 +55,14 @@ void Render(const uptr<Game>& game) {
     if (tilemap != nullptr)
         DrawTilemapToTarget(tilemap, game->mainCamera, game->spriteRenderer);
     BeginTextureMode(game->mainCanvas);
-        ClearBackground({0, 0, 0, 0});
-        DrawTexture(
-            Assets::I()->textures[TEX_BG],
-            0,0,
-            WHITE);
+        if (tilemap != nullptr) game->backgroundClearColor = tilemap->backgroundColor;
+        ClearBackground(game->backgroundClearColor);
+
+        if (tilemap && tilemap->backgroundColor.a == 0)
+            DrawTexture(
+                Assets::I()->textures[TEX_BG],
+                0,0,
+                WHITE);
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);
             DrawSprites(game->spriteRenderer, game->reg);

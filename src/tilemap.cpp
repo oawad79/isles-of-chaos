@@ -57,6 +57,13 @@ Tilemap* LoadTilemap(const std::string& path) {
     auto* mapd = root->NextSiblingElement();
     auto* tilesetd = mapd->FirstChildElement("tileset");
 
+    const char* mapColor = mapd->Attribute("backgroundcolor");
+    if (mapColor) {
+        auto color = std::string{mapColor};
+        map->backgroundColor = ColorFromHexString(color);
+        std::cout << color << std::endl;
+    }
+
     if (!tilesetd) {
         std::cout << "Failed to load a tileset, none was embedded in the map: " << path << std::endl;
         return map;
