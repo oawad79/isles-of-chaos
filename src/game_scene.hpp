@@ -23,8 +23,8 @@ private:
 
     void handlePorts(uptr<Game>& game);
 
-    void archiveEntities(uptr<Game>& game);
-    void unarchiveEntities(uptr<Game>& game);
+    void archiveEntities(uptr<Game>& game, int id=0);
+    void unarchiveEntities(uptr<Game>& game, int id=0);
     bool archived{false};
 
     bool enteringPort{false};

@@ -2,7 +2,9 @@
 #define SKYVAULT_WATER_HPP
 
 #include "entt.hpp"
+#include "particles.hpp"
 #include "body.hpp"
+#include "physics.hpp"
 #include "assets.hpp"
 
 struct Water {};

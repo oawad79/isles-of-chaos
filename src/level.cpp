@@ -30,6 +30,16 @@ Tilemap* GetTilemap(const uptr<Level>& level, const std::string& byName) {
     return nullptr;
 }
 
+int GetTilemapId(const uptr<Level>& level) {
+    int id = 0;
+    for (auto& tm : level->tilemaps) {
+        if (tm->name == level->currentTilemap)
+            return id;
+        id++;
+    }
+    return id;
+}
+
 uptr<Level> LoadLevel(const std::string& path) {
     auto level = std::make_unique<Level>();
     loadTilemapRecr(level, path);

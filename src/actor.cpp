@@ -91,6 +91,11 @@ void UpdateActor(entt::registry& reg) {
         auto& body = reg.get<Body>(ent);
         auto& physics = reg.get<Physics>(ent);
 
+        if (physics.velocity.x > 0)
+            physics.facingX = RIGHT;
+        else
+            physics.facingX = LEFT;
+
         if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) {
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;

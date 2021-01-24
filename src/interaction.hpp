@@ -26,6 +26,8 @@ struct Interaction {
     bool last_intersection{false};
     ActionIcon icon{ActionIcon::INTERACT};
     std::function<void(entt::entity, entt::registry&)> action;
+
+    bool justPlayer{true};
 };
 
 void UpdateInteraction(uptr<Game>& game, entt::registry& reg);

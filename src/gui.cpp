@@ -70,7 +70,10 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
         DrawTexturePro(
             tex,
             item.region,
-            {x, y, cellSize, cellSize},
+            {x + cellSize / 2 - item.region.width / 2,
+             y + cellSize / 2 - item.region.height / 2,
+             item.region.width,
+             item.region.height},
             {0, 0},
             0.0,
             WHITE);

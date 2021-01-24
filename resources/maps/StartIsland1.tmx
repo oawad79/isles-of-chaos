@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="90">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" backgroundcolor="#55aaff" nextlayerid="11" nextobjectid="108">
  <tileset firstgid="1" name="Tileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -1209,7 +1209,7 @@
     <property name="target" value="StartIsland1Bg"/>
    </properties>
   </object>
-  <object id="37" name="Water" type="Water" x="-620.167" y="-40" width="1012.17" height="373"/>
+  <object id="37" name="Water" type="Water" x="-620.167" y="-40" width="1012.17" height="217"/>
   <object id="46" x="-533.375" y="-191.125">
    <polygon points="0,0 -18.625,-8.875 -18.625,0"/>
   </object>
@@ -1225,7 +1225,7 @@
   </object>
   <object id="53" x="-320" y="-184" width="56" height="8"/>
   <object id="62" name="Water" type="Water" x="-792" y="-132" width="160" height="212.75"/>
-  <object id="63" name="DreadShark" type="DreadShark" x="-728" y="-248" width="32" height="48"/>
+  <object id="63" name="DreadShark" type="DreadShark" x="-728.5" y="-258.25" width="32" height="48"/>
   <object id="64" x="-632" y="-192">
    <polygon points="0,0 -24,8 -48.7273,12.7273 -110.545,12.9091 -134,8.36364 -160,0 -160,8 -136,16 -111.818,19.6364 -84,20 -49.2727,19.4545 -24,16 0,8"/>
   </object>
@@ -1245,6 +1245,11 @@
   </object>
   <object id="80" name="Zambie" type="Zambie" x="-304" y="-208"/>
   <object id="81" name="Zambie" type="Zambie" x="-561.75" y="-227.5"/>
+  <object id="90" name="Long Sword" type="Item" x="-134" y="-146.25" width="24" height="16">
+   <properties>
+    <property name="id" value="long-sword"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="2" x="-80" y="-104" width="24" height="80"/>

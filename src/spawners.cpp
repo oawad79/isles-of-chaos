@@ -19,7 +19,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
     spr.region = {0, 0, 12, 20};
-    spr.number_of_frames = 3;
+    spr.number_of_frames = 4;
     spr.offset.x = -1;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
 
@@ -28,7 +28,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& health = game->reg.emplace<Health>(self);
 
     auto& chr = game->reg.emplace<Character>(self);
-    chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
+    // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
 
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 

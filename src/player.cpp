@@ -48,12 +48,27 @@ void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
         const auto equiped = character.equiped;
 
         const auto [ax, ay] = Input::I()->GetMovementVector();
+
+        sprite.playback = Playback::PAUSED;
+        if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
+        if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
+
+        if (sprite.playback == Playback::PAUSED)
+            sprite.current_frame = 0;
+
         sprite.scale.x = physics.facingX;
-        physics.velocity.x += ax * 400.0f * dt;
+
+        if (!player.hit)
+            physics.velocity.x += ax * 400.0f * dt;
+
+        if (player.hit)
+            sprite.current_frame = 2;
 
         if (Input::I()->Jump() && physics.on_ground) {
             physics.velocity.y -= 18000.0f * dt;
             physics.on_ground = false;
+
+            // SpawnWaterParticles(game->reg, body.center());
         }
 
         if (Input::I()->Ascend() && physics.on_ladder) {
@@ -87,13 +102,17 @@ void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
             if (auto o = equiped.weapon) {
                 auto weaponItem = o.value();
 
+                sprite.current_frame = 2;
+                // physics.velocity.x = 0.0f;
+
                 player.hit = std::optional{
                     SpawnPlayerHit(
                         game,
                         weaponItem,
                         body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
                         body.center().y - weaponItem.region.height / 2,
-                        physics.facingX)};
+                        physics.facingX)
+                };
             }
         }
     });

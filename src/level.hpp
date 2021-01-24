@@ -21,6 +21,8 @@ struct Level {
 Tilemap* GetTilemap(const uptr<Level>& level);
 Tilemap* GetTilemap(const uptr<Level>& level, const std::string& byName);
 
+int GetTilemapId(const uptr<Level>& level);
+
 bool HasTilemap(const uptr<Level>& level, const std::string& path);
 
 uptr<Level> LoadLevel(const std::string& path);

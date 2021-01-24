@@ -3,12 +3,11 @@
 void UpdateInteraction(uptr<Game>& game, entt::registry& reg) {
     auto view = reg.view<Body, Interaction>(entt::exclude<Disabled>);
 
-    auto player_view = reg.view<Player>();
-
     for (entt::entity e : view) {
         auto& body = reg.get<Body>(e);
         auto& interaction = reg.get<Interaction>(e);
 
+        auto player_view = reg.view<Player, Body>();
         for (auto player : player_view) {
             auto player_body = reg.get<Body>(player);
 

@@ -14,6 +14,8 @@
 #define GENERATE_STRING(STR) #STR,
 #endif//GENERATE_STRING
 
+#define ARR_LEN(a) (sizeof((a))/sizeof((a)[0]))
+
 // Defer
 template <typename F>
 struct DeferStruct {

@@ -77,11 +77,11 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         deffered_sprites.push_back({body, &spr});
     }
 
-    std::sort(deffered_sprites.begin(), deffered_sprites.end(), [](const auto& a, const auto& b) {
-        if (std::get<1>(a)->layer > std::get<1>(b)->layer) return 1;
-        if (std::get<1>(a)->layer < std::get<1>(b)->layer) return -1;
-        return 0;
-    });
+    // std::sort(deffered_sprites.begin(), deffered_sprites.end(), [](const auto& a, const auto& b) {
+    //     if (std::get<1>(a)->layer > std::get<1>(b)->layer) return 1;
+    //     if (std::get<1>(a)->layer < std::get<1>(b)->layer) return -1;
+    //     return 0;
+    // });
 
     for (const auto& [body, deff] : deffered_sprites) {
         const auto tint = Color{

@@ -40,10 +40,13 @@ union Range2D {
   };
 };
 
+struct Particle {};
+
 struct ParticleDesc {
   Rectangle region;
   Range2D velocityRange{0};
   Range1D lifeRange{0};
+  float gravityScale{0.0f};
 };
 
 constexpr Rectangle PARTICLE_HIT_REGIONS[] = {
@@ -54,7 +57,15 @@ constexpr Rectangle PARTICLE_HIT_REGIONS[] = {
   {29, 0, 11, 11},
 };
 
+constexpr Rectangle PARTICLE_WATER_REGIONS[] = {
+  {0, 16, 8, 12},
+  {8, 16, 8, 8},
+  {0, 28, 4, 4},
+  {16, 16, 8, 12},
+};
+
 entt::entity SpawnParticleWithDesc(entt::registry& reg, ParticleDesc& desc, const Vector2 position);
 void SpawnHitParticles(entt::registry& reg, const Vector2 center);
+void SpawnWaterParticles(entt::registry& reg, const Vector2 center, float ySpeed=10000.0f);
 
 #endif // SKYVAULT_PARTICLES_HPP

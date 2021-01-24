@@ -50,7 +50,7 @@ struct SimpleAnimation : Sprite {
     Playback playback {Playback::FORWARD};
     int number_of_frames {1};
     int current_frame {0};
-    float speed {200.0f}; // MS
+    float speed {150.0f}; // MS
     float time {0.0f};
 };
 

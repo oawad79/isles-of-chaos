@@ -177,11 +177,6 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
         physics.velocity.x *= std::pow(physics.friction, dt);
         physics.velocity.y *= std::pow(physics.friction, dt);
-
-        if (physics.velocity.x > 0)
-            physics.facingX = RIGHT;
-        else
-            physics.facingX = LEFT;
     }
 }
 
@@ -233,7 +228,7 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
         DrawText(text.c_str(), b.x, b.y - 9, 4, color);
     }
 
-    auto view = reg.view<Physics, Body>();
+    auto view = reg.view<Physics, Body>(entt::exclude<Disabled>);
     for (auto e : view) {
         auto& physics = reg.get<Physics>(e);
         auto& body = reg.get<Body>(e);

@@ -4,6 +4,7 @@
 #include <entt.hpp>
 
 #include "sprite.hpp"
+#include "particles.hpp"
 #include "body.hpp"
 #include "character.hpp"
 #include "timed.hpp"

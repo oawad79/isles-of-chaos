@@ -4,7 +4,7 @@ GameScene::GameScene(entt::registry& reg) {}
 
 void GameScene::load(uptr<Game>& game) {
 
-    game->level = LoadLevel("resources/maps/StartIsland1.tmx");
+    game->level = LoadLevel("resources/maps/StartIslandFork.tmx");
     auto* tilemap = GetTilemap(game->level);
 
     SpawnEntitiesFromTileMap(tilemap, game);
@@ -51,14 +51,13 @@ void GameScene::update(uptr<Game>& game) {
 
 void GameScene::handlePorts(uptr<Game>& game) {
     auto* tilemap = GetTilemap(game->level);
+    const auto id = GetTilemapId(game->level);
     if (enteringPort && tilemap) {
         if (fadeOut) {
             if (fadeTimer <= 0.01f) {
 
                 // Store a snapshot of the entities
-                if (archived) unarchiveEntities(game);
-                else archiveEntities(game);
-
+                archiveEntities(game, id);
                 game->level->currentTilemap = nextTilemap;
 
                 nextTilemap = "";
@@ -77,6 +76,9 @@ void GameScene::handlePorts(uptr<Game>& game) {
                 nextOffset = Vector2{0,0};
 
                 SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
+
+                // Un archive entities for that tilemap
+                unarchiveEntities(game, GetTilemapId(game->level));
 
                 return;
             }
@@ -103,8 +105,6 @@ void GameScene::handlePorts(uptr<Game>& game) {
                         auto* tmap
                             = GetTilemap(game->level, nextTilemap);
                         SetPosition(tmap, {0, 0});
-
-                        std::cout << feat.id << std::endl;
 
                         if (const auto returnPortO = GetPortWithTarget(tmap, tilemap->name, feat.id)){
                             const auto returnPort = returnPortO.value();
@@ -139,17 +139,21 @@ void GameScene::destroy(uptr<Game>& game) {
     game->reg.clear();
 }
 
-void GameScene::archiveEntities(uptr<Game>& game) {
-    game->reg.each([&game](auto entity){
+void GameScene::archiveEntities(uptr<Game>& game, int id) {
+    game->reg.each([&game, id](auto entity){
         if (game->reg.has<Player>(entity)) return;
-        game->reg.emplace_or_replace<Disabled>(entity);
+        if (!game->reg.has<Disabled>(entity))
+            game->reg.emplace<Disabled>(entity, id);
     });
     archived = true;
 }
 
-void GameScene::unarchiveEntities(uptr<Game>& game) {
-    game->reg.each([&game](auto entity){
-        game->reg.remove_if_exists<Disabled>(entity);
+void GameScene::unarchiveEntities(uptr<Game>& game, int id) {
+    game->reg.each([&game, id](auto entity){
+        if (game->reg.has<Disabled>(entity)) {
+            auto& d = game->reg.get<Disabled>(entity);
+            if (d.mapId == id) game->reg.remove<Disabled>(entity);
+        }
     });
     archived = false;
 }

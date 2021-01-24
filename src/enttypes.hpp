@@ -35,7 +35,7 @@ static EntType GetEntType(const std::string& tstr) {
     return EntTypeM[tstr];
 }
 
-struct Disabled {};
+struct Disabled { int mapId {0}; };
 
 #undef GENERATE_MAP
 
