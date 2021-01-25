@@ -106,6 +106,7 @@ void UpdateActor(entt::registry& reg) {
             physics.facingX = LEFT;
 
         if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) {
+
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;
                 if (CheckCollisionRecs(body, obody)) {
@@ -120,6 +121,23 @@ void UpdateActor(entt::registry& reg) {
                         }
 
                         health.hit(damage);
+
+                        if (health.shouldDie()) {
+
+                            // Handle loot dropping from enemies w/ loot
+                            if (reg.has<Loot>(ent)) {
+                                SpawnLoot(
+                                    reg,
+                                    reg.get<Loot>(ent),
+                                    body.center(),
+                                    Range1D{0, 0},
+                                    Range2D{
+                                        Range1D{-2000.0f, 2000.0f},
+                                        Range1D{5000.0f, 8000.0f}
+                                    });
+                            }
+
+                        }
                     }
                 }
             });

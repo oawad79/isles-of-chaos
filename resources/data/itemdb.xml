@@ -19,6 +19,12 @@
           catagory="Money"
           effectValue="1.0"
           region="16 10 5 6"/>
+    <item id="zombie-flesh"
+          name="Zombie Flesh"
+          descr="Small jibs"
+          catagory="Money"
+          effectValue="1.0"
+          region="0 16 5 4"/>
   </moneys>
 
   <consumables>

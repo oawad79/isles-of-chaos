@@ -7,6 +7,7 @@
 #include "physics_type.hpp"
 #include "body.hpp"
 #include "player.hpp"
+#include "spawners.hpp"
 #include "item.hpp"
 #include "particles.hpp"
 

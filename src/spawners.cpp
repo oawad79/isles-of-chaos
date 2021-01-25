@@ -163,6 +163,8 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     auto& actor = game->reg.emplace<Actor>(self);
     actor.type = ActorType::ZAMBIE;
 
+    game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
     return self;
 }
 
@@ -191,21 +193,15 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
         spr.region.height += 1;
         spr.region.y -= 1;
 
-        const auto dt = GetFrameTime();
-        for (const auto slot : loot.slots) {
-            for (int i = 0; i < RandInt(slot.amount.min, slot.amount.max); i++) {
-                auto itemEnt = SpawnItemWithId(r, body.center(), slot.itemId);
-                auto& itemBody = r.get<Body>(itemEnt);
-                itemBody.x -= itemBody.width / 2;
-                itemBody.y -= itemBody.height / 4;
-
-                itemBody.x += RandInt(-body.width/2 + 4, body.width/2 - 4);
-
-                auto& physics = r.get<Physics>(itemEnt);
-                physics.velocity.x = RandFloat(-10000.0f, 10000.0f) * dt;
-                physics.velocity.y = RandFloat(10000, 20000) * dt * -1.0f;
-            }
-        }
+        SpawnLoot(
+            r,
+            loot,
+            body.center(),
+            { -body.width + 4, body.width - 4 },
+            Range2D{
+                Range1D{ -10000.0f, 10000.0f },
+                Range1D{ 10000.0f, 20000.0f }
+            });
 
         r.remove<Interaction>(e);
     };
@@ -279,6 +275,30 @@ entt::entity SpawnItemWithId(
     };
 
     return self;
+}
+
+void SpawnLoot(
+    entt::registry& reg,
+    const Loot& loot,
+    Vector2 where,
+    Range1D xRange,
+    Range2D velocityRange
+){
+    const auto dt = GetFrameTime();
+    for (const auto slot : loot.slots) {
+        for (int i = 0; i < RandInt(slot.amount.min, slot.amount.max); i++) {
+            auto itemEnt = SpawnItemWithId(reg, where, slot.itemId);
+            auto& itemBody = reg.get<Body>(itemEnt);
+            itemBody.x -= itemBody.width / 2;
+            itemBody.y -= itemBody.height / 4;
+
+            itemBody.x += RandInt(xRange.min, xRange.max);
+
+            auto& physics = reg.get<Physics>(itemEnt);
+            physics.velocity.x = RandFloat(velocityRange.xMin, velocityRange.xMax) * dt;
+            physics.velocity.y = RandFloat(velocityRange.yMin, velocityRange.yMax) * dt * -1.0f;
+        }
+    }
 }
 
 void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {

@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chest-loot-sets>
+
   <chest-loot id="first-small-sword">
     <loot itemId="small-sword" chance="100"/>
   </chest-loot>
+
   <chest-loot id="test-chest">
     <loot itemId="doubloon" chance="100" amount="3 10"/>
     <loot itemId="gem" chance="100" amount="3 10"/>
     <loot itemId="coin" chance="100" amount="3 10"/>
   </chest-loot>
+
+  <chest-loot id="zambie">
+    <loot itemId="coin" chance="100" amount="1 2"/>
+    <loot itemId="zombie-flesh" chance="100" amount="5 10"/>
+  </chest-loot>
+
 </chest-loot-sets>

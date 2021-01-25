@@ -48,6 +48,8 @@ entt::entity SpawnItemWithId(
   const Vector2 position,
   const std::string& id);
 
+void SpawnLoot(entt::registry& reg, const Loot& loot, Vector2 where, Range1D xRange, Range2D velocityRange);
+
 entt::entity SpawnParticle(const uptr<Game>& game, const Vector2 position);
 
 void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game);
