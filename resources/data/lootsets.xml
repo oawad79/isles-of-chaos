@@ -4,6 +4,8 @@
     <loot itemId="small-sword" chance="100"/>
   </chest-loot>
   <chest-loot id="test-chest">
-    <loot itemId="coin" chance="100" amount="30 100"/>
+    <loot itemId="doubloon" chance="100" amount="3 10"/>
+    <loot itemId="gem" chance="100" amount="3 10"/>
+    <loot itemId="coin" chance="100" amount="3 10"/>
   </chest-loot>
 </chest-loot-sets>

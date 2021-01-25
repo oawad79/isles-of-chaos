@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <items>
   <moneys>
+    <item id="doubloon"
+          name="Doubloon"
+          descr="A small unit of monitary value"
+          catagory="Money"
+          effectValue="1.0"
+          region="0 8 8 8"/>
     <item id="coin"
           name="Coin"
           descr="A small unit of monitary value"
           catagory="Money"
           effectValue="1.0"
-          region="0 8 8 8"/>
+          region="8 10 5 6"/>
+    <item id="gem"
+          name="Gem"
+          descr="A small unit of monitary value"
+          catagory="Money"
+          effectValue="1.0"
+          region="16 10 5 6"/>
   </moneys>
 
   <consumables>
