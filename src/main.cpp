@@ -30,19 +30,19 @@ std::once_flag Input::once;
 GuiState guiState;
 
 void Update(uptr<Game>& game) {
+    UpdateGame(game);
+    UpdateGui(game, guiState);
+
     if (game->state == AppState::Running) {
         UpdateSprites(game->reg);
         UpdatePlayer(game, game->reg);
         UpdatePhysics(game, game->reg);
-        UpdateInteraction(game, game->reg);
         UpdateTimed(game->reg);
         UpdateCharacter(game->reg);
         UpdateActor(game->reg);
         UpdateWater(game->reg);
+        UpdateInteraction(game, game->reg);
     }
-
-    UpdateGame(game);
-    UpdateGui(game, guiState);
 }
 
 void RenderGui(const uptr<Game>& game) {

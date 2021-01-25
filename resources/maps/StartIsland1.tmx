@@ -1245,7 +1245,7 @@
     <property name="id" value="long-sword"/>
    </properties>
   </object>
-  <object id="109" name="Test Chest" type="Chest" x="-168" y="-152" width="24" height="16">
+  <object id="109" name="Test Chest" type="Chest" x="-168" y="-160" width="24" height="17">
    <properties>
     <property name="loot" value="test-chest"/>
    </properties>

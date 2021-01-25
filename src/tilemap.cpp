@@ -309,17 +309,17 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
         ClearBackground({0,0,0,0});
         const auto* tileset = &tilemap->tileset;
 
-        for (const auto& bill : tilemap->billboards) {
-            DrawSprite(
-                ren,
-                (Sprite)bill,
-                Body{
-                    bill.position.x + ox,
-                    bill.position.y + oy,
-                    bill.region.width,
-                    bill.region.height,
-                });
-        }
+        // for (const auto& bill : tilemap->billboards) {
+        //     DrawSprite(
+        //         ren,
+        //         (Sprite)bill,
+        //         Body{
+        //             bill.position.x + ox,
+        //             bill.position.y + oy,
+        //             bill.region.width,
+        //             bill.region.height,
+        //         });
+        // }
 
         for (const auto& layer : tilemap->layers) {
             const auto tint = layer.tint;

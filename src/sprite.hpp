@@ -62,7 +62,7 @@ struct SpriteRenderer {
 
 void LoadSpriteRenderer(SpriteRenderer& self);
 
-void DrawSprite(SpriteRenderer& self, const Sprite sprite, const Body body);
+// void DrawSprite(SpriteRenderer& self, const Sprite sprite, const Body body);
 
 void UpdateSprites(entt::registry& reg);
 void DrawSprites(SpriteRenderer& ren, entt::registry& reg);

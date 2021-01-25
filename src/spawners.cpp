@@ -173,22 +173,37 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
     body.x = position.x;
     body.y = position.y;
     body.width = 24;
-    body.height = 16;
+    body.height = 17;
 
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
-    spr.region = Rectangle{96, 32, 24, 16};
+    spr.region = Rectangle{96, 31, 24, 17};
 
     auto& inter = game->reg.emplace<Interaction>(self);
     inter.action = [&](auto e, entt::registry& r){
         const auto loot = r.get<Loot>(e);
         const auto body = r.get<Body>(e);
 
+        auto& spr = r.get<Sprite>(e);
+        spr.region.x += spr.region.width;
+        spr.region.height += 1;
+        spr.region.y -= 1;
+
+        const auto dt = GetFrameTime();
         for (const auto slot : loot.slots) {
             for (int i = 0; i < RandInt(slot.amount.min, slot.amount.max); i++) {
-                SpawnItemWithId(game, body.center(), slot.itemId);
+                auto itemEnt = SpawnItemWithId(r, body.center(), slot.itemId);
+                auto& itemBody = r.get<Body>(itemEnt);
+                itemBody.x -= itemBody.width / 2;
+                itemBody.y -= itemBody.height / 4;
+
+                itemBody.x += RandInt(-body.width/2 + 4, body.width/2 - 4);
+
+                auto& physics = r.get<Physics>(itemEnt);
+                physics.velocity.x = RandFloat(-10000.0f, 10000.0f) * dt;
+                physics.velocity.y = RandFloat(10000, 20000) * dt * -1.0f;
             }
         }
 
@@ -223,23 +238,24 @@ entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position) {
 }
 
 entt::entity SpawnItemWithId(
-  const uptr<Game>& game,
+  entt::registry& reg,
   const Vector2 position,
   const std::string& id) {
-    auto self = game->reg.create();
+    auto self = reg.create();
 
     const auto itemData = Assets::I()->getItemInfo(id);
-    game->reg.emplace<Item>(self, itemData);
+    reg.emplace<Item>(self, itemData);
 
-    auto& body = game->reg.emplace<Body>(self);
+    auto& body = reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
     body.width = itemData.region.width;
     body.height = itemData.region.height;
 
-    auto& spr = game->reg.emplace<Sprite>(self);
+    auto& spr = reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
+    spr.layer = 1.0f;
 
     if (itemData.catagory == ItemCatagory::Consumable || itemData.catagory == ItemCatagory::Money) {
         spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
@@ -251,9 +267,9 @@ entt::entity SpawnItemWithId(
 
     spr.region = itemData.region;
 
-    auto& physics = game->reg.emplace<Physics>(self);
+    auto& physics = reg.emplace<Physics>(self);
 
-    auto& inter = game->reg.emplace<Interaction>(self);
+    auto& inter = reg.emplace<Interaction>(self);
     inter.action = [&](auto e, entt::registry& r){
         auto item = r.get<Item>(e);
         r.view<Player, Inventory>().each([&](auto& p, auto& inv){
@@ -272,7 +288,7 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
         const auto x = obj.x + obj.offset.x;
         const auto y = obj.y + obj.offset.y;
         if (obj.type == EntType::Item) {
-            SpawnItemWithId(game, {x, y}, obj.id);
+            SpawnItemWithId(game->reg, {x, y}, obj.id);
         } else if (obj.type == EntType::Water) {
             const auto ent = SpawnWater(game, {x, y});
             auto& body = game->reg.get<Body>(ent);

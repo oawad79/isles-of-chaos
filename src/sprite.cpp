@@ -1,5 +1,17 @@
 #include "sprite.hpp"
 
+#include <variant>
+
+struct SpriteBody {
+    Sprite sprite;
+    Body body;
+};
+
+struct AnimSpriteBody {
+    SimpleAnimation sprite;
+    Body body;
+};
+
 void LoadSpriteRenderer(SpriteRenderer& self) {
 }
 
@@ -58,106 +70,106 @@ void UpdateSprites(entt::registry& reg) {
     }
 }
 
-void DrawSprite(SpriteRenderer& self, const Sprite sprite, const Body body) {
-    self.sprites_to_draw.push_back(std::make_tuple(std::move(sprite), std::move(body)));
-}
+// void DrawSprite(SpriteRenderer& self, const Sprite sprite, const Body body) {
+//     self.sprites_to_draw.push_back(std::make_tuple(std::move(sprite), std::move(body)));
+// }
 
 void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
-    auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled>);
-    auto sim_anims = reg.view<Body, SimpleAnimation>(entt::exclude<Disabled>);
+    auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled, Item>);
+    auto sim_anims = reg.view<Body, SimpleAnimation>(entt::exclude<Disabled, Item>);
 
-    std::vector<std::tuple<Body, Sprite*>> deffered_sprites;
+    auto items = reg.view<Body, Sprite, Item>();
 
-    sprites.each([&deffered_sprites](auto& b, auto& s) {
-        deffered_sprites.push_back({b, &s});
-    });
-
-    sim_anims.each([&deffered_sprites](auto& b, auto& s) {
-        deffered_sprites.push_back({b, &s});
-    });
-
-    for (auto& [spr, body] : self.sprites_to_draw) {
-        deffered_sprites.push_back({body, &spr});
-    }
-
-    // std::sort(deffered_sprites.begin(), deffered_sprites.end(), [](const auto& a, const auto& b) {
-    //     if (std::get<1>(a)->layer > std::get<1>(b)->layer) return 1;
-    //     if (std::get<1>(a)->layer < std::get<1>(b)->layer) return -1;
-    //     return 0;
-    // });
-
-    for (const auto& [body, deff] : deffered_sprites) {
+    auto drawSprite = [](const auto& body, const auto& sprite) {
         const auto tint = Color{
-          (unsigned char)((deff->tint.r + deff->tint2.r) / 2),
-          (unsigned char)((deff->tint.g + deff->tint2.g) / 2),
-          (unsigned char)((deff->tint.b + deff->tint2.b) / 2),
-          (unsigned char)((deff->tint.a + deff->tint2.a) / 2),
+          (unsigned char)((sprite.tint.r + sprite.tint2.r) / 2),
+          (unsigned char)((sprite.tint.g + sprite.tint2.g) / 2),
+          (unsigned char)((sprite.tint.b + sprite.tint2.b) / 2),
+          (unsigned char)((sprite.tint.a + sprite.tint2.a) / 2),
         };
-        if (deff->T == Type::ANIMATION) {
-            const auto* sprite = dynamic_cast<SimpleAnimation*>(deff);
-            const auto sw = sprite->region.width;
-            const auto sh = sprite->region.height;
 
-            const auto [_rx, _ry, rw, rh] = sprite->region;
+        const auto sw = sprite.region.width;
+        const auto sh = sprite.region.height;
 
-            const auto [ox, oy] = sprite->offset;
+        const auto [ox, oy] = sprite.offset;
 
+        if (sprite.T == Type::RECTANGLE) {
+            DrawRectangle(
+                ceil(body.x),
+                ceil(body.y),
+                body.width,
+                body.height,
+                tint);
+        }
+
+        if (sprite.T == Type::SPRITE) {
+            const auto [_rx, _ry, rw, rh] = sprite.region;
             DrawTexturePro(
-                sprite->texture,
+                sprite.texture,
                 {
-                    sprite->region.x + sw * sprite->current_frame,
-                    sprite->region.y,
-                    sprite->region.width * sprite->scale.x,
-                    sprite->region.height * sprite->scale.y,
+                    sprite.region.x,
+                    sprite.region.y,
+                    sprite.region.width * sprite.scale.x,
+                    sprite.region.height * sprite.scale.y,
                 },
-                {
-                    ceil(body.x + ox + rw/2),
+                {ceil(body.x + ox + rw/2),
                     ceil(body.y + oy + rh/2),
-                    sw,
-                    sh
-                },
+                    body.width,
+                    body.height},
                 Vector2{rw/2, rh/2},
-                sprite->rotation,
+                sprite.rotation,
                 tint
             );
-
-        } else {
-            const auto* sprite = deff;
-            const auto sw = sprite->region.width;
-            const auto sh = sprite->region.height;
-
-            const auto [ox, oy] = sprite->offset;
-
-            if (sprite->T == Type::RECTANGLE) {
-                DrawRectangle(
-                    ceil(body.x),
-                    ceil(body.y),
-                    body.width,
-                    body.height,
-                    tint);
-            }
-
-            if (sprite->T == Type::SPRITE) {
-                const auto [_rx, _ry, rw, rh] = sprite->region;
-                DrawTexturePro(
-                    sprite->texture,
-                    {
-                        sprite->region.x,
-                        sprite->region.y,
-                        sprite->region.width * sprite->scale.x,
-                        sprite->region.height * sprite->scale.y,
-                    },
-                    {ceil(body.x + ox + rw/2),
-                     ceil(body.y + oy + rh/2),
-                     body.width,
-                     body.height},
-                    Vector2{rw/2, rh/2},
-                    sprite->rotation,
-                    tint
-                );
-            }
         }
+    };
+
+    for (auto e : sprites){
+        const auto& sprite = reg.get<Sprite>(e);
+        const auto& body = reg.get<Body>(e);
+        drawSprite(body, sprite);
     }
 
-    self.sprites_to_draw.clear();
+    for (auto e : sim_anims) {
+        const auto& sprite = reg.get<SimpleAnimation>(e);
+        const auto& body = reg.get<Body>(e);
+        const auto tint = Color{
+          (unsigned char)((sprite.tint.r + sprite.tint2.r) / 2),
+          (unsigned char)((sprite.tint.g + sprite.tint2.g) / 2),
+          (unsigned char)((sprite.tint.b + sprite.tint2.b) / 2),
+          (unsigned char)((sprite.tint.a + sprite.tint2.a) / 2),
+        };
+
+        const auto sw = sprite.region.width;
+        const auto sh = sprite.region.height;
+
+        const auto [_rx, _ry, rw, rh] = sprite.region;
+
+        const auto [ox, oy] = sprite.offset;
+
+        DrawTexturePro(
+            sprite.texture,
+            {
+                sprite.region.x + sw * sprite.current_frame,
+                sprite.region.y,
+                sprite.region.width * sprite.scale.x,
+                sprite.region.height * sprite.scale.y,
+            },
+            {
+                ceil(body.x + ox + rw/2),
+                ceil(body.y + oy + rh/2),
+                sw,
+                sh
+            },
+            Vector2{rw/2, rh/2},
+            sprite.rotation,
+            tint
+        );
+
+    }
+
+    for (auto e : items){
+        const auto& sprite = reg.get<Sprite>(e);
+        const auto& body = reg.get<Body>(e);
+        drawSprite(body, sprite);
+    }
 }
