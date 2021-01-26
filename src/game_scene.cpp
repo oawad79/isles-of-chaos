@@ -4,7 +4,7 @@ GameScene::GameScene(entt::registry& reg) {}
 
 void GameScene::load(uptr<Game>& game) {
 
-    game->level = LoadLevel("resources/maps/StartIsland1.tmx");
+    game->level = LoadLevel("resources/maps/StartIslandFork.tmx");
     auto* tilemap = GetTilemap(game->level);
 
     SpawnEntitiesFromTileMap(tilemap, game);
