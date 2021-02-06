@@ -60,7 +60,7 @@ struct SpawnLocation : Rectangle {
     Vector2 offset{0, 0};
 
     EntType type{EntType::None};
-    std::string id{""}; // Used for items
+    std::string id{""}; // Used for items and npcs
     std::map<std::string, std::string> props;
 
     inline auto bounds() const { return Rectangle{

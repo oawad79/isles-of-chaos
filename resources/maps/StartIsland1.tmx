@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="114">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="115">
  <tileset firstgid="1" name="Tileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -606,10 +606,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,705,707,706,705,0,0,0,0,0,0,0,0,0,
-0,0,0,769,771,0,769,0,0,0,0,0,0,0,0,0,
-0,0,0,903,904,905,906,0,0,0,0,0,0,0,0,0,
-0,0,0,967,968,969,970,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 389,389,389,389,389,389,389,389,389,389,389,389,390,257,258,259,
 450,450,450,450,450,450,450,450,450,450,450,450,454,0,322,323,
 450,450,450,450,450,450,450,450,450,450,450,450,454,0,0,0,
@@ -1282,7 +1282,6 @@
   <object id="68" x="-904" y="-192">
    <polygon points="0,0 -16,-16 -16,0"/>
   </object>
-  <object id="72" x="-872" y="-208" width="32"/>
   <object id="75" x="-984" y="-208" width="64" height="16"/>
   <object id="76" x="-984" y="-296" width="48" height="88"/>
   <object id="77" x="-936" y="-296" width="16" height="64"/>
@@ -1307,6 +1306,11 @@
   <object id="113" name="Chest w/ Smol Sword" type="Chest" x="-182.667" y="-297" width="24" height="16">
    <properties>
     <property name="loot" value="first-small-sword"/>
+   </properties>
+  </object>
+  <object id="114" name="Old Man" type="Npc" x="-98" y="-183.5" width="16" height="24">
+   <properties>
+    <property name="id" value="old-man"/>
    </properties>
   </object>
  </objectgroup>

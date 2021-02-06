@@ -63,6 +63,7 @@ void Render(const uptr<Game>& game) {
                 Assets::I()->textures[TEX_BG],
                 0,0,
                 WHITE);
+
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);
             DrawSprites(game->spriteRenderer, game->reg);

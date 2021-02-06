@@ -3,6 +3,11 @@
 constexpr auto cellSize {16};
 constexpr auto margin{1};
 
+
+constexpr auto dialogWidth = CANVAS_WIDTH / 2;
+constexpr auto dialogHeight = CANVAS_HEIGHT / 4;
+
+
 void UpdateHud(const uptr<Game>& game, GuiState& state) {
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
         const auto d = Input::I()->GetMovementVector();
@@ -136,8 +141,36 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
     });
 }
 
+void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
+    auto& branch = dialog.branches[dialog.currentId];
+    if (IsKeyPressed(KEY_A)) branch.cursor -= 1;
+    if (IsKeyPressed(KEY_D)) branch.cursor += 1;
+    branch.cursor %= (dialog.branches.size() + 1);
+
+    if (IsKeyPressed(KEY_X)) {
+        if (branch.choices.size() == 0) {
+            if (branch.nextId == "" || branch.nextId == "exit") {
+                game->state = AppState::Running;
+                game->dialogTree = std::nullopt;
+            }
+        } else {
+            dialog.currentId = branch.choices[branch.cursor].nextId;
+            std::cout << "Herrow:" << dialog.currentId << std::endl;
+            if (dialog.currentId == "" || dialog.currentId == "exit") {
+                game->state = AppState::Running;
+                game->dialogTree = std::nullopt;
+            }
+        }
+    }
+}
+
 void UpdateGui(const uptr<Game>& game, GuiState& state) {
     UpdateHud(game, state);
+
+    if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
+        auto& dialog = game->dialogTree.value();
+        UpdateDialog(dialog, game);
+    }
 
     game->reg
         .view<Player, Inventory, Character>()
@@ -191,6 +224,62 @@ void UpdateGui(const uptr<Game>& game, GuiState& state) {
     });
 }
 
+void DrawChoices(const std::vector<Choice>& choices, const int cursor) {
+    const auto x = CANVAS_WIDTH / 2 - dialogWidth / 2;
+    const auto y = CANVAS_HEIGHT - (dialogHeight + 32);
+    const auto num = choices.size();
+    const auto width = (dialogWidth - (margin*num)) / num;
+    const auto font = GetFontDefault();
+
+    int i = 0;
+    for (const auto& [message, nextId] : choices) {
+        const auto hot = i == cursor;
+        const auto fillColor = hot ? BLACK : RAYWHITE;
+        const auto rect = Rectangle{margin+x+(float)i*(width+margin), y+dialogHeight-20,(float)width,20};
+
+        if (hot) {
+            DrawRectangleRec(rect, RAYWHITE);
+        }
+
+        DrawTextRec(
+            font,
+            message.c_str(),
+            rect,
+            10,
+            1.0f,
+            true,
+            fillColor);
+        i+=1;
+    }
+}
+
+void DrawBranch(const DialogBranch& branch) {
+    const auto x = CANVAS_WIDTH / 2 - dialogWidth / 2;
+    const auto y = CANVAS_HEIGHT - (dialogHeight + 32);
+    const auto font = GetFontDefault();
+    DrawTextRec(
+        font,
+        branch.message.c_str(),
+        {x+margin,y+margin,dialogWidth-margin*2,dialogHeight-margin*2},
+        10, 1.0f, true, RAYWHITE);
+    if (branch.choices.size() > 0)
+        DrawChoices(branch.choices, branch.cursor);
+}
+
+void DrawDialog(DialogTree& dialog) {
+    // Draw border
+    DrawRectangle(
+        CANVAS_WIDTH/2 - dialogWidth / 2,
+        CANVAS_HEIGHT-(dialogHeight+32),
+        dialogWidth,
+        dialogHeight,
+        {0, 0, 0, 200}
+    );
+
+    const auto branch = dialog.branches[dialog.currentId];
+    DrawBranch(branch);
+}
+
 void DrawGui(const uptr<Game>& game, GuiState& state) {
     const auto tex = Assets::I()->textures[Textures::TEX_GUI];
     DrawInventory(game, state);
@@ -199,4 +288,9 @@ void DrawGui(const uptr<Game>& game, GuiState& state) {
     DrawCircle(cx, cy, 2, BLUE);
 
     DrawHud(game, state, tex);
+
+    if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
+        auto dialog = game->dialogTree.value();
+        DrawDialog(dialog);
+    }
 }

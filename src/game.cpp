@@ -34,6 +34,15 @@ void RenderGame(const uptr<Game>& game) {
         scene->render(game);
 }
 
+void DoDialog(const uptr<Game>& game, const DialogTree& tree) {
+    if (tree.branches.find("start") == tree.branches.end()) {
+        std::cout << "Error: dialog doesn't have a 'start' branch" << std::endl;
+    }
+
+    game->dialogTree = std::optional<DialogTree>(tree);
+    game->state = AppState::InDialog;
+}
+
 Vector2 MouseCanvasPosition(const uptr<Game>& game) {
     const float mx = GetMouseX();
     const float my = GetMouseY();

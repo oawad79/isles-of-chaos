@@ -3,16 +3,19 @@
 
 #include <vector>
 #include <entt.hpp>
+#include <optional>
 
 #include "utils.hpp"
 #include "sprite.hpp"
 #include "scene.hpp"
+#include "dialog.hpp"
 #include "level.hpp"
 #include "consts.hpp"
 
 enum class AppState {
     Running,
     Paused,
+    InDialog,
     Stopped
 };
 
@@ -31,6 +34,8 @@ struct Game {
 
     Camera2D mainCamera = {0};
     RenderTexture2D mainCanvas;
+
+    std::optional<DialogTree> dialogTree{std::nullopt};
 };
 
 void LoadGame(uptr<Game>& game);
@@ -40,6 +45,8 @@ void GotoScene(uptr<Game>& game, SceneLayer* scene);
 
 void UpdateGame(uptr<Game>& game);
 void RenderGame(const uptr<Game>& game);
+
+void DoDialog(const uptr<Game>& game, const DialogTree& tree);
 
 Vector2 MouseCanvasPosition(const uptr<Game>& game);
 

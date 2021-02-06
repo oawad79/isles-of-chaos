@@ -3,44 +3,66 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "StartIsland1.tmx",
+    "activeFile": "StartIslandFork.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
-        "StartIsland1.tmx": {
-            "scale": 1,
-            "selectedLayer": 6,
+        "StartCaveDungeonDoor.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": -32,
-                "y": -101.5
+                "x": -68,
+                "y": -22.5
+            }
+        },
+        "StartCaveDungeonDoor.tmx#OverworldTileset": {
+            "scaleInDock": 3
+        },
+        "StartIsland1.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": -320,
+                "y": -127.9090909090909
             }
         },
         "StartIsland1.tmx#Tileset": {
             "scaleInDock": 2
         },
         "StartIsland1Bg.tmx": {
-            "scale": 3,
+            "scale": 1,
             "selectedLayer": 4,
             "viewCenter": {
                 "x": -384,
-                "y": -127.83333333333331
+                "y": -127.5
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 4,
-            "selectedLayer": 7,
+            "scale": 8,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 144.75,
-                "y": 114.625
+                "x": 280.75,
+                "y": 86.3125
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
-            "scaleInDock": 2
+            "scaleInDock": 4
+        },
+        "StartIslandForkIndoors.tmx": {
+            "scale": 4,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 521,
+                "y": 8.875
+            }
+        },
+        "StartIslandForkIndoors.tmx#OverworldTileset": {
+            "scaleInDock": 1
         },
         "TestArea.tmx": {
             "scale": 2,
@@ -72,14 +94,15 @@
     "openFiles": [
         "TestArea.tmx",
         "StartIsland1.tmx",
-        "StartIsland1Bg.tmx"
+        "StartIsland1Bg.tmx",
+        "StartIslandFork.tmx"
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
-        "StartIslandFork.tmx",
-        "StartIsland1.tmx",
-        "TestArea.tmx",
         "StartIsland1Bg.tmx",
+        "TestArea.tmx",
+        "StartIsland1.tmx",
+        "StartIslandFork.tmx",
         "TestArea2.tmx"
     ],
     "tileset.embedInMap": true,

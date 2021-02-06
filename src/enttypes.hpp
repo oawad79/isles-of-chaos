@@ -9,6 +9,7 @@
 
 #define X_ENT_TYPES(E) \
     E(None)            \
+    E(Npc)             \
     E(Player)          \
     E(Test)            \
     E(Zambie)          \
