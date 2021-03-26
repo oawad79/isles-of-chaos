@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="8" nextobjectid="15">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="8" nextobjectid="16">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -241,9 +241,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,577,578,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,641,642,
-0,0,0,0,0,0,0,0,0,0,0,0,577,578,642,643,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,577,578,580,
+0,0,0,0,0,0,0,0,0,0,0,0,577,641,642,644,
 0,0,0,0,0,0,0,0,0,0,0,0,641,642,643,643,
 0,0,0,0,0,0,0,0,0,0,577,578,642,644,643,644
 </chunk>
@@ -259,9 +259,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-579,581,582,0,0,0,0,0,0,0,0,0,0,0,0,0,
-643,645,646,0,0,0,0,0,0,0,0,0,0,0,0,0,
-643,643,645,581,582,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+580,579,580,0,0,0,0,0,0,0,0,0,0,0,0,0,
+644,643,644,581,582,0,0,0,0,0,0,0,0,0,0,0,
 643,643,643,645,646,0,0,0,0,0,0,0,0,0,0,0,
 643,644,643,643,644,579,580,581,582,0,0,0,0,0,0,0
 </chunk>
@@ -654,13 +654,22 @@
   </data>
  </layer>
  <objectgroup id="5" name="Objects">
+  <properties>
+   <property name="id" value="1"/>
+   <property name="target" value="CaveDungeonEntrance"/>
+  </properties>
   <object id="13" type="Port" x="-72" y="-24" width="16" height="32">
    <properties>
     <property name="id" value="5"/>
     <property name="target" value="StartIslandFork"/>
    </properties>
   </object>
-  <object id="14" name="To Cave Dungeon" type="Door" x="-8" y="-48" width="40" height="56"/>
+  <object id="14" name="To Cave Dungeon" type="Door" x="-8" y="-48" width="40" height="56">
+   <properties>
+    <property name="id" value="1"/>
+    <property name="target" value="CaveDungeonEntrance"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="6" name="Solids">
   <object id="3" x="40" y="8">

@@ -138,6 +138,12 @@ std::optional<Feature> GetPortWithTarget(
     const std::string& id
 );
 
+std::optional<Feature> GetDoorWithTarget(
+    const Tilemap* tilemap,
+    const std::string& target,
+    const std::string& id
+);
+
 void UpdateTilemapGeometryPositions(Tilemap* tilemap);
 void SetPosition(Tilemap* tilemap, Vector2 newPos);
 

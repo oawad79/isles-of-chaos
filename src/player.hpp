@@ -16,6 +16,7 @@ struct PlayerHit {};
 struct Player {
     int health{3};
     std::optional<entt::entity> hit;
+    std::optional<Vector2> target;
 };
 
 entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Facing facing=RIGHT);

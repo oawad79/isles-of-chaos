@@ -81,6 +81,10 @@ inline float RandFloat(float a=0.0f, float b=1.0f) {
     return ((b - a) * ((float)rand() / (float)RAND_MAX)) + a;
 }
 
+inline float RandAngle() {
+    return RandFloat(0.0f, 2.0f * (float)PI);
+}
+
 inline int RandInt(int a = 0, int b = RAND_MAX) {
     return (int)RandFloat((float)a, (float)b);
 }

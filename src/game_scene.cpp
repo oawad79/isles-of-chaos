@@ -2,10 +2,8 @@
 
 GameScene::GameScene(entt::registry& reg) {}
 
-void GameScene::load(uptr<Game>& game) {
-
-    // game->level = LoadLevel("resources/maps/StartIslandFork.tmx");
-    game->level = LoadLevel("resources/maps/StartIsland1.tmx");
+void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
+    game->level = LoadLevel(which);
     auto* tilemap = GetTilemap(game->level);
 
     SpawnEntitiesFromTileMap(tilemap, game);
@@ -46,8 +44,15 @@ void GameScene::load(uptr<Game>& game) {
     }
 }
 
+void GameScene::load(uptr<Game>& game) {
+    loadLevel(game, "resources/maps/StartIsland1.tmx");
+}
+
 void GameScene::update(uptr<Game>& game) {
     handlePorts(game);
+}
+
+void GameScene::handleDoors(uptr<Game>& game) {
 }
 
 void GameScene::handlePorts(uptr<Game>& game) {
@@ -93,7 +98,18 @@ void GameScene::handlePorts(uptr<Game>& game) {
              .each([this, &tilemap, &game](auto& player, auto& body){
         if (!tilemap || enteringPort) return;
         for (const auto& feat : tilemap->features) {
-            if (feat.type == FeatureType::Port) {
+            if (feat.type == FeatureType::Door) {
+                if (Input::I()->EnterDoor()) {
+                    if (CheckCollisionRecs(feat.bounds(), body)) {
+                        // Phase out the tilemap
+
+                        std::cout << "TARGET: " << feat.target << std::endl;
+                        deleteLevel(game);
+                        loadLevel(game, "resources/maps/" + feat.target + ".tmx");
+
+                    }
+                }
+            } else if (feat.type == FeatureType::Port) {
                 if (Input::I()->EnterDoor()) {
                     if (CheckCollisionRecs(feat.bounds(), body)) {
                         // Phase out the tilemap
@@ -131,6 +147,10 @@ void GameScene::handlePorts(uptr<Game>& game) {
             }
         }
     });
+}
+
+void GameScene::deleteLevel(uptr<Game>& game) {
+    game->reg.clear();
 }
 
 void GameScene::render(const uptr<Game>& game) {

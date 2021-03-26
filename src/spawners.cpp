@@ -84,10 +84,12 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position) {
     spr.number_of_frames = 4;
 
     auto& physics = game->reg.emplace<Physics>(self);
+    physics.gravityScale.y = 0.0f;
+
     game->reg.emplace<Health>(self);
 
     auto& actor = game->reg.emplace<Actor>(self);
-    actor.type = ActorType::ZAMBIE;
+    actor.type = ActorType::GHOST;
 
     return self;
 }
@@ -171,9 +173,10 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
     if (id == "old-man") {
         auto convo = DialogTree {
             {{"start", {"Hello traveler! I don't believe we've meet, what is your name son?", "",
-                        {{"Dustin, old man", "less-rude"}, {"Yeah... not telling you anything", "rude"}}}},
-             {"rude", {"Okay wow, you are a rude boy...", ""}},
-             {"less-rude", {"Um im not even that old...", "", {}}}},
+                        {{"Dustin, old man", "less-rude"},
+                         {"Yeah... not telling you anything", "rude"}}}},
+             {"rude", {"Okay wow, you are a rude boy..."}},
+             {"less-rude", {"Um im not even that old..."}}},
         };
 
         game->reg.emplace<DialogTree>(self, convo);

@@ -18,10 +18,14 @@ public:
     void update(uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
     void destroy(uptr<Game>& game) override;
+
+    void loadLevel(uptr<Game>& game, const std::string& which);
+    void deleteLevel(uptr<Game>& game);
 private:
     entt::entity player{0};
 
     void handlePorts(uptr<Game>& game);
+    void handleDoors(uptr<Game>& game);
 
     void archiveEntities(uptr<Game>& game, int id=0);
     void unarchiveEntities(uptr<Game>& game, int id=0);

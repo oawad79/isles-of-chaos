@@ -212,28 +212,32 @@ Tilemap* LoadTilemap(const std::string& path) {
                             feat.width = size.x;
                             feat.height = size.y;
                             map->features.push_back(std::move(feat));
-                        } else if (stype == "Port") {
+                        } else if (stype == "Port" || stype == "Door") {
                             Feature feat;
-                            feat.type = FeatureType::Port;
+                            feat.type = stype == "Port" ? FeatureType::Port : FeatureType::Door;
                             feat.x = polypos.x;
                             feat.y = polypos.y;
                             feat.width = size.x;
                             feat.height = size.y;
 
                             const auto* props = object->FirstChildElement();
-                            auto* prop = props->FirstChildElement();
-                            while (prop) {
-                                const auto name = std::string{prop->Attribute("name")};
-                                if (name == "target") {
-                                    feat.target = std::string{prop->Attribute("value")};
-                                } else if (name == "id") {
-                                    feat.id = std::string{prop->Attribute("value")};
-                                } else {
-                                    std::cout << "WARNING:: Port has unsupported property: "
-                                              << name
-                                              << std::endl;
+                            if (!props) {
+                                std::cout << "Error: Port/Door is missing props" << std::endl;
+                            } else {
+                                auto* prop = props->FirstChildElement();
+                                while (prop) {
+                                    const auto name = std::string{prop->Attribute("name")};
+                                    if (name == "target") {
+                                        feat.target = std::string{prop->Attribute("value")};
+                                    } else if (name == "id") {
+                                        feat.id = std::string{prop->Attribute("value")};
+                                    } else {
+                                        std::cout << "WARNING:: Port has unsupported property: "
+                                                << name
+                                                << std::endl;
+                                    }
+                                    prop = prop->NextSiblingElement();
                                 }
-                                prop = prop->NextSiblingElement();
                             }
 
                             map->features.push_back(std::move(feat));
@@ -378,6 +382,21 @@ std::optional<Feature> GetPortWithTarget(
 
     for (const auto& feat : tilemap->features) {
         if (feat.type == FeatureType::Port) {
+            if (feat.target == target && feat.id == id)
+                return std::optional{feat};
+        }
+    }
+
+    return std::nullopt;
+}
+
+std::optional<Feature> GetDoorWithTarget(
+    const Tilemap* tilemap,
+    const std::string& target,
+    const std::string& id) {
+
+    for (const auto& feat : tilemap->features) {
+        if (feat.type == FeatureType::Door) {
             if (feat.target == target && feat.id == id)
                 return std::optional{feat};
         }

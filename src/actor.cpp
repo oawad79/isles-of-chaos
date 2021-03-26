@@ -3,13 +3,13 @@
 void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics& physics, Actor& actor) {
     switch(actor.state) {
         case ActorState::IDLE: {
-            actor.target[0] = Vector2{body.x + -200 + RandFloat() * 400, body.y};
+            actor.target[0] = Vector2{body.center().x + -200 + RandFloat() * 400, body.y};
             actor.timer[0] = RandFloat(0.5f, 2.0f);
             actor.state = ActorState::WONDER;
             break;
         }
         case ActorState::WONDER: {
-            const float dist = Vector2Distance({body.x, body.y}, actor.target[0]);
+            const float dist = Vector2Distance(body.center(), actor.target[0]);
 
             if (actor.target[0].x < body.center().x) {
                 physics.velocity.x -= 100.0f * GetFrameTime();
@@ -92,6 +92,110 @@ void UpdateDreadSharkAi(entt::registry& reg, Body& body, Physics& physics, Actor
 
 }
 
+void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& actor, Sprite& sprite) {
+    constexpr auto TRACKING_DIST { 100.0f };
+
+    const auto dt = GetFrameTime();
+
+    auto players = reg.view<Player, Body>();
+
+    float dist = 9999.0f;
+    const auto angle = atan2f(
+        actor.target[0].y,
+        actor.target[0].x
+    );
+
+    players.each([&body, &dist](auto &player, auto& playerBody) {
+        dist = Vector2Distance(body.center(), playerBody.center());
+    });
+
+    switch(actor.state) {
+        case ActorState::IDLE: {
+            const auto angle = RandAngle();
+            actor.target[0] = Vector2{
+            cosf(angle) * RandFloat(50.0f, 300.0f),
+            sinf(angle) * RandFloat(50.0f, 300.0f),
+            };
+            actor.timer[0] = RandFloat(0.5f, 2.0f);
+            actor.state = ActorState::WONDER;
+            break;
+        }
+
+        case ActorState::FIND_NEW_TARGET: {
+            const auto angle = atan2f(
+                actor.target[0].y,
+                actor.target[0].x
+            ) + RandFloat(-(float)PI/4.0f, (float)PI/4.0f);
+
+            actor.target[0] = Vector2Add(actor.target[0], Vector2{ cosf(angle), sinf(angle) });
+            actor.state = ActorState::WONDER;
+
+            break;
+        }
+
+        case ActorState::WONDER: {
+            if (dist < TRACKING_DIST) {
+                actor.state = ActorState::TRACKING;
+                break;
+            }
+
+            const auto angle = atan2f(
+                body.center().y - actor.target[0].y,
+                body.center().x - actor.target[0].x
+            ) - (float)(PI);
+
+            physics.velocity.x = cosf(angle) * 1000.0f * dt;
+            physics.velocity.y = sinf(angle) * 1000.0f * dt;
+
+            float distFromTarget = Vector2Distance(body.center(), actor.target[0]);
+
+            if (distFromTarget < 10.0f || actor.timer[0] <= 0.0f) {
+                actor.state = ActorState::IDLE;
+            }
+
+            actor.timer[0] -= dt;
+
+            break;
+        }
+
+        case ActorState::WAITING: {
+            if (actor.timer[0] <= 0.0f)  {
+                actor.state = ActorState::TRACKING;
+                break;
+            }
+            actor.timer[0] -= dt;
+            break;
+        }
+
+        case ActorState::TRACKING: {
+            players.each([dt, dist, &actor, &body, &physics](auto &player, auto& playerBody){
+                auto [x, y] = body.center();
+                auto [px, py] = playerBody.center();
+
+                float angle = atan2f(y - py, x - px) - (float)(PI);
+
+                float speed = dist / (float)TRACKING_DIST;
+
+                physics.velocity = {
+                    cosf(angle) * 3000.0f * (1.0f + speed) * dt,
+                    sinf(angle) * 3000.0f * (1.0f + speed) * dt,
+                };
+
+                if (dist <= playerBody.width) {
+                    float newAngle = angle + (float)(PI) + RandFloat(-(float)PI/4.0f, (float)PI/4.0f);
+                    physics.velocity = {
+                    cosf(newAngle) * 6000.0f * dt,
+                    sinf(newAngle) * 6000.0f * dt,
+                    };
+                    actor.timer[0] = RandFloat(0.5f, 2.0f);
+                    actor.state = ActorState::WAITING;
+                }
+            });
+            break;
+        }
+    }
+}
+
 void UpdateActor(entt::registry& reg) {
     auto view = reg.view<Actor, Physics, Body>(entt::exclude<Disabled>);
 
@@ -152,6 +256,13 @@ void UpdateActor(entt::registry& reg) {
                     UpdateDreadSharkAi(reg, body, physics, actor, sprite);
                     break;
                 }
+
+                case ActorType::GHOST: {
+                    auto& sprite = reg.get<SimpleAnimation>(ent);
+                    UpdateGhostAi(reg, body, physics, actor, sprite);
+                    break;
+                }
+
                 default: break;
             }
         }

@@ -17,12 +17,14 @@ enum class ActorType {
 
     ZAMBIE,
     DREAD_SHARK,
+    GHOST,
 
     ENEMY_END,
 };
 
 enum class ActorState {
     IDLE,
+    FIND_NEW_TARGET,
     WONDER,
     WAITING,
     FALLING,
