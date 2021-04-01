@@ -21,8 +21,7 @@ void UpdateInteraction(uptr<Game>& game, entt::registry& reg) {
 
                 if (interaction.mode == CALL_WHEN_INTERACTED &&
                     hot &&
-                    IsKeyPressed(KEY_X)) {
-
+                    Input::I()->Interact()) { 
                     std::invoke(interaction.action, e, reg);
                     interaction.last_intersection = true;
                 }

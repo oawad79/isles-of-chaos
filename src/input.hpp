@@ -19,6 +19,7 @@
     I(ACTION)                \
     I(CLIMB)                 \
     I(JUMP)                  \
+    I(INTERACT)              \
     I(OPEN_INVENTORY)        \
     I(PAUSE)                 \
     I(NUM_INPUT_TYPES)
@@ -48,6 +49,7 @@ struct Input {
     auto Jump() -> bool;
     auto OpenInv() -> bool;
     auto EnterDoor() -> bool;
+    auto Interact() -> bool;
 
     auto Attack() -> bool;
 
@@ -65,6 +67,7 @@ private:
         {InputMap::MOVE_DOWN, KEY_S},
         {InputMap::ATTACK, KEY_M},
         {InputMap::ACTION, KEY_PERIOD},
+        {InputMap::INTERACT, KEY_E},
         {InputMap::CLIMB, KEY_W},
         {InputMap::JUMP, KEY_SPACE},
         {InputMap::OPEN_INVENTORY, KEY_I},

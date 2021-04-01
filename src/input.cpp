@@ -68,3 +68,7 @@ auto Input::ShouldPause() -> bool {
 auto Input::Attack() -> bool {
     return IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
+
+auto Input::Interact() -> bool {
+    return IsKeyPressed(keymapping[InputMap::INTERACT]);
+}
