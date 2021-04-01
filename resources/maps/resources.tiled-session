@@ -23,6 +23,14 @@
         "/home/dustin/Repos/unknown/resources/maps/test-level.tmx#palette": {
             "scaleInDock": 5.5
         },
+        "ActorPalette.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 208.5,
+                "y": -2.25
+            }
+        },
         "CaveDungeonEntrance.tmx": {
             "scale": 4,
             "selectedLayer": 1,
@@ -35,22 +43,22 @@
             "scaleInDock": 3
         },
         "StartCaveDungeonDoor.tmx": {
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 4,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": -36.5,
-                "y": -96.75
+                "x": 6.25,
+                "y": -49.375
             }
         },
         "StartCaveDungeonDoor.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIsland1.tmx": {
-            "scale": 3,
+            "scale": 1.5,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -786.3333333333333,
-                "y": -196.16666666666666
+                "x": -541.3333333333333,
+                "y": -94.33333333333337
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -60,19 +68,19 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -741.5,
-                "y": -107.375
+                "x": -723.25,
+                "y": -105.625
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 4,
+            "scale": 2,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": -873.5,
-                "y": -87.375
+                "x": 281,
+                "y": 150.25
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
@@ -112,6 +120,7 @@
             "scaleInDock": 1
         }
     },
+    "last.objectTypesPath": "/home/dustin/Repos/isles-of-chaos/resources/maps/objecttypes.xml",
     "map.fixedSize": false,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 8,

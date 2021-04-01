@@ -21,6 +21,9 @@ struct Inventory {
     bool putItemAt(std::optional<Item> item, unsigned int column, unsigned int row);
     std::optional<Item> getItem(unsigned int column, unsigned int row);
     void grow(size_t newMaxColumns, size_t newMaxRows);
+
+    void decOrClear(unsigned int column, unsigned int row);
+
     void clear();
 };
 

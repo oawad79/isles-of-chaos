@@ -70,18 +70,24 @@ InvSpacial GetInvSpacial(Inventory& inv) {
             {wx, wy}};
 }
 
+constexpr auto fntSize = 10.0f;
+constexpr auto spacing = 1.0f;
+
 void DrawInventory(const uptr<Game>& game, GuiState& state) {
-    auto drawItem = [](float x, float y, Texture2D& tex, Item& item) {
+    auto drawItem = [](float x, float y, float size, Texture2D& tex, Item& item) {
+        const auto pos = Vector2{ 
+            x + cellSize / 2 - item.region.width / 2,
+            y + cellSize / 2 - item.region.height / 2,
+        };
+
         DrawTexturePro(
             tex,
             item.region,
-            {x + cellSize / 2 - item.region.width / 2,
-             y + cellSize / 2 - item.region.height / 2,
-             item.region.width,
-             item.region.height},
+            {pos.x, pos.y, item.region.width, item.region.height},
             {0, 0},
             0.0,
-            WHITE);
+            WHITE
+        );
     };
 
     auto drawEquipmentSquare = [&drawItem](float x, float y, std::optional<Item> o) {
@@ -90,20 +96,19 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
         if (o) {
             auto tex = Assets::I()->textures[Textures::TEX_EQUIPMENT];
             auto item = o.value();
-            drawItem(x, y, tex, item);
+            drawItem(x, y, cellSize, tex, item);
         }
     };
 
     game->reg
         .view<Player, Inventory, Character>()
-        .each([&state, &drawEquipmentSquare, &drawItem]
+        .each([&state, &drawEquipmentSquare, &drawItem, &game]
               (auto& player, Inventory& inventory, Character& character){
         if (state.playerInvOpen) {
             const auto equiped = character.equiped;
 
             const auto sp = GetInvSpacial(inventory);
             const auto [scx, scy] = sp.startPos;
-            auto [cx, cy] = sp.startPos;
             auto [ex, ey] = sp.equipStartPos;
             const auto [width, height] = sp.totalSize;
             const auto [wx, wy] = sp.weaponPos;
@@ -118,6 +123,8 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
             drawEquipmentSquare(ex, ey + (cellSize + margin) * i++, equiped.helmet);
             drawEquipmentSquare(ex, ey + (cellSize + margin) * i++, equiped.chestPiece);
 
+            auto [cx, cy] = sp.startPos;
+
             for (int y = 0; y < inventory.maxRows; y++) {
                 for (int x = 0; x < inventory.maxColumns; x++) {
                     DrawRectangle(cx, cy, cellSize, cellSize, {0, 0, 0, 100});
@@ -129,9 +136,82 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
                         ) ? consu
                           : equip;
                         auto item = o.value();
-                        drawItem(cx, cy, tex, item);
+                        drawItem(cx, cy, cellSize, tex, item);
                     }
 
+                    cx += cellSize + margin;
+                }
+                cx = scx;
+                cy += cellSize + margin;
+            }
+
+            cx = sp.startPos.x;
+            cy = sp.startPos.y;
+
+            for (int y = 0; y < inventory.maxRows; y++) {
+                for (int x = 0; x < inventory.maxColumns; x++) { 
+                    auto o = inventory.getItem(x, y);
+                    if (o) {
+                        const char* text = FormatText("%d", o.value().amount);
+                        const auto size = MeasureText(text, 8.0f);
+                        DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
+                        DrawTextEx(
+                            GetFontDefault(),
+                            text,
+                            {cx + cellSize - 6, cy + cellSize - 5},
+                            8.0f,
+                            8.0f,
+                            BLACK
+                        );
+
+                        if (CheckCollisionPointRec(MouseCanvasPosition(game), {cx, cy, cellSize, cellSize})) {
+                            // Show tooltip
+                            auto item = o.value(); 
+
+                            DrawRectangle(
+                                cx - 128, cy,
+                                120, 96,
+                                BLACK
+                            );
+
+                            const char* name = TextFormat("Name: %s", item.name.c_str());
+                            const char* catagory = TextFormat("Type: %s", ItemCatagoryS[(int)item.catagory].c_str());
+
+                            auto yy = cy + 4;
+                            const auto xx = cx - 128;
+
+                            DrawTextEx(GetFontDefault(), name, {xx + 4, yy}, fntSize, spacing, WHITE);
+                            yy += MeasureTextEx(GetFontDefault(), name, fntSize, spacing).y;
+                            DrawTextEx(GetFontDefault(), catagory, {xx + 4, yy}, fntSize, spacing, WHITE);
+                            yy += MeasureTextEx(GetFontDefault(), name, fntSize, spacing).y;
+
+                            switch(item.catagory) {
+                                case ItemCatagory::Consumable: {
+                                    const char* effect = TextFormat("Effect: %s", ConsumableEffectS[(int)item.consumableEffect].c_str());
+                                    DrawTextEx(GetFontDefault(), effect, {xx + 4, yy}, fntSize, spacing, WHITE);
+                                    yy += MeasureTextEx(GetFontDefault(), effect, fntSize, spacing).y; 
+                                    break;
+                                }
+                                case ItemCatagory::Weapon: {
+                                    const char* damage = TextFormat("Damage: %f", item.effectValue);
+                                    DrawTextEx(GetFontDefault(), damage, {xx + 4, yy}, fntSize, spacing, WHITE);
+                                    yy += MeasureTextEx(GetFontDefault(), damage, fntSize, spacing).y; 
+                                    break;
+                                }
+                                case ItemCatagory::Armor: {
+                                    const char* armor = TextFormat("Armor: %f", item.effectValue);
+                                    DrawTextEx(GetFontDefault(), armor, {xx + 4, yy}, fntSize, spacing, WHITE);
+                                    yy += MeasureTextEx(GetFontDefault(), armor, fntSize, spacing).y; 
+                                    break;
+                                }
+                            }
+
+                            const char* value = TextFormat("Value: %d$", item.value);
+                            DrawTextEx(GetFontDefault(), value, {xx + 4, yy}, fntSize, spacing, WHITE);
+                            yy += MeasureTextEx(GetFontDefault(), value, fntSize, spacing).y; 
+
+                        }
+                    }
                     cx += cellSize + margin;
                 }
                 cx = scx;
@@ -173,8 +253,8 @@ void UpdateGui(const uptr<Game>& game, GuiState& state) {
     }
 
     game->reg
-        .view<Player, Inventory, Character>()
-        .each([&state, &game](auto& player, Inventory& inventory, Character& character){
+        .view<Player, Body, Inventory, Character>()
+        .each([&state, &game](auto& player, auto& body, Inventory& inventory, Character& character){
         if (Input::I()->OpenInv()) {
             state.playerInvOpen = !state.playerInvOpen;
         }
@@ -210,6 +290,24 @@ void UpdateGui(const uptr<Game>& game, GuiState& state) {
                             if (character.equiped.weapon) {
                                 inventory.putItem(character.equiped.weapon.value());
                                 character.equiped.weapon = std::nullopt;
+                            }
+                        }
+                    } 
+
+                    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+                        if (CheckCollisionPointRec(MouseCanvasPosition(game),
+                                                   {cx, cy, cellSize, cellSize})) {
+                            // Drop item
+                            if (auto o = inventory.getItem(x, y)) {
+                                const Item item = o.value();
+
+                                SpawnItemWithId(
+                                    game->reg,
+                                    {body.center().x, body.center().y},
+                                    item.id
+                                );
+
+                                inventory.decOrClear(x, y);
                             }
                         }
                     }

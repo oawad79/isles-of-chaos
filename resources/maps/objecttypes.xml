@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objecttypes>
- <objecttype name="Door" color="#8b2612"/>
- <objecttype name="Ladder" color="#a48300"/>
- <objecttype name="Player" color="#0afff7"/>
- <objecttype name="Port" color="#a4154c"/>
+ <objecttype name="Checkpoint" color="#2aa2a4"/>
+ <objecttype name="Chest" color="#aa5500"/>
+ <objecttype name="DreadShark" color="#ff007f"/>
+ <objecttype name="Ghost" color="#f9f9ff"/>
+ <objecttype name="Item" color="#ffff00"/>
+ <objecttype name="Player" color="#000ce7"/>
+ <objecttype name="Port" color="#ec5de0"/>
+ <objecttype name="Water" color="#0000ff"/>
+ <objecttype name="Zambie" color="#55aa00"/>
 </objecttypes>

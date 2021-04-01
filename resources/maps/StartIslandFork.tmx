@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="108">
+<map version="1.5" tiledversion="1.5.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="110">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -1094,9 +1094,9 @@
 1615,1615,1616,1615,1473,1474,1616,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,1631,1632,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,1695,1696,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,1759,1760,
+0,0,0,0,0,0,0,0,0,0,0,0,0,1636,1631,1632,
+0,0,0,0,0,0,0,0,0,0,0,0,0,1700,1695,1696,
+0,0,0,0,0,0,0,0,0,0,0,0,0,1764,1759,1760,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,167,0,
 0,0,0,0,903,904,905,906,0,0,0,0,0,0,167,0,
 0,0,0,0,967,968,969,970,0,0,0,0,0,0,231,0
@@ -2267,6 +2267,12 @@
     <property name="target" value="StartCaveDungeonDoor"/>
    </properties>
   </object>
+  <object id="108" type="Shop" x="624" y="80" width="44.125" height="47.875">
+   <properties>
+    <property name="id" value="first-shop"/>
+   </properties>
+  </object>
+  <object id="109" name="Player" type="Player" x="479.5" y="103.5" width="16" height="24"/>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="3" x="160" y="63.125" width="8"/>

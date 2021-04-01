@@ -6,6 +6,7 @@
 #include "player.hpp"
 #include "inventory.hpp"
 #include "character.hpp"
+#include "spawners.hpp"
 
 struct GuiState {
     bool playerInvOpen{false};

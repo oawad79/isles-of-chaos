@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 #include <string>
+#include <vector>
 #include <cstdint>
 #include <map>
 
@@ -37,6 +38,7 @@
     E(ArmorIncrease)
 
 enum class ItemCatagory {X_ITEM_CATAGORY(GENERATE_ENUM)};
+static std::vector<std::string> ItemCatagoryS = { X_ITEM_CATAGORY(GENERATE_STRING) };
 #define GENERATE_MAP(V) { #V, ItemCatagory::V },
 static std::map<std::string, ItemCatagory> ItemCatagoryM = {
   X_ITEM_CATAGORY(GENERATE_MAP)
@@ -44,6 +46,7 @@ static std::map<std::string, ItemCatagory> ItemCatagoryM = {
 #undef GENERATE_MAP
 
 enum class WeaponClass {X_WEAPON_CLASS(GENERATE_ENUM)};
+static std::vector<std::string> WeaponClassS = { X_WEAPON_CLASS(GENERATE_STRING) };
 #define GENERATE_MAP(V) { #V, WeaponClass::V },
 static std::map<std::string, WeaponClass> WeaponClassM = {
   X_WEAPON_CLASS(GENERATE_MAP)
@@ -51,6 +54,7 @@ static std::map<std::string, WeaponClass> WeaponClassM = {
 #undef GENERATE_MAP
 
 enum class ArmorClass {X_ARMOR_CLASS(GENERATE_ENUM)};
+static std::vector<std::string> ArmorClassS = { X_ARMOR_CLASS(GENERATE_STRING) };
 #define GENERATE_MAP(V) { #V, ArmorClass::V },
 static std::map<std::string, ArmorClass> ArmorClassM = {
   X_ARMOR_CLASS(GENERATE_MAP)
@@ -58,6 +62,7 @@ static std::map<std::string, ArmorClass> ArmorClassM = {
 #undef GENERATE_MAP
 
 enum class ConsumableEffect {X_CONSUMABLE_EFFECT(GENERATE_ENUM)};
+static std::vector<std::string> ConsumableEffectS = { X_CONSUMABLE_EFFECT(GENERATE_STRING) };
 #define GENERATE_MAP(V) { #V, ConsumableEffect::V },
 static std::map<std::string, ConsumableEffect>  ConsumableEffectM = {
   X_CONSUMABLE_EFFECT(GENERATE_MAP)
@@ -85,6 +90,8 @@ struct Item {
 
     int value{1};
     uint32_t flags{0};
+
+    int amount{1}; // Items can also be a stack
 };
 
 #endif // SKYVAULT_ITEM_HPP
