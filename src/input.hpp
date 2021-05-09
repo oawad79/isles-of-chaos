@@ -15,6 +15,7 @@
     I(MOVE_RIGHT)            \
     I(MOVE_UP)               \
     I(MOVE_DOWN)             \
+    I(DODGE_ROLL)            \
     I(ATTACK)                \
     I(ACTION)                \
     I(CLIMB)                 \
@@ -47,6 +48,7 @@ struct Input {
     auto Up() -> bool;
     auto Down() -> bool;
     auto Jump() -> bool;
+    auto DodgeRoll() -> bool;
     auto OpenInv() -> bool;
     auto EnterDoor() -> bool;
     auto Interact() -> bool;
@@ -69,6 +71,7 @@ private:
         {InputMap::ACTION, KEY_PERIOD},
         {InputMap::INTERACT, KEY_E},
         {InputMap::CLIMB, KEY_W},
+        {InputMap::DODGE_ROLL, KEY_LEFT_SHIFT},
         {InputMap::JUMP, KEY_SPACE},
         {InputMap::OPEN_INVENTORY, KEY_I},
         {InputMap::PAUSE, KEY_ESCAPE},

@@ -49,6 +49,10 @@ auto Input::Jump() -> bool {
     return IsKeyPressed(keymapping[InputMap::JUMP]);
 }
 
+auto Input::DodgeRoll() -> bool {
+    return IsKeyPressed(keymapping[InputMap::DODGE_ROLL]);
+}
+
 auto Input::OpenInv() -> bool {
     return IsKeyPressed(keymapping[InputMap::OPEN_INVENTORY]);
 }

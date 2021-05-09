@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include <vector>
 #include <raylib.h>
 #include <tuple>
@@ -54,11 +55,26 @@ struct SimpleAnimation : Sprite {
     float time {0.0f};
 };
 
-struct SpriteRenderer {
-    Shader shader;
+struct Frame : Rectangle { float speed { 200.0f }; };
 
+struct Animation {
+  std::vector<Frame> frames;
+};
+
+struct AdvancedAnimation : Sprite {
+    Playback playback {Playback::FORWARD};
+    float time {0.0f};
+    int currentFrame{0};
+    std::string currentAnimation {""};
+    std::map<std::string, Animation> animations;
+};
+
+struct SpriteRenderer {
+    Shader shader; 
     std::vector<std::tuple<Sprite, Body>> sprites_to_draw{};
 };
+
+Animation CreateUniformAnimation(Rectangle startRegion, int numFrames, float speed=200.0f);
 
 void LoadSpriteRenderer(SpriteRenderer& self);
 

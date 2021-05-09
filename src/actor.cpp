@@ -1,15 +1,39 @@
 #include "actor.hpp"
 
 void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics& physics, Actor& actor) {
+    constexpr auto TRACKING_DIST { 80.0f };
+    constexpr auto WAIT_MAX_TIME { 3.0f };
+    constexpr auto WAIT_MIN_TIME { 0.8f };
+
+    const auto dt = GetFrameTime();
+
+    auto players = reg.view<Player, Body>();
+
+    float distToPlayer = 9999.0f;
+
+    float dirToPlayer = 0.0f;
+    players.each([&body, &distToPlayer, &dirToPlayer](auto &player, auto& playerBody) {
+        distToPlayer = Vector2Distance(body.center(), playerBody.center());
+        dirToPlayer = playerBody.center().x > body.center().x ? 1 : -1;
+    });
+
+    auto& sprite = reg.get<SimpleAnimation>(self);
+    
+    if (distToPlayer < TRACKING_DIST) {
+      actor.state = ActorState::TRACKING;
+    }
+
     switch(actor.state) {
         case ActorState::IDLE: {
+            sprite.playback = Playback::PAUSED;
             actor.target[0] = Vector2{body.center().x + -200 + RandFloat() * 400, body.y};
             actor.timer[0] = RandFloat(0.5f, 2.0f);
             actor.state = ActorState::WONDER;
             break;
         }
         case ActorState::WONDER: {
-            const float dist = Vector2Distance(body.center(), actor.target[0]);
+            sprite.playback = Playback::FORWARD;
+            const float targetDist = Vector2Distance(body.center(), actor.target[0]);
 
             if (actor.target[0].x < body.center().x) {
                 physics.velocity.x -= 100.0f * GetFrameTime();
@@ -18,14 +42,35 @@ void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics&
             }
 
             actor.timer[0] -= GetFrameTime();
-            if (dist < 10.0f || actor.timer[0] <= 0.0f) {
-                actor.timer[0] = RandFloat(0.2f, 1.0f);
+            if (targetDist < 10.0f || actor.timer[0] <= 0.0f) {
+                actor.timer[0] = RandFloat(WAIT_MIN_TIME, WAIT_MAX_TIME);
                 actor.state = ActorState::WAITING;
             }
 
             break;
         }
+
+        case ActorState::TRACKING: {
+          sprite.playback = Playback::FORWARD;
+          if (distToPlayer > TRACKING_DIST * 1.2f) {
+            actor.state = ActorState::IDLE;
+          }
+
+          if (RandFloat() * 100.0f > 98.0f && physics.on_ground) {
+            physics.velocity.y = -12000.0f * dt;
+            physics.velocity.x = dirToPlayer * 5000.0f * RandFloat(0.5f, 1.2f) * dt;
+          }
+
+          players.each([&body, &physics](auto &player, auto& playerBody){
+            int dx = body.center().x < playerBody.center().x ? 1 : -1;
+            physics.velocity.x += dx * 200.0f * GetFrameTime();
+          });
+
+          break;
+        }
+
         case ActorState::WAITING: {
+            sprite.playback = Playback::PAUSED;
             actor.timer[0] -= GetFrameTime();
             if (actor.timer[0] <= 0.0f) {
                 actor.state = ActorState::IDLE;

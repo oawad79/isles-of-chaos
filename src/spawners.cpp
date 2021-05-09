@@ -26,13 +26,14 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     body.width = 10;
     body.height = 20;
 
-    auto& spr = game->reg.emplace<SimpleAnimation>(self);
+    auto& spr = game->reg.emplace<AdvancedAnimation>(self);
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
-    spr.region = {0, 0, 12, 20};
-    spr.number_of_frames = 4;
-    spr.offset.x = -1;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
+
+    spr.currentAnimation = "moving"; 
+    spr.animations["moving"] = CreateUniformAnimation({ 0, 0, 12, 20 }, 4);
+    spr.animations["rolling"] = CreateUniformAnimation({ 0, 28, 16, 20 }, 6, 200.0f / 3.0f); 
 
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);

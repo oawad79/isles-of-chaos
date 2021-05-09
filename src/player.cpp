@@ -39,81 +39,127 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto delta = GetMouseWheelMove();
 }
 
-void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
-    auto view = reg.view<Player, Physics, Body, Character, SimpleAnimation>();
-
+void UpdatePlayerNormalState(
+    uptr<Game>& game,
+    Player &player, 
+    Physics& physics, 
+    Body& body, 
+    Character& character, 
+    AdvancedAnimation& sprite
+) { 
     const auto dt = GetFrameTime();
+    const auto equiped = character.equiped;
 
-    view.each([dt, &game](auto &player, auto& physics, auto& body, auto& character, SimpleAnimation& sprite){
-        const auto equiped = character.equiped;
+    const auto [ax, ay] = Input::I()->GetMovementVector();
 
-        const auto [ax, ay] = Input::I()->GetMovementVector();
+    sprite.playback = Playback::PAUSED;
+    if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
+    if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
 
-        sprite.playback = Playback::PAUSED;
-        if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
-        if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
+    if (sprite.playback == Playback::PAUSED)
+        sprite.currentFrame = 0;
 
-        if (sprite.playback == Playback::PAUSED)
-            sprite.current_frame = 0;
+    sprite.scale.x = physics.facingX;
 
-        sprite.scale.x = physics.facingX;
+    if (!player.hit)
+        physics.velocity.x += ax * 400.0f * dt;
 
-        if (!player.hit)
-            physics.velocity.x += ax * 400.0f * dt;
+    if (player.hit)
+        sprite.currentFrame = 2;
 
-        if (player.hit)
-            sprite.current_frame = 2;
+    if (Input::I()->Jump() && physics.on_ground) {
+        physics.velocity.y -= 18000.0f * dt;
+        physics.on_ground = false;
 
-        if (Input::I()->Jump() && physics.on_ground) {
-            physics.velocity.y -= 18000.0f * dt;
-            physics.on_ground = false;
+        // SpawnWaterParticles(game->reg, body.center());
+    }
 
-            // SpawnWaterParticles(game->reg, body.center());
+    if (Input::I()->Ascend() && physics.on_ladder) {
+        physics.velocity.y -= 1000.0f * dt;
+    }
+
+    if (Input::I()->Descend() && physics.on_ladder) {
+        physics.velocity.y += 1000.0f * dt;
+    }
+
+    if (Input::I()->Descend() && physics.on_ladder && physics.on_ground) {
+        body.y += 100.0f * dt;
+    }
+
+    if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
+      sprite.currentFrame = 0;
+      sprite.currentAnimation = "rolling";
+      sprite.playback = Playback::FORWARD;
+      player.state = PlayerState::ROLLING; 
+      player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
+      physics.velocity.y = -10000.0f * dt;
+      physics.on_ground = false;
+    }
+
+    player.dodgeRollCooloff -= dt;
+
+    UpdateCameraTracking(body, physics, game->mainCamera);
+
+    if (player.hit && game->reg.valid(player.hit.value())) {
+        auto& hitBody = game->reg.get<Body>(player.hit.value());
+        auto& spr = game->reg.get<Sprite>(player.hit.value());
+
+        spr.scale.x = physics.facingX;
+
+        hitBody.x = body.center().x - hitBody.width / 2 + hitBody.width * physics.facingX;
+        hitBody.y = body.center().y - hitBody.height / 2;
+    } else {
+        player.hit = std::nullopt;
+    }
+
+    // Attack
+    if (Input::I()->Attack() && !player.hit) {
+        if (auto o = equiped.weapon) {
+            auto weaponItem = o.value();
+
+            sprite.currentFrame = 2;
+            // physics.velocity.x = 0.0f;
+
+            player.hit = std::optional{
+                SpawnPlayerHit(
+                    game,
+                    weaponItem,
+                    body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
+                    body.center().y - weaponItem.region.height / 2,
+                    physics.facingX)
+            };
         }
+    }
+}
 
-        if (Input::I()->Ascend() && physics.on_ladder) {
-            physics.velocity.y -= 1000.0f * dt;
-        }
+void UpdatePlayerRollingState(
+    uptr<Game>& game,
+    Player &player, 
+    Physics& physics, 
+    Body& body, 
+    Character& character, 
+    AdvancedAnimation& sprite
+) { 
+  if (sprite.currentFrame >= sprite.animations[sprite.currentAnimation].frames.size() - 1) {
+    sprite.currentFrame = 0;
+    sprite.currentAnimation = "moving";
+    player.state = PlayerState::NORMAL; 
+    player.dodgeRollCooloff = DODGEROLL_COOLOFF;
+  }
 
-        if (Input::I()->Descend() && physics.on_ladder) {
-            physics.velocity.y += 1000.0f * dt;
-        }
+  physics.velocity.x = player.dodgeRollVel * GetFrameTime();
 
-        if (Input::I()->Descend() && physics.on_ladder && physics.on_ground) {
-            body.y += 100.0f * dt;
-        }
+  UpdateCameraTracking(body, physics, game->mainCamera);
+}
 
-        UpdateCameraTracking(body, physics, game->mainCamera);
+void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
+    auto view = reg.view<Player, Physics, Body, Character, AdvancedAnimation>();
 
-        if (player.hit && game->reg.valid(player.hit.value())) {
-            auto& hitBody = game->reg.get<Body>(player.hit.value());
-            auto& spr = game->reg.get<Sprite>(player.hit.value());
-
-            spr.scale.x = physics.facingX;
-
-            hitBody.x = body.center().x - hitBody.width / 2 + hitBody.width * physics.facingX;
-            hitBody.y = body.center().y - hitBody.height / 2;
-        } else {
-            player.hit = std::nullopt;
-        }
-
-        // Attack
-        if (Input::I()->Attack() && !player.hit) {
-            if (auto o = equiped.weapon) {
-                auto weaponItem = o.value();
-
-                sprite.current_frame = 2;
-                // physics.velocity.x = 0.0f;
-
-                player.hit = std::optional{
-                    SpawnPlayerHit(
-                        game,
-                        weaponItem,
-                        body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
-                        body.center().y - weaponItem.region.height / 2,
-                        physics.facingX)
-                };
-            }
+    view.each([&game](auto &player, auto& physics, auto& body, auto& character, AdvancedAnimation& sprite){
+        if (player.state == PlayerState::NORMAL) {
+          UpdatePlayerNormalState(game, player, physics, body, character, sprite);
+        } else if (player.state == PlayerState::ROLLING) {
+          UpdatePlayerRollingState(game, player, physics, body, character, sprite);
         }
     });
 }

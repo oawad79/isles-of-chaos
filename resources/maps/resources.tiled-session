@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "StartIsland1.tmx",
+    "activeFile": "StartIslandFork.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -27,8 +27,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 208.5,
-                "y": -2.25
+                "x": -4,
+                "y": 4.25
             }
         },
         "CaveDungeonEntrance.tmx": {
@@ -46,8 +46,8 @@
             "scale": 4,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 6.25,
-                "y": -49.375
+                "x": 64,
+                "y": -63.875
             }
         },
         "StartCaveDungeonDoor.tmx#OverworldTileset": {
@@ -57,8 +57,8 @@
             "scale": 1.5,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -541.3333333333333,
-                "y": -94.33333333333337
+                "x": -320,
+                "y": -128.33333333333337
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -68,8 +68,8 @@
             "scale": 4,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -723.25,
-                "y": -105.625
+                "x": -384,
+                "y": -127.875
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
@@ -79,8 +79,8 @@
             "scale": 2,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 281,
-                "y": 150.25
+                "x": 192,
+                "y": 0.25
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
@@ -90,8 +90,8 @@
             "scale": 4,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 521,
-                "y": 8.875
+                "x": 256,
+                "y": 0.125
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {
@@ -127,17 +127,23 @@
     "map.tileWidth": 8,
     "openFiles": [
         "StartIsland1.tmx",
-        "StartIsland1Bg.tmx"
+        "StartIsland1Bg.tmx",
+        "StartCaveDungeonDoor.tmx",
+        "StartIslandFork.tmx",
+        "StartIslandForkIndoors.tmx",
+        "ActorPalette.tmx"
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
-        "StartIsland1Bg.tmx",
         "StartIsland1.tmx",
+        "StartIsland1Bg.tmx",
+        "StartCaveDungeonDoor.tmx",
+        "ActorPalette.tmx",
+        "StartIslandForkIndoors.tmx",
+        "StartIslandFork.tmx",
         "/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx",
         "/home/dustin/Repos/unknown/resources/maps/test-level.tmx",
-        "StartCaveDungeonDoor.tmx",
         "CaveDungeonEntrance.tmx",
-        "StartIslandFork.tmx",
         "TestArea.tmx",
         "TestArea2.tmx"
     ],

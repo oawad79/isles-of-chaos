@@ -9,9 +9,12 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
     SpawnEntitiesFromTileMap(tilemap, game);
 
     float playerHeight = 64;
-    game->reg.view<Player, Body>().each([this, &playerHeight](auto& p, auto& body){
+    game->reg.view<Player, Body, Character>().each([this, &playerHeight](auto& p, auto& body, Character& character){
         respawnLocation = Vector2{body.x, body.y};
         playerHeight = body.height;
+        // inv.putItem(Assets::I()->getItemInfo("small-sword"));
+        character.equiped.weapon = Assets::I()->getItemInfo("small-sword");
+        
     });
 
     // Spawn checkpoints and kill zones
@@ -45,7 +48,7 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
 }
 
 void GameScene::load(uptr<Game>& game) {
-    loadLevel(game, "resources/maps/StartIsland1.tmx");
+    loadLevel(game, "resources/maps/StartIslandFork.tmx");
 }
 
 void GameScene::update(uptr<Game>& game) {
