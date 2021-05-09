@@ -30,8 +30,10 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * dt * xsmooth;
     const auto ideal_y = body.y + dt * ysmooth;
 
-    camera.target.x = (int)lerp(camera.target.x, ideal_x, xsmooth * dt);
-    camera.target.y = (int)lerp(camera.target.y, ideal_y, ysmooth * dt);
+    camera.zoom = 6.0f;
+
+    camera.target.x = lerp(camera.target.x, ideal_x, xsmooth * dt);
+    camera.target.y = lerp(camera.target.y, ideal_y, ysmooth * dt);
 
     camera.offset.x = CANVAS_WIDTH/2;
     camera.offset.y = CANVAS_HEIGHT/2;
@@ -61,17 +63,12 @@ void UpdatePlayerNormalState(
 
     sprite.scale.x = physics.facingX;
 
-    if (!player.hit)
-        physics.velocity.x += ax * 400.0f * dt;
-
-    if (player.hit)
-        sprite.currentFrame = 2;
+    if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
+    if (player.hit) sprite.currentFrame = 2;
 
     if (Input::I()->Jump() && physics.on_ground) {
         physics.velocity.y -= 18000.0f * dt;
         physics.on_ground = false;
-
-        // SpawnWaterParticles(game->reg, body.center());
     }
 
     if (Input::I()->Ascend() && physics.on_ladder) {
@@ -130,6 +127,8 @@ void UpdatePlayerNormalState(
             };
         }
     }
+
+    // Handle enemy collisions
 }
 
 void UpdatePlayerRollingState(

@@ -254,8 +254,7 @@ void UpdateActor(entt::registry& reg) {
         else
             physics.facingX = LEFT;
 
-        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) {
-
+        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) { 
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;
                 if (CheckCollisionRecs(body, obody)) {

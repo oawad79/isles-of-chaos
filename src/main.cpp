@@ -59,9 +59,9 @@ void Render(const uptr<Game>& game) {
         ClearBackground(game->backgroundClearColor);
 
         if (tilemap && tilemap->backgroundColor.a == 0)
-            DrawTexture(
+            DrawTextureEx(
                 Assets::I()->textures[TEX_BG],
-                0,0,
+                {0,0},0.0f,6.0f,
                 WHITE);
 
         if (tilemap != nullptr) DrawTilemap(tilemap);
