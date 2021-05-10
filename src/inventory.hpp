@@ -3,7 +3,7 @@
 
 #include "item.hpp"
 
-#include <vector>
+#include <array>
 #include <optional>
 
 constexpr auto MAX_INV_COLUMNS {30};

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_CXX_STANDARD 17)
 set(PROJECT_NAME IslesOfChaos)
@@ -35,7 +35,12 @@ message(STATUS "Building ${CMAKE_BUILD_TYPE}")
 
 # Get packages
 find_package(OpenGL REQUIRED)
-find_package(Raylib REQUIRED)
+if (MSVC)
+    add_subdirectory(Libs/raylib)
+endif(MSVC)
+if (NOT MSVC)
+    find_package(Raylib REQUIRED)
+endif(NOT MSVC)
 find_package(Threads)
 
 # Manual include paths

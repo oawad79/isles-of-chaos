@@ -37,7 +37,8 @@ enum Fonts {
 };
 
 enum Shaders {
-    SHADER_NUM_SHADERS
+    MAIN_SHADER,
+    SHADER_NUM_SHADERS,
 };
 
 struct ShaderAssetInfo {

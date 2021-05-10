@@ -19,12 +19,12 @@ Vector2 Input::GetMovementVector() {
     if (IsKeyDown(keymapping[InputMap::MOVE_UP]))
         result.y = -1;
 
-    if (IsGamepadAvailable(GAMEPAD_PLAYER1)) {
-        float x_axis = GetGamepadAxisMovement(GAMEPAD_PLAYER1, GAMEPAD_AXIS_LEFT_X);
-        float y_axis = GetGamepadAxisMovement(GAMEPAD_PLAYER1, GAMEPAD_AXIS_LEFT_Y);
-        if (x_axis != 0.0f) result.x = x_axis;
-        if (y_axis != 0.0f) result.y = y_axis;
-    }
+//    if (IsGamepadAvailable(GAMEPAD_PLAYER1)) {
+//        float x_axis = GetGamepadAxisMovement(GAMEPAD_PLAYER1, GAMEPAD_AXIS_LEFT_X);
+//        float y_axis = GetGamepadAxisMovement(GAMEPAD_PLAYER1, GAMEPAD_AXIS_LEFT_Y);
+//        if (x_axis != 0.0f) result.x = x_axis;
+//        if (y_axis != 0.0f) result.y = y_axis;
+//    }
 
     return result;
 }

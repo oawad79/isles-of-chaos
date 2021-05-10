@@ -213,7 +213,7 @@ void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& act
         }
 
         case ActorState::TRACKING: {
-            players.each([dt, dist, &actor, &body, &physics](auto &player, auto& playerBody){
+            players.each([dt, dist, &actor, &body, &physics, TRACKING_DIST](auto &player, auto& playerBody){
                 auto [x, y] = body.center();
                 auto [px, py] = playerBody.center();
 

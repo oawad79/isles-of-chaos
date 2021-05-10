@@ -43,7 +43,7 @@ int GetTilemapId(const uptr<Level>& level) {
 uptr<Level> LoadLevel(const std::string& path) {
     auto level = std::make_unique<Level>();
     loadTilemapRecr(level, path);
-    level->currentTilemap = std::filesystem::path(path).stem();
+    level->currentTilemap = std::filesystem::path(path).stem().string();
     return level;
 }
 

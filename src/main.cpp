@@ -85,7 +85,7 @@ int main(const int argc, const char *argv[]) {
     SetTargetFPS(60);
     HideCursor();
 
-    SetExitKey(0);
+//    SetExitKey(0);
 
     auto game = std::make_unique<Game>();
 

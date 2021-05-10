@@ -21,12 +21,9 @@ Tileset LoadTileset(tinyxml2::XMLElement* el) {
     el->QueryIntAttribute("tileheight", &height);
 
     const auto path = std::filesystem::path(image->Attribute("source"));
-    const auto filename = path.filename();
+    const auto texturePath = "resources/textures/" + path.filename().string();
 
-    char fullpath[512];
-    sprintf(fullpath, "resources/textures/%s", filename.c_str());
-
-    result.texture = LoadTexture(fullpath);
+    result.texture = LoadTexture(texturePath.c_str());
     result.tilewidth = width;
     result.tileheight = height;
 
@@ -45,7 +42,7 @@ Tilemap* LoadTilemap(const std::string& path) {
     auto map = new Tilemap();
 
     map->path = path;
-    map->name = std::filesystem::path(path).stem();
+    map->name = std::filesystem::path(path).stem().string();
     map->target = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
 
     using namespace tinyxml2;
@@ -98,6 +95,7 @@ Tilemap* LoadTilemap(const std::string& path) {
                 chunkd->QueryAttribute("x", &coffsetx);
                 chunkd->QueryAttribute("y", &coffsety);
 
+
                 chunk->tiles.reserve(sizeof(Tile)*cwidth*cheight);
                 chunk->offset = Vector2{(float)coffsetx, (float)coffsety};
                 chunk->size = Vector2{(float)cwidth, (float)cheight};
@@ -107,7 +105,7 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                 int index = 0;
                 for (Tile i; ss >> i;) {
-                    chunk->tiles[index++] = i;
+                        chunk->tiles.push_back(i);
                     if (ss.peek() == ',') ss.ignore();
                 }
 
@@ -331,6 +329,8 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                 for (int y = 0; y < chunk->size.y; y++) {
                     for (int x = 0; x < chunk->size.x; x++) {
                         int index = x + y * chunk->size.x;
+
+//                        if (index >= chunk->tiles.size()) continue;
 
                         Tile tile = chunk->tiles[index];
 

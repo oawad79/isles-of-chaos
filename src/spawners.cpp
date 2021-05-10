@@ -81,7 +81,7 @@ entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position) {
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
     spr.offset.x += 4;
-    spr.region = (Rectangle){0, 16, 16, 16};
+    spr.region = Rectangle{0, 16, 16, 16};
     spr.number_of_frames = 4;
 
     auto& physics = game->reg.emplace<Physics>(self);
@@ -109,7 +109,7 @@ entt::entity SpawnDreadShark(const uptr<Game>& game, const Vector2 position) {
     // spr.offset.y += 6;
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
-    spr.region = (Rectangle){64, 16, 32, 48};
+    spr.region = Rectangle{64, 16, 32, 48};
     spr.number_of_frames = 1;
 
     game->reg.emplace<Health>(self);
