@@ -126,7 +126,7 @@ int main(const int argc, const char *argv[]) {
               DrawTexturePro(
                   tex,
                   {0,0,(float)tex.width, -(float)tex.height},
-                  {0,0,GetScreenHeight()*aspect,GetScreenHeight()},
+                  {0,0,(GetScreenHeight()*aspect),(float)GetScreenHeight()},
                   Vector2Zero(),
                   0.0f,
                   WHITE);

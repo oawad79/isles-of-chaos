@@ -133,8 +133,10 @@ void UpdateShroombaAi(entt::registry& reg, Body& body, Physics& physics, Actor& 
             break;
         }
         case ActorState::JUMPING: {
-          if (physics.on_ground == true) {
-            actor.state = ActorState::IDLE;
+          sprite.region.x = 48;
+          if (physics.on_ground) {
+              sprite.region.x = 32;
+              actor.state = ActorState::IDLE;
           }
           break;
         }
