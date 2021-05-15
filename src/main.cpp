@@ -80,6 +80,7 @@ int main(const int argc, const char *argv[]) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(1280, 720, "DevWindow");
+    SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
     SetTargetFPS(60);
     //HideCursor();
 
@@ -96,13 +97,14 @@ int main(const int argc, const char *argv[]) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
-        Update(game);
-        Render(game);
+        if (IsWindowFocused()) {
+            Update(game);
+            Render(game);
 
-        BeginDrawing();
+            BeginDrawing();
             ClearBackground(BLACK);
             // DrawTexture(game->mainCanvas.texture, 0, 0, WHITE);
-            const float aspect = (float)CANVAS_HEIGHT / (float)CANVAS_WIDTH;
+            const float aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
             const float width = GetScreenWidth();
             const float height = width * aspect;
 
@@ -110,30 +112,36 @@ int main(const int argc, const char *argv[]) {
             const float y = screenHeight / 2.0f - height / 2.0f;
 
             {
-              const auto tex = game->mainCanvas.texture; 
-              DrawTexturePro(
-                  tex,
-                  {0,0,(float)tex.width, -(float)tex.height},
-                  {x,y,width,height},
-                  Vector2Zero(),
-                  0.0f,
-                  WHITE);
+                const auto tex = game->mainCanvas.texture;
+                DrawTexturePro(
+                        tex,
+                        {0, 0, (float) tex.width, -(float) tex.height},
+                        {x, y, width, height},
+                        Vector2Zero(),
+                        0.0f,
+                        WHITE);
             }
 
             {
-              const auto tex = game->guiCanvas.texture; 
-              const float aspect = (float)GUI_CANVAS_WIDTH / (float)GUI_CANVAS_HEIGHT;
-              DrawTexturePro(
-                  tex,
-                  {0,0,(float)tex.width, -(float)tex.height},
-                  {0,0,(GetScreenHeight()*aspect),(float)GetScreenHeight()},
-                  Vector2Zero(),
-                  0.0f,
-                  WHITE);
+                const auto tex = game->guiCanvas.texture;
+                const float aspect = (float) GUI_CANVAS_WIDTH / (float) GUI_CANVAS_HEIGHT;
+                DrawTexturePro(
+                        tex,
+                        {0, 0, (float) tex.width, -(float) tex.height},
+                        {0, 0, (GetScreenHeight() * aspect), (float) GetScreenHeight()},
+                        Vector2Zero(),
+                        0.0f,
+                        WHITE);
             }
 
             DrawFPS(0, 0);
-        EndDrawing();
+            EndDrawing();
+        } else {
+            BeginDrawing();
+            ClearBackground(BLACK);
+                DrawText("Click on window!", 0, 0, 120, WHITE);
+            EndDrawing();
+        }
     }
 
     return 0;

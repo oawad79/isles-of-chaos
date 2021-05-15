@@ -21,12 +21,24 @@ void UpdateHud(const uptr<Game>& game, GuiState& state) {
 
 void DrawHud(const uptr<Game>& game, GuiState& state, const Texture& tex){
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
+        const auto& tex = Assets::I()->textures[TEX_GUI];
+
+        DrawTexturePro(
+                tex,
+                {0, 96, 16, 16},
+                {0, 0, 16, 16},
+                {0, 0},
+                0.0f,
+                WHITE);
+
         //int frame = floor(state.frameScaler);
         //if (state.frameScaler > 1.8) frame = 2;
         //const auto [rx, ry, rw, rh] = state.healthRegion;
 
-        const float dist = health.max - health.amount;
-        DrawRectangle(0, dist, 16, health.max - dist, RED);
+//        const float dist = health.max - health.amount;
+//        DrawRectangle(0, dist, 16, health.max - dist, RED);
+
+
 
         //DrawTexturePro(
         //    tex,
