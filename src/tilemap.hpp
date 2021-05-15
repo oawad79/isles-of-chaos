@@ -37,6 +37,7 @@ enum class FeatureType {
     Door,
     Checkpoint,
     Kill,
+    Banner,
 };
 
 struct Polygon : Rectangle {

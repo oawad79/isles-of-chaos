@@ -17,3 +17,12 @@ A couple traveling to the new land, gets hit with a storm, they get shipwrecked 
 ** Zones
 *** Tutorial Islands
 - Small fishing village
+
+IDEA:
+
+I think that the old man you talk to in the village should give you an item that allow you to do the dash roll so that
+you can dash roll over spikes in the starting cave, that way the game prevents you from completing the starting dungeon
+with out talking to the old man
+
+Health should after a large hit display first in yellow how much damage will be applied, then after a second the 
+health will move to that location

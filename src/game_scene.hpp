@@ -4,6 +4,7 @@
 #include <entt.hpp>
 
 #include "scene.hpp"
+#include "gui.hpp"
 #include "game.hpp"
 #include "level.hpp"
 #include "player.hpp"

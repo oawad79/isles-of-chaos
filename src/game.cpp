@@ -2,6 +2,7 @@
 
 void LoadGame(uptr<Game>& game) {
     game->mainCanvas = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
+    game->guiCanvas = LoadRenderTexture(GUI_CANVAS_WIDTH, GUI_CANVAS_HEIGHT);
 
     game->mainCamera.rotation = 0;
     game->mainCamera.zoom = 1;

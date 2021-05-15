@@ -42,6 +42,17 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
                 });
             };
         }
+
+        if (feat.type == FeatureType::Banner) {
+            auto e = game->reg.create();
+            auto& b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+            auto& i = game->reg.emplace<Interaction>(e);
+            i.mode = InteractionMode::CALL_WHEN_ENTERED;
+            i.icon = ActionIcon::NONE;
+            i.action = [&](auto e, entt::registry& reg) {
+                DoAreaBanner(game, feat.target);
+            }; 
+        }
     }
 }
 

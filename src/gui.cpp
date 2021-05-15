@@ -1,12 +1,10 @@
 #include "gui.hpp"
 
 constexpr auto cellSize {16};
-constexpr auto margin{1};
-
+constexpr auto margin{1}; 
 
 constexpr auto dialogWidth = CANVAS_WIDTH / 2;
-constexpr auto dialogHeight = CANVAS_HEIGHT / 4;
-
+constexpr auto dialogHeight = CANVAS_HEIGHT / 4; 
 
 void UpdateHud(const uptr<Game>& game, GuiState& state) {
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
@@ -23,19 +21,23 @@ void UpdateHud(const uptr<Game>& game, GuiState& state) {
 
 void DrawHud(const uptr<Game>& game, GuiState& state, const Texture& tex){
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
-        int frame = floor(state.frameScaler);
-        if (state.frameScaler > 1.8) frame = 2;
-        const auto [rx, ry, rw, rh] = state.healthRegion;
-        DrawTexturePro(
-            tex,
-            {rx + frame * 32,
-             ry,
-             rw,
-             rh},
-            {8, 8, 32, 16},
-            {0, 0},
-            0.0f,
-            WHITE);
+        //int frame = floor(state.frameScaler);
+        //if (state.frameScaler > 1.8) frame = 2;
+        //const auto [rx, ry, rw, rh] = state.healthRegion;
+
+        const float dist = health.max - health.amount;
+        DrawRectangle(0, dist, 16, health.max - dist, RED);
+
+        //DrawTexturePro(
+        //    tex,
+        //    {rx + frame * 32,
+        //     ry,
+        //     rw,
+        //     rh},
+        //    {8, 8, 32, 16},
+        //    {0, 0},
+        //    0.0f,
+        //    WHITE);
     });
 }
 
@@ -50,8 +52,8 @@ struct InvSpacial {
 InvSpacial GetInvSpacial(Inventory& inv) {
     const float width = inv.maxColumns * (cellSize + margin);
     const float height = inv.maxRows * (cellSize + margin);
-    constexpr auto cwh = CANVAS_WIDTH/2;
-    constexpr auto chh = CANVAS_HEIGHT*(0.75);
+    constexpr auto cwh = GUI_CANVAS_WIDTH/2;
+    constexpr auto chh = GUI_CANVAS_HEIGHT*(0.75);
 
     const auto scx = cwh - width / 2;
     const auto scy = chh - height / 2;
@@ -235,7 +237,6 @@ void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
             }
         } else {
             dialog.currentId = branch.choices[branch.cursor].nextId;
-            std::cout << "Herrow:" << dialog.currentId << std::endl;
             if (dialog.currentId == "" || dialog.currentId == "exit") {
                 game->state = AppState::Running;
                 game->dialogTree = std::nullopt;
@@ -244,7 +245,22 @@ void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
     }
 }
 
-void UpdateGui(const uptr<Game>& game, GuiState& state) {
+void UpdateGui(const uptr<Game>& game) {
+    auto& state = game->guiState;
+
+    if (state.banner.timeLeft >= 0.0f) {
+        if (state.banner.color.a < 256 - 4) {
+          state.banner.color.a += 4;
+        } else { 
+          state.banner.color.a = 255;
+        }
+
+      state.banner.timeLeft -= GetFrameTime();
+
+      if (state.banner.timeLeft <= 0.0f)
+        state.banner.text = "";
+    }
+
     UpdateHud(game, state);
 
     if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
@@ -378,7 +394,40 @@ void DrawDialog(DialogTree& dialog) {
     DrawBranch(branch);
 }
 
-void DrawGui(const uptr<Game>& game, GuiState& state) {
+
+void DrawBanner(BannerState& state) {
+    constexpr auto fontSize = 100.0f;
+
+    const auto& tex = Assets::I()->textures[TEX_GUI];
+    const auto font = GetFontDefault();
+    const auto [tw, th] = MeasureTextEx(font, state.text.c_str(), fontSize, 1.0f);
+
+    const auto x = GetScreenWidth() / 2 - tw / 2;
+    const auto y = GetScreenHeight() / 2 - th / 2 - GetScreenHeight() / 4.0f;
+
+    const auto tileSize = 8*6.0f;
+
+    DrawTexturePro(tex, {0, 45, 8, 38}, {x - tileSize, y, tileSize, th}, {0, 0}, 0.0f, state.color);
+    for (int i = 0; i < (int)(tw / tileSize); i++) { 
+      DrawTexturePro(tex, {8, 45, 16, 38}, {x + i * tileSize, y, tileSize, th}, {0, 0}, 0.0f, state.color);
+    } 
+    DrawTexturePro(tex, {0, 45, -8, 38}, {x + tw - 4, y, tileSize + 4, th}, {0, 0}, 0.0f, state.color);
+
+    const Color textColor { 0, 0, 0, state.color.a };
+    DrawTextRec(
+        font,
+        state.text.c_str(),
+        {x,y,tw * 2,th},
+        fontSize, 1.0f, true, textColor);
+}
+
+void RenderGui(const uptr<Game>& game) {
+    auto& state = game->guiState; 
+
+    if (state.banner.timeLeft >= 0.0f && state.banner.text != "") {
+        DrawBanner(state.banner);
+    }
+
     const auto tex = Assets::I()->textures[Textures::TEX_GUI];
     DrawInventory(game, state);
 
@@ -391,4 +440,11 @@ void DrawGui(const uptr<Game>& game, GuiState& state) {
         auto dialog = game->dialogTree.value();
         DrawDialog(dialog);
     }
+}
+
+void DoAreaBanner(const uptr<Game>& game, const std::string& text) {
+  if (game->guiState.banner.text != "" || game->guiState.banner.timeLeft > 0.0f) return;
+  game->guiState.banner.color.a = 0.0f;
+  game->guiState.banner.text = text;
+  game->guiState.banner.timeLeft = BANNER_MAX_TIME; 
 }

@@ -7,6 +7,7 @@
 
 #include "utils.hpp"
 #include "sprite.hpp"
+#include "gui_state.hpp"
 #include "scene.hpp"
 #include "dialog.hpp"
 #include "level.hpp"
@@ -34,6 +35,8 @@ struct Game {
 
     Camera2D mainCamera = {0};
     RenderTexture2D mainCanvas;
+    RenderTexture2D guiCanvas;
+    GuiState guiState;
 
     std::optional<DialogTree> dialogTree{std::nullopt};
 };

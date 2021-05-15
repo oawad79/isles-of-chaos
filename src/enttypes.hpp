@@ -14,6 +14,7 @@
     E(Test)            \
     E(Zambie)          \
     E(Ghost)           \
+    E(Shroomba)        \
     E(Pot)             \
     E(Water)           \
     E(DreadShark)      \

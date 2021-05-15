@@ -30,8 +30,7 @@ Tileset LoadTileset(tinyxml2::XMLElement* el) {
     return result;
 }
 
-Tilemap* LoadTilemap(const std::string& path) {
-
+Tilemap* LoadTilemap(const std::string& path) { 
     if (std::filesystem::exists(path) == false) {
         std::cout << "ERROR::Tilemap::LoadTilemap:: map does not exist: "
                   << path
@@ -93,8 +92,7 @@ Tilemap* LoadTilemap(const std::string& path) {
                 chunkd->QueryIntAttribute("width", &cwidth);
                 chunkd->QueryIntAttribute("height", &cheight);
                 chunkd->QueryAttribute("x", &coffsetx);
-                chunkd->QueryAttribute("y", &coffsety);
-
+                chunkd->QueryAttribute("y", &coffsety); 
 
                 chunk->tiles.reserve(sizeof(Tile)*cwidth*cheight);
                 chunk->offset = Vector2{(float)coffsetx, (float)coffsety};
@@ -194,6 +192,29 @@ Tilemap* LoadTilemap(const std::string& path) {
                             }
 
                             map->billboards.push_back(billboard);
+                        } else if (stype == "Banner") { 
+                            Feature feat;
+                            feat.type = FeatureType::Banner;
+                            feat.x = polypos.x;
+                            feat.y = polypos.y;
+                            feat.width = size.x;
+                            feat.height = size.y; 
+
+                            const auto* props = object->FirstChildElement();
+                            if (!props) {
+                                std::cout << "Error: Banner is missing props" << std::endl;
+                            } else {
+                                auto* prop = props->FirstChildElement();
+                                while (prop) {
+                                    const auto name = std::string{prop->Attribute("name")};
+                                    if (name == "banner") {
+                                        feat.target = std::string{prop->Attribute("value")};
+                                    }
+                                    prop = prop->NextSiblingElement();
+                                }
+                            }
+
+                            map->features.push_back(std::move(feat));
                         } else if (stype == "Checkpoint") {
                             Feature feat;
                             feat.type = FeatureType::Checkpoint;

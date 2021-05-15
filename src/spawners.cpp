@@ -223,6 +223,32 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 16;
+    body.height = 16;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.region = {32, 0, 16, 16};
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+    auto& physics = game->reg.emplace<Physics>(self);
+    game->reg.emplace<Health>(self);
+
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::SHROOMBA;
+
+    game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
+    return self;
+}
+
 entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 

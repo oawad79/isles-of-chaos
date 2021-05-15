@@ -24,11 +24,11 @@
             "scaleInDock": 5.5
         },
         "ActorPalette.tmx": {
-            "scale": 2,
+            "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": -4,
-                "y": 4.25
+                "x": 258.3636363636364,
+                "y": -36.09090909090909
             }
         },
         "CaveDungeonEntrance.tmx": {
@@ -57,8 +57,8 @@
             "scale": 1.5,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -320,
-                "y": -128.33333333333337
+                "x": -76,
+                "y": -117
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -76,11 +76,11 @@
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 2,
+            "scale": 4,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 192,
-                "y": 0.25
+                "x": 317.25,
+                "y": 64.125
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {

@@ -7,6 +7,7 @@
 #include "particles.hpp"
 #include "body.hpp"
 #include "character.hpp"
+#include "actor.hpp"
 #include "timed.hpp"
 #include "physics.hpp"
 #include "input.hpp"

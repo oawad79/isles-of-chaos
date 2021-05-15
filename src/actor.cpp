@@ -91,6 +91,57 @@ void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics&
     }
 }
 
+void UpdateShroombaAi(entt::registry& reg, Body& body, Physics& physics, Actor& actor, Sprite& sprite) {
+    constexpr auto TRACKING_DIST { 60.0f };
+    constexpr auto WAIT_MAX_TIME { 3.0f };
+    constexpr auto WAIT_MIN_TIME { 0.8f };
+
+    const auto dt = GetFrameTime();
+
+    auto players = reg.view<Player, Body>();
+
+    float distToPlayer = 9999.0f;
+
+    float dirToPlayer = 0.0f;
+    players.each([&body, &distToPlayer, &dirToPlayer](auto &player, auto& playerBody) {
+        distToPlayer = Vector2Distance(body.center(), playerBody.center());
+        dirToPlayer = playerBody.center().x > body.center().x ? 1 : -1;
+    }); 
+
+    switch(actor.state) {
+        case ActorState::IDLE: {
+            actor.target[0] = Vector2{body.center().x + -200 + RandFloat() * 400, body.y};
+            actor.timer[0] = RandFloat(0.35f, 1.00f);
+            actor.state = ActorState::WAITING;
+            break;
+        }
+        case ActorState::WAITING: { 
+            if (actor.timer[0] <= 0.0f) {
+                actor.state = ActorState::JUMPING; 
+                if (distToPlayer < TRACKING_DIST) {
+                  physics.velocity.y = -RandFloat(10000.0f, 18000.0f) * dt;
+                  physics.velocity.x = RandFloat(7000.0f, 9000.0f) * dt * dirToPlayer;
+                } else { 
+                  physics.velocity.y = -RandFloat(8000.0f, 13000.0f) * dt;
+                  physics.velocity.x = RandFloat(7000.0f, 9000.0f) * dt * RandFloat(-1.0f, 1.0f);
+                }
+                physics.friction = 0.105f;
+                physics.on_ground = false;
+            }
+
+            actor.timer[0] -= dt; 
+            break;
+        }
+        case ActorState::JUMPING: {
+          if (physics.on_ground == true) {
+            actor.state = ActorState::IDLE;
+          }
+          break;
+        }
+        default: break;
+    }
+}
+
 void UpdateDreadSharkAi(entt::registry& reg, Body& body, Physics& physics, Actor& actor, Sprite& sprite) {
     constexpr auto JUMP_HEIGHT {160.0f};
     switch(actor.state) {
@@ -241,6 +292,11 @@ void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& act
     }
 }
 
+bool IsEnemy(Actor actor) {
+  return actor.type > ActorType::ENEMY_START 
+    && actor.type < ActorType::ENEMY_END;
+}
+
 void UpdateActor(entt::registry& reg) {
     auto view = reg.view<Actor, Physics, Body>(entt::exclude<Disabled>);
 
@@ -299,14 +355,17 @@ void UpdateActor(entt::registry& reg) {
                     auto& sprite = reg.get<SimpleAnimation>(ent);
                     UpdateDreadSharkAi(reg, body, physics, actor, sprite);
                     break;
-                }
-
+                } 
                 case ActorType::GHOST: {
                     auto& sprite = reg.get<SimpleAnimation>(ent);
                     UpdateGhostAi(reg, body, physics, actor, sprite);
                     break;
                 }
-
+                case ActorType::SHROOMBA: { 
+                    auto& sprite = reg.get<Sprite>(ent);
+                    UpdateShroombaAi(reg, body, physics, actor, sprite);
+                    break;
+                }
                 default: break;
             }
         }

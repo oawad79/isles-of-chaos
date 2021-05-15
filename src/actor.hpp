@@ -7,6 +7,7 @@
 #include "physics_type.hpp"
 #include "body.hpp"
 #include "player.hpp"
+#include "enemy.hpp"
 #include "spawners.hpp"
 #include "item.hpp"
 #include "particles.hpp"
@@ -18,6 +19,7 @@ enum class ActorType {
     ZAMBIE,
     DREAD_SHARK,
     GHOST,
+    SHROOMBA,
 
     ENEMY_END,
 };
@@ -42,10 +44,14 @@ struct Actor {
     ActorType type{ActorType::NPC};
     AiType ai{AiType::NONE};
     ActorState state{ActorState::IDLE};
+
+    Enemy enemyStats{};
+
     Vector2 target[8];
     float timer[8];
 };
 
+bool IsEnemy(Actor actor);
 void UpdateActor(entt::registry& reg);
 
 #endif // SKYVAULT_ACTOR_HPP

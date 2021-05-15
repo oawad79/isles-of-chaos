@@ -30,7 +30,7 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * dt * xsmooth;
     const auto ideal_y = body.y + dt * ysmooth;
 
-    camera.zoom = 6.0f;
+    camera.zoom = CAMERA_ZOOM;
 
     camera.target.x = lerp(camera.target.x, ideal_x, xsmooth * dt);
     camera.target.y = lerp(camera.target.y, ideal_y, ysmooth * dt);
@@ -44,6 +44,7 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
 void UpdatePlayerNormalState(
     uptr<Game>& game,
     Player &player, 
+    Health &health,
     Physics& physics, 
     Body& body, 
     Character& character, 
@@ -129,6 +130,18 @@ void UpdatePlayerNormalState(
     }
 
     // Handle enemy collisions
+    auto view = game->reg.view<Actor, Body, Physics>(entt::exclude<Player, Disabled>);
+    for (auto& ent : view) {
+      auto& eactor = game->reg.get<Actor>(ent);
+      if (!IsEnemy(eactor)) continue;
+  
+      auto& ebody = game->reg.get<Body>(ent);
+     
+      if (CheckCollisionRecs(body, ebody)) {
+        health.hit(eactor.enemyStats.damage);
+      }
+
+    }
 }
 
 void UpdatePlayerRollingState(
@@ -152,11 +165,18 @@ void UpdatePlayerRollingState(
 }
 
 void UpdatePlayer(uptr<Game>& game, entt::registry& reg) {
-    auto view = reg.view<Player, Physics, Body, Character, AdvancedAnimation>();
+    auto view = reg.view<
+      Player, 
+      Health, 
+      Physics, 
+      Body, 
+      Character, 
+      AdvancedAnimation
+    >();
 
-    view.each([&game](auto &player, auto& physics, auto& body, auto& character, AdvancedAnimation& sprite){
+    view.each([&game](auto &player, auto& health, auto& physics, auto& body, auto& character, AdvancedAnimation& sprite){
         if (player.state == PlayerState::NORMAL) {
-          UpdatePlayerNormalState(game, player, physics, body, character, sprite);
+          UpdatePlayerNormalState(game, player, health, physics, body, character, sprite);
         } else if (player.state == PlayerState::ROLLING) {
           UpdatePlayerRollingState(game, player, physics, body, character, sprite);
         }
