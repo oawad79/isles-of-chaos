@@ -24,12 +24,13 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     body.x = position.x;
     body.y = position.y;
     body.width = 10;
-    body.height = 20;
+    body.height = 18;
 
     auto& spr = game->reg.emplace<AdvancedAnimation>(self);
     spr.T = Type::ANIMATION;
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
+    spr.offset.y -= 2;
 
     spr.currentAnimation = "moving"; 
     spr.animations["moving"] = CreateUniformAnimation({ 0, 0, 12, 20 }, 4);
@@ -172,22 +173,29 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
     const auto self = SpawnNpc(game, position);
 
     if (id == "old-man") {
-        auto convo = DialogTree {
-            {{"start", {"Hello traveler! I don't believe we've meet, what is your name son?", "",
-                        {{"Dustin, old man", "less-rude"},
-                         {"Yeah... not telling you anything", "rude"}}}},
-             {"rude", {"Okay wow, you are a rude boy..."}},
-             {"less-rude", {"Um im not even that old..."}}},
+        auto convo = DialogTree{
+                {{"start", {"Hello traveler! I don't believe we've meet, what is your name son?", "",
+                                   {{"Dustin, old man", "less-rude"},
+                                           {"Yeah... not telling you anything", "rude"}}}},
+                        {"rude", {"Okay wow, you are a rude boy..."}},
+                        {"less-rude", {"Um im not even that old..."}}},
         };
 
         game->reg.emplace<DialogTree>(self, convo);
 
-        auto& inter = game->reg.emplace<Interaction>(self);
-        inter.action = [&](auto e, entt::registry& r){
-            const auto& dialog = r.get<DialogTree>(e);
+        auto &inter = game->reg.emplace<Interaction>(self);
+        inter.action = [&](auto e, entt::registry &r) {
+            const auto &dialog = r.get<DialogTree>(e);
             DoDialog(game, dialog);
         };
+    } else if (id == "fishing-man") {
+        auto& sprite = game->reg.get<SimpleAnimation>(self);
+        sprite.region = Rectangle{ 176, 10, 16, 22 };
 
+        auto& body = game->reg.get<Body>(self);
+        body.height = 17;
+
+//        sprite.offset.y -= 5;
     } else {
         std::cout << "Unknown NPC with ID: '" << id << "'" << std::endl;
     }

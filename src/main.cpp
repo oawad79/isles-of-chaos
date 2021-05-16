@@ -97,7 +97,7 @@ int main(const int argc, const char *argv[]) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
-        if (IsWindowFocused()) {
+        if (IsWindowFocused() || true) {
             Update(game);
             Render(game);
 
@@ -134,7 +134,7 @@ int main(const int argc, const char *argv[]) {
                         WHITE);
             }
 
-            DrawFPS(0, 0);
+            DrawFPS(GetScreenWidth() - 100, 0);
             EndDrawing();
         } else {
             BeginDrawing();

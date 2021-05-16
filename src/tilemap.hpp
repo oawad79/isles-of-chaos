@@ -35,6 +35,7 @@ enum class FeatureType {
     Ladder,
     Port,
     Door,
+    Room,
     Checkpoint,
     Kill,
     Banner,
@@ -79,6 +80,8 @@ struct Feature : Rectangle {
     std::string target{""};
     std::string id{""};
 
+    bool active = false;
+
     inline auto bounds() const { return Rectangle{
         x + offset.x,
         y + offset.y,
@@ -121,6 +124,7 @@ struct Tilemap {
     std::vector<SpawnLocation> objects;
     std::vector<Feature> features; // Ladders / Doors / Ports
     std::vector<Billboard> billboards;
+    std::vector<Feature> rooms;
 
     RenderTexture2D target;
     float alpha {1.0f};

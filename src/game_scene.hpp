@@ -32,6 +32,8 @@ private:
     void unarchiveEntities(uptr<Game>& game, int id=0);
     bool archived{false};
 
+    float loadTimer {0.0f};
+
     bool enteringPort{false};
     bool fadeOut{false};
     float fadeTimer = 0.0f;

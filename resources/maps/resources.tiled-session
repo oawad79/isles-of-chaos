@@ -55,14 +55,14 @@
         },
         "StartIsland1.tmx": {
             "scale": 5.5,
-            "selectedLayer": 1,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": -889.4545454545455,
-                "y": -212.9090909090909
+                "x": -44.90909090909091,
+                "y": -138.72727272727275
             }
         },
         "StartIsland1.tmx#Tileset": {
-            "scaleInDock": 2
+            "scaleInDock": 5.5
         },
         "StartIsland1Bg.tmx": {
             "scale": 4,
@@ -79,19 +79,19 @@
             "scale": 3,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": -360.3333333333333,
-                "y": 1.3333333333333428
+                "x": 583.3333333333333,
+                "y": 110.33333333333334
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
             "scaleInDock": 4
         },
         "StartIslandForkIndoors.tmx": {
-            "scale": 4,
-            "selectedLayer": 3,
+            "scale": 1.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 256,
-                "y": 0
+                "x": 227.33333333333331,
+                "y": 10
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {

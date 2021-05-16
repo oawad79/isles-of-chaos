@@ -33,6 +33,7 @@ enum Textures {
 
 enum Fonts {
     FONT_NONE,
+    FONT_SMALL,
     FONT_NUM_FONTS,
 };
 

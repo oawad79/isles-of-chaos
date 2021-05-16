@@ -231,6 +231,12 @@ Tilemap* LoadTilemap(const std::string& path) {
                             feat.width = size.x;
                             feat.height = size.y;
                             map->features.push_back(std::move(feat));
+                        } else if (stype == "Room") {
+                            Feature feat;
+                            feat.type = FeatureType::Room;
+                            feat.x = polypos.x; feat.y = polypos.y;
+                            feat.width = size.x; feat.height = size.y;
+                            map->rooms.push_back(std::move(feat));
                         } else if (stype == "Port" || stype == "Door") {
                             Feature feat;
                             feat.type = stype == "Port" ? FeatureType::Port : FeatureType::Door;
@@ -344,14 +350,20 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
         //         });
         // }
 
+//        bool roomActive = false;
+//        for (auto& room : tilemap->rooms) {
+//            if (room.active) {
+//                BeginScissorMode((int)room.x, (int)room.y, (int)room.width, (int)room.height);
+//                roomActive = true;
+//            }
+//        }
+
         for (const auto& layer : tilemap->layers) {
             const auto tint = layer.tint;
             for (const auto& chunk : layer) {
                 for (int y = 0; y < chunk->size.y; y++) {
                     for (int x = 0; x < chunk->size.x; x++) {
                         int index = x + y * chunk->size.x;
-
-//                        if (index >= chunk->tiles.size()) continue;
 
                         Tile tile = chunk->tiles[index];
 
@@ -381,6 +393,11 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                 }
             }
         }
+
+//        if (roomActive) {
+//            EndScissorMode();
+//        }
+
         EndMode2D();
     EndTextureMode();
 }

@@ -20,16 +20,39 @@ void UpdateHud(const uptr<Game>& game, GuiState& state) {
 }
 
 void DrawHud(const uptr<Game>& game, GuiState& state, const Texture& tex){
+    const auto full = Rectangle{32, 8, 8, 8};
+    const auto fullTip = Rectangle{40, 8, 8, 8};
+    const auto empty = Rectangle{48, 8, 8, 8};
+    const auto emptyTip = Rectangle{56, 8, 8, 8};
+
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
         const auto& tex = Assets::I()->textures[TEX_GUI];
 
-        DrawTexturePro(
-                tex,
-                {0, 96, 16, 16},
-                {0, 0, 16, 16},
-                {0, 0},
-                0.0f,
-                WHITE);
+        DrawTexturePro(tex, {0, 96, 16, 16}, {2, 2, 16, 16}, {0, 0}, 0.0f, WHITE);
+
+        const float percent = (float)health.max / (float)health.amount;
+
+        constexpr int length = 8;
+        constexpr float startX = 2 + 16 + 2;
+
+        auto reg = full; reg.x -= 8;
+        DrawTexturePro(tex, reg, {startX - 8, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
+
+        const auto totalWidth = 8*(float)length;
+        const auto dx = totalWidth - (totalWidth * percent);
+
+        BeginScissorMode(startX, 2, totalWidth, 8);
+            for (int i = 0; i < length; i++) {
+
+                auto reg = i == length - 1 ? fullTip : full;
+
+                reg.x += 16;
+                DrawTexturePro(tex, reg, {startX + 8 * (float)i, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
+
+                reg.x -= 16;
+                DrawTexturePro(tex, reg, {startX + (8 * (float) i) + dx, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
+            }
+        EndScissorMode();
 
         //int frame = floor(state.frameScaler);
         //if (state.frameScaler > 1.8) frame = 2;
