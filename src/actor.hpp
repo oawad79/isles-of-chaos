@@ -14,6 +14,8 @@
 
 enum class ActorType {
     NPC,
+    KIWI_BIRD,
+
     ENEMY_START,
 
     ZAMBIE,

@@ -40,6 +40,7 @@ entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnDreadShark(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnKiwiBird(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position);

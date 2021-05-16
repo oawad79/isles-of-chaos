@@ -59,7 +59,7 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
 }
 
 void GameScene::load(uptr<Game>& game) {
-    loadLevel(game, "resources/maps/StartIslandFork.tmx");
+    loadLevel(game, "resources/maps/StartIsland1.tmx");
 }
 
 void GameScene::update(uptr<Game>& game) {
@@ -146,8 +146,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
                         fadeTimer = 1.0f;
                         nextTilemap = feat.target;
 
-                        auto* tmap
-                            = GetTilemap(game->level, nextTilemap);
+                        auto* tmap = GetTilemap(game->level, nextTilemap);
                         SetPosition(tmap, {0, 0});
 
                         if (const auto returnPortO = GetPortWithTarget(tmap, tilemap->name, feat.id)){
@@ -190,6 +189,7 @@ void GameScene::destroy(uptr<Game>& game) {
 void GameScene::archiveEntities(uptr<Game>& game, int id) {
     game->reg.each([&game, id](auto entity){
         if (game->reg.has<Player>(entity)) return;
+        if (game->reg.has<Actor>(entity) && game->reg.get<Actor>(entity).type == ActorType::KIWI_BIRD) return;
         if (!game->reg.has<Disabled>(entity))
             game->reg.emplace<Disabled>(entity, id);
     });

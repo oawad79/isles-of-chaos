@@ -11,6 +11,7 @@
     E(None)            \
     E(Npc)             \
     E(Player)          \
+    E(KiwiBird)       \
     E(Test)            \
     E(Zambie)          \
     E(Ghost)           \

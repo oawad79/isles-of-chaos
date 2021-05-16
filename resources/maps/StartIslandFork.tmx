@@ -2638,7 +2638,6 @@
   <object id="150" x="-456" y="-80" width="8"/>
   <object id="151" x="-528" y="-80" width="8"/>
   <object id="152" name="Zambie" type="Zambie" x="-504" y="-96" width="16" height="24"/>
-  <object id="153" name="Player" type="Player" x="64.6667" y="84.3333" width="16" height="24"/>
   <object id="157" name="Water" type="Water" x="-302.5" y="147.667" width="603.333" height="82.3333"/>
   <object id="158" type="Npc" x="9" y="95" width="16" height="17">
    <properties>

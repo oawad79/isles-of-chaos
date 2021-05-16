@@ -48,6 +48,32 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnKiwiBird(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 8;
+    body.height = 8;
+
+    auto& spr = game->reg.emplace<AdvancedAnimation>(self);
+    spr.T = Type::ANIMATION;
+    spr.tint = WHITE;
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    spr.currentAnimation = "flying";
+    spr.animations["flying"] = CreateUniformAnimation({ 208, 0, 8, 8 }, 4, 100.0f);
+
+    auto& physics = game->reg.emplace<Physics>(self);
+    physics.gravityScale.y = 0.0f;
+    physics.type = PhysicsType::KINEMATIC;
+
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::KIWI_BIRD;
+
+    return self;
+}
+
 entt::entity SpawnTest(const uptr<Game>& game, const Vector2 position) {
     const auto self = game->reg.create();
     auto& body = game->reg.emplace<Body>(self);

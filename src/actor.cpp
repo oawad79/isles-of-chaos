@@ -211,8 +211,8 @@ void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& act
         case ActorState::IDLE: {
             const auto angle = RandAngle();
             actor.target[0] = Vector2{
-            cosf(angle) * RandFloat(50.0f, 300.0f),
-            sinf(angle) * RandFloat(50.0f, 300.0f),
+                cosf(angle) * RandFloat(50.0f, 300.0f),
+                sinf(angle) * RandFloat(50.0f, 300.0f),
             };
             actor.timer[0] = RandFloat(0.5f, 2.0f);
             actor.state = ActorState::WONDER;
@@ -282,8 +282,8 @@ void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& act
                 if (dist <= playerBody.width) {
                     float newAngle = angle + (float)(PI) + RandFloat(-(float)PI/4.0f, (float)PI/4.0f);
                     physics.velocity = {
-                    cosf(newAngle) * 6000.0f * dt,
-                    sinf(newAngle) * 6000.0f * dt,
+                        cosf(newAngle) * 6000.0f * dt,
+                        sinf(newAngle) * 6000.0f * dt,
                     };
                     actor.timer[0] = RandFloat(0.5f, 2.0f);
                     actor.state = ActorState::WAITING;
@@ -291,6 +291,55 @@ void UpdateGhostAi(entt::registry& reg, Body& body, Physics& physics, Actor& act
             });
             break;
         }
+    }
+}
+
+void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
+    const auto dt = GetFrameTime();
+
+    auto& actor = reg.get<Actor>(self);
+    auto& body = reg.get<Body>(self);
+    auto& physics = reg.get<Physics>(self);
+    auto& sprite = reg.get<AdvancedAnimation>(self);
+
+    float dist = 9999.0f;
+    float angleToPlayer = 0.0f;
+    Vector2 playerPos = {0, 0};
+
+    sprite.scale.x = physics.facingX;
+
+    auto players = reg.view<Player, Body>();
+    players.each([&body, &dist, &angleToPlayer, &playerPos](auto &player, auto& playerBody) {
+        const auto a = body.center();
+        auto b = playerBody.center();
+        b.y -= playerBody.height * 2;
+
+        dist = Vector2Distance(a, b);
+        angleToPlayer = atan2f(b.y - a.y, b.x - a.x) - PI/4;
+        playerPos = b;
+    });
+
+    switch(actor.state) {
+        case ActorState::IDLE: {
+            actor.state = ActorState::TRACKING;
+            break;
+        }
+
+        case ActorState::TRACKING: {
+            if (dist > 20) {
+                auto vel = Vector2{
+                    cosf(angleToPlayer),
+                    sinf(angleToPlayer)
+                };
+                vel.x *= (5000.0f + dist * 4) * dt;
+                vel.y *= (3000.0f + dist * 4) * dt;
+                physics.velocity = vel;
+            }
+            break;
+        }
+
+        default:
+            break;
     }
 }
 
@@ -307,10 +356,8 @@ void UpdateActor(entt::registry& reg) {
         auto& body = reg.get<Body>(ent);
         auto& physics = reg.get<Physics>(ent);
 
-        if (physics.velocity.x > 0)
-            physics.facingX = RIGHT;
-        else
-            physics.facingX = LEFT;
+        if (physics.velocity.x > 0) physics.facingX = RIGHT;
+        else physics.facingX = LEFT;
 
         if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) { 
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
@@ -329,7 +376,6 @@ void UpdateActor(entt::registry& reg) {
                         health.hit(damage);
 
                         if (health.shouldDie()) {
-
                             // Handle loot dropping from enemies w/ loot
                             if (reg.has<Loot>(ent)) {
                                 SpawnLoot(
@@ -347,29 +393,33 @@ void UpdateActor(entt::registry& reg) {
                     }
                 }
             });
+        }
 
-            switch (actor.type) {
-                case ActorType::ZAMBIE: {
-                    UpdateZambieAi(reg, ent,  body, physics, actor);
-                    break;
-                }
-                case ActorType::DREAD_SHARK: {
-                    auto& sprite = reg.get<SimpleAnimation>(ent);
-                    UpdateDreadSharkAi(reg, body, physics, actor, sprite);
-                    break;
-                } 
-                case ActorType::GHOST: {
-                    auto& sprite = reg.get<SimpleAnimation>(ent);
-                    UpdateGhostAi(reg, body, physics, actor, sprite);
-                    break;
-                }
-                case ActorType::SHROOMBA: { 
-                    auto& sprite = reg.get<Sprite>(ent);
-                    UpdateShroombaAi(reg, body, physics, actor, sprite);
-                    break;
-                }
-                default: break;
+        switch (actor.type) {
+            case ActorType::KIWI_BIRD: {
+                UpdateKiwiBirdAi(reg, ent);
+                break;
             }
+            case ActorType::ZAMBIE: {
+                UpdateZambieAi(reg, ent,  body, physics, actor);
+                break;
+            }
+            case ActorType::DREAD_SHARK: {
+                auto& sprite = reg.get<SimpleAnimation>(ent);
+                UpdateDreadSharkAi(reg, body, physics, actor, sprite);
+                break;
+            }
+            case ActorType::GHOST: {
+                auto& sprite = reg.get<SimpleAnimation>(ent);
+                UpdateGhostAi(reg, body, physics, actor, sprite);
+                break;
+            }
+            case ActorType::SHROOMBA: {
+                auto& sprite = reg.get<Sprite>(ent);
+                UpdateShroombaAi(reg, body, physics, actor, sprite);
+                break;
+            }
+            default: break;
         }
     }
 }
