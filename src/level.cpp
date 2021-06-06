@@ -13,6 +13,7 @@ void loadTilemapRecr(const uptr<Level>& level, const std::string& path) {
 }
 
 bool HasTilemap(const uptr<Level>& level, const std::string& name) {
+    if (!level.get()) return false;
     for (auto& tm : level->tilemaps) {
         if (tm->name == name)
             return true;
@@ -25,6 +26,7 @@ Tilemap* GetTilemap(const uptr<Level>& level) {
 }
 
 Tilemap* GetTilemap(const uptr<Level>& level, const std::string& byName) {
+    if (!level.get()) return nullptr;
     for (auto& tm : level->tilemaps)
         if (tm->name == byName) return tm;
     return nullptr;

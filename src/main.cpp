@@ -20,6 +20,7 @@
 #include "enttypes.hpp"
 
 #include "game_scene.hpp"
+#include "menu_scene.hpp"
 
 uptr<Assets> Assets::it;
 std::once_flag Assets::once;
@@ -44,7 +45,6 @@ void Update(uptr<Game>& game) {
 }
 
 void Render(const uptr<Game>& game) {
-    RenderGame(game);
     const auto* tilemap = GetTilemap(game->level);
     if (tilemap != nullptr)
         DrawTilemapToTarget(tilemap, game->mainCamera, game->spriteRenderer);
@@ -71,6 +71,7 @@ void Render(const uptr<Game>& game) {
     BeginTextureMode(game->guiCanvas); 
         ClearBackground({0, 0, 0, 0});
         RenderGui(game); 
+        RenderGame(game);
     EndTextureMode();
 }
 
@@ -91,6 +92,10 @@ int main(const int argc, const char *argv[]) {
     LoadGame(game);
     LoadAllAssets();
 
+
+    LoadSpriteRenderer(game->spriteRenderer);
+
+    // GotoScene(game, new MenuScene(game->reg));
     GotoScene(game, new GameScene(game->reg));
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {

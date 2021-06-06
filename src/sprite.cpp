@@ -30,6 +30,7 @@ Animation CreateUniformAnimation(Rectangle startRegion, int numFrames, float spe
 }
 
 void LoadSpriteRenderer(SpriteRenderer& self) {
+    self.target = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
 void UpdateSprites(entt::registry& reg) {

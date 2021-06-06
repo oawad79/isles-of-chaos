@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "StartIslandFork.tmx",
+    "activeFile": "StartIslandForkIndoors.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -13,8 +13,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 181.5,
-                "y": -7
+                "x": -4,
+                "y": 4.25
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -54,11 +54,11 @@
             "scaleInDock": 3
         },
         "StartIsland1.tmx": {
-            "scale": 5.5,
+            "scale": 1,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 38.363636363636374,
-                "y": -77.81818181818183
+                "x": -384,
+                "y": -128.5
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -76,22 +76,22 @@
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 3,
+            "scale": 4,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 190,
-                "y": 70.33333333333334
+                "x": 128,
+                "y": 0.125
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
             "scaleInDock": 4
         },
         "StartIslandForkIndoors.tmx": {
-            "scale": 1.5,
+            "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 256,
-                "y": 0.3333333333333144
+                "x": 46.66666666666663,
+                "y": -20.5
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {
@@ -138,9 +138,9 @@
         "StartIsland1.tmx",
         "StartIsland1Bg.tmx",
         "StartCaveDungeonDoor.tmx",
+        "StartIslandFork.tmx",
         "ActorPalette.tmx",
         "StartIslandForkIndoors.tmx",
-        "StartIslandFork.tmx",
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx",
         "C:/home/dustin/Repos/unknown/resources/maps/test-level.tmx",
         "CaveDungeonEntrance.tmx",

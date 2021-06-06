@@ -8,6 +8,7 @@
 #include <entt.hpp>
 
 #include "enttypes.hpp"
+#include "consts.hpp"
 #include "item.hpp"
 #include "physics_type.hpp"
 #include "body.hpp"
@@ -72,6 +73,8 @@ struct AdvancedAnimation : Sprite {
 struct SpriteRenderer {
     Shader shader; 
     std::vector<std::tuple<Sprite, Body>> sprites_to_draw{};
+
+    RenderTexture2D target;
 };
 
 Animation CreateUniformAnimation(Rectangle startRegion, int numFrames, float speed=200.0f);

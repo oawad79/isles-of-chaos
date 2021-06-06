@@ -334,7 +334,10 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
                 vel.x *= (5000.0f + dist * 4) * dt;
                 vel.y *= (3000.0f + dist * 4) * dt;
                 physics.velocity = vel;
+            } else {
             }
+
+
             break;
         }
 
