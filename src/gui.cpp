@@ -3,8 +3,11 @@
 constexpr auto cellSize {16};
 constexpr auto margin{1}; 
 
-constexpr auto dialogWidth = CANVAS_WIDTH / 2;
-constexpr auto dialogHeight = CANVAS_HEIGHT / 4; 
+constexpr auto dialogWidth = GUI_CANVAS_WIDTH - (GUI_CANVAS_WIDTH / 4);
+constexpr auto dialogHeight = GUI_CANVAS_HEIGHT / 3;
+
+const auto dialogX = GUI_CANVAS_WIDTH / 2 - dialogWidth / 2;
+const auto dialogY = GUI_CANVAS_HEIGHT - (dialogHeight + 16);
 
 void UpdateHud(const uptr<Game>& game, GuiState& state) {
     game->reg.view<Player, Health>().each([&](auto& p, auto& health){
@@ -112,7 +115,7 @@ constexpr auto spacing = 1.0f;
 
 void DrawInventory(const uptr<Game>& game, GuiState& state) {
     auto drawItem = [](float x, float y, float size, Texture2D& tex, Item& item) {
-        const auto pos = Vector2{ 
+        const auto pos = Vector2{
             x + cellSize / 2 - item.region.width / 2,
             y + cellSize / 2 - item.region.height / 2,
         };
@@ -127,11 +130,13 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
         );
     };
 
-    auto drawEquipmentSquare = [&drawItem](float x, float y, std::optional<Item> o) {
-        DrawRectangle(x, y, cellSize, cellSize, {0, 0, 0, 100});
-        DrawRectangleLines(x, y, cellSize, cellSize, BLACK);
+    auto drawEquipmentSquare = [&drawItem](float x, float y, std::optional<Item> o, Color border=BLACK) {
+        DrawRectangle(x, y, cellSize, cellSize, {0, 0, 0, 200});
+        DrawRectangleLines(x, y, cellSize, cellSize, border);
         if (o) {
             auto tex = Assets::I()->textures[Textures::TEX_EQUIPMENT];
+            if (o->catagory == ItemCatagory::Ability)
+                tex = Assets::I()->textures[Textures::TEX_ITEMS];
             auto item = o.value();
             drawItem(x, y, cellSize, tex, item);
         }
@@ -156,6 +161,9 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
             // Draw equipment
             drawEquipmentSquare(wx, wy, equiped.weapon);
 
+            // Ability
+            drawEquipmentSquare(wx, wy - (cellSize + margin), equiped.ability, GOLD);
+
             int i = 0;
             drawEquipmentSquare(ex, ey + (cellSize + margin) * i++, equiped.helmet);
             drawEquipmentSquare(ex, ey + (cellSize + margin) * i++, equiped.chestPiece);
@@ -164,12 +172,14 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
 
             for (int y = 0; y < inventory.maxRows; y++) {
                 for (int x = 0; x < inventory.maxColumns; x++) {
-                    DrawRectangle(cx, cy, cellSize, cellSize, {0, 0, 0, 100});
+                    DrawRectangle(cx, cy, cellSize, cellSize, {0, 0, 0, 200});
                     DrawRectangleLines(cx, cy, cellSize, cellSize, BLACK);
                     auto o = inventory.getItem(x, y);
                     if (o) {
                         auto tex = (
-                            o->catagory == ItemCatagory::Consumable || o->catagory == ItemCatagory::Money
+                            o->catagory == ItemCatagory::Consumable
+                            || o->catagory == ItemCatagory::Money
+                            || o->catagory == ItemCatagory::Ability
                         ) ? consu
                           : equip;
                         auto item = o.value();
@@ -189,6 +199,7 @@ void DrawInventory(const uptr<Game>& game, GuiState& state) {
                 for (int x = 0; x < inventory.maxColumns; x++) { 
                     auto o = inventory.getItem(x, y);
                     if (o) {
+                        // Amount display
                         const char* text = FormatText("%d", o.value().amount);
                         const auto size = MeasureText(text, 8.0f);
                         DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
@@ -264,7 +275,7 @@ void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
     if (IsKeyPressed(KEY_D)) branch.cursor += 1;
     branch.cursor %= (dialog.branches.size() + 1);
 
-    if (IsKeyPressed(KEY_X)) {
+    if (Input::I()->Interact()) {
         if (branch.choices.size() == 0) {
             if (branch.nextId == "" || branch.nextId == "exit") {
                 game->state = AppState::Running;
@@ -308,6 +319,7 @@ void UpdateGui(const uptr<Game>& game) {
         .each([&state, &game](auto& player, auto& body, Inventory& inventory, Character& character){
         if (Input::I()->OpenInv()) {
             state.playerInvOpen = !state.playerInvOpen;
+            game->state = state.playerInvOpen ? AppState::InDialog : AppState::Running;
         }
 
         if (state.playerInvOpen) {
@@ -322,9 +334,8 @@ void UpdateGui(const uptr<Game>& game) {
                 for (int x = 0; x < inventory.maxColumns; x++) {
 
                     if (IsKeyDown(KEY_LEFT_SHIFT) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                        if (CheckCollisionPointRec(MouseCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
                                                    {cx, cy, cellSize, cellSize})) {
-                            // Equip the item
                             if (auto o = inventory.getItem(x, y)) {
                                 const Item item = o.value();
 
@@ -332,21 +343,33 @@ void UpdateGui(const uptr<Game>& game) {
                                     const auto oitem = character.equiped.weapon;
                                     character.equiped.weapon = item;
                                     inventory.putItemAt(oitem, x, y);
+                                } else if (item.catagory == ItemCatagory::Ability) {
+                                    const auto oitem = character.equiped.ability;
+                                    character.equiped.ability = item;
+                                    inventory.putItemAt(oitem, x, y);
                                 }
                             }
                         }
 
-                        if (CheckCollisionPointRec(MouseCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
                                                    {wx, wy, cellSize, cellSize})) {
                             if (character.equiped.weapon) {
                                 inventory.putItem(character.equiped.weapon.value());
                                 character.equiped.weapon = std::nullopt;
                             }
                         }
+
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
+                                                   {wx, wy - (cellSize + margin), cellSize, cellSize})) {
+                            if (character.equiped.ability) {
+                                inventory.putItem(character.equiped.ability.value());
+                                character.equiped.ability = std::nullopt;
+                            }
+                        }
                     } 
 
                     if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-                        if (CheckCollisionPointRec(MouseCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
                                                    {cx, cy, cellSize, cellSize})) {
                             // Drop item
                             if (auto o = inventory.getItem(x, y)) {
@@ -374,8 +397,6 @@ void UpdateGui(const uptr<Game>& game) {
 }
 
 void DrawChoices(const std::vector<Choice>& choices, const int cursor) {
-    const auto x = CANVAS_WIDTH / 2 - dialogWidth / 2;
-    const auto y = CANVAS_HEIGHT - (dialogHeight + 32);
     const auto num = choices.size();
     const auto width = (dialogWidth - (margin*num)) / num;
     const auto font = GetFontDefault();
@@ -384,7 +405,7 @@ void DrawChoices(const std::vector<Choice>& choices, const int cursor) {
     for (const auto& [message, nextId] : choices) {
         const auto hot = i == cursor;
         const auto fillColor = hot ? BLACK : RAYWHITE;
-        const auto rect = Rectangle{margin+x+(float)i*(width+margin), y+dialogHeight-20,(float)width,20};
+        const auto rect = Rectangle{margin+dialogX+(float)i*(width+margin), dialogY+dialogHeight-20,(float)width,20};
 
         if (hot) {
             DrawRectangleRec(rect, RAYWHITE);
@@ -403,13 +424,11 @@ void DrawChoices(const std::vector<Choice>& choices, const int cursor) {
 }
 
 void DrawBranch(const DialogBranch& branch) {
-    const auto x = CANVAS_WIDTH / 2 - dialogWidth / 2;
-    const auto y = CANVAS_HEIGHT - (dialogHeight + 32);
     const auto font = GetFontDefault();
     DrawTextRec(
         font,
         branch.message.c_str(),
-        {x+margin,y+margin,dialogWidth-margin*2,dialogHeight-margin*2},
+        {dialogX+margin,dialogY+margin,dialogWidth-margin*2,dialogHeight-margin*2},
         10, 1.0f, true, RAYWHITE);
     if (branch.choices.size() > 0)
         DrawChoices(branch.choices, branch.cursor);
@@ -418,8 +437,8 @@ void DrawBranch(const DialogBranch& branch) {
 void DrawDialog(DialogTree& dialog) {
     // Draw border
     DrawRectangle(
-        CANVAS_WIDTH/2 - dialogWidth / 2,
-        CANVAS_HEIGHT-(dialogHeight+32),
+        GUI_CANVAS_WIDTH/2 - dialogWidth / 2,
+        GUI_CANVAS_HEIGHT-(dialogHeight+16),
         dialogWidth,
         dialogHeight,
         {0, 0, 0, 200}
@@ -466,7 +485,7 @@ void RenderGui(const uptr<Game>& game) {
     const auto tex = Assets::I()->textures[Textures::TEX_GUI];
     DrawInventory(game, state);
 
-    const auto [cx, cy] = MouseCanvasPosition(game);
+    const auto [cx, cy] = MouseGuiCanvasPosition(game);
     DrawCircle(cx, cy, 2, BLUE);
 
     DrawHud(game, state, tex);

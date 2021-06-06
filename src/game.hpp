@@ -17,6 +17,7 @@ enum class AppState {
     Running,
     Paused,
     InDialog,
+    InCutscene,
     Stopped
 };
 
@@ -52,5 +53,6 @@ void RenderGame(const uptr<Game>& game);
 void DoDialog(const uptr<Game>& game, const DialogTree& tree);
 
 Vector2 MouseCanvasPosition(const uptr<Game>& game);
+Vector2 MouseGuiCanvasPosition(const uptr<Game>& game);
 
 #endif // SKYVAULT_GAME_H_

@@ -15,6 +15,7 @@
     E(Money)              \
     E(Consumable)         \
     E(Armor)              \
+    E(Ability)            \
     E(Weapon)
 
 #define X_WEAPON_CLASS(E)\

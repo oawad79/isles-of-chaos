@@ -57,3 +57,17 @@ Vector2 MouseCanvasPosition(const uptr<Game>& game) {
 
     return {mx*ws, my*hs};
 }
+
+Vector2 MouseGuiCanvasPosition(const uptr<Game>& game) {
+    const float mx = GetMouseX();
+    const float my = GetMouseY();
+
+    const float aspect = (float)GUI_CANVAS_HEIGHT / (float)GUI_CANVAS_WIDTH;
+    const float width = GetScreenWidth();
+    const float height = GetScreenHeight();
+
+    const float ws = (float)GUI_CANVAS_WIDTH / (float)width;
+    const float hs = (float)GUI_CANVAS_HEIGHT / (float)height;
+
+    return {mx*ws, my*hs};
+}

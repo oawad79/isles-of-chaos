@@ -7,18 +7,21 @@
           catagory="Money"
           effectValue="1.0"
           region="0 8 8 8"/>
+
     <item id="coin"
           name="Coin"
           descr="A small unit of monitary value"
           catagory="Money"
           effectValue="1.0"
           region="8 10 5 6"/>
+
     <item id="gem"
           name="Gem"
           descr="A small unit of monitary value"
           catagory="Money"
           effectValue="1.0"
           region="16 10 5 6"/>
+
     <item id="zombie-flesh"
           name="Zombie Flesh"
           descr="Small jibs"
@@ -36,6 +39,7 @@
           effectValue="10.0"
           region="8 0 5 8"
           value="1"/>
+
     <item id="health-potion"
           name="Health Potion"
           descr="Potion that heals you"
@@ -55,6 +59,7 @@
           effectValue="20.0"
           region="0 0 13 3"
           value="4"/>
+
     <item id="small-dagger"
           name="A Small Dagger"
           descr="Sharp and deadly assassins tool"
@@ -63,6 +68,7 @@
           effectValue="5.0"
           region="16 0 9 3"
           value="4"/>
+
     <item id="long-sword"
           name="A long sword"
           descr="A sword that is long"
@@ -72,4 +78,13 @@
           region="0 4 18 5"
           value="4"/>
   </weapons>
+
+  <abilities>
+    <item id="flippy-feather"
+          name="Flippy bird feather"
+          descr="Its a magic feather that gives you flippy skills"
+          catagory="Ability"
+          region="4 20 12 12"
+          value="100"/>
+  </abilities>
 </items>

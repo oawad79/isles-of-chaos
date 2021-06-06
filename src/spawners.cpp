@@ -200,11 +200,11 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
 
     if (id == "old-man") {
         auto convo = DialogTree{
-                {{"start", {"Hello traveler! I don't believe we've meet, what is your name son?", "",
-                                   {{"Dustin, old man", "less-rude"},
-                                           {"Yeah... not telling you anything", "rude"}}}},
-                        {"rude", {"Okay wow, you are a rude boy..."}},
-                        {"less-rude", {"Um im not even that old..."}}},
+            {{"start", {"Hello traveler! I don't believe we've meet, what is your name son?", "",
+                               {{"Anon, sir. I just washed ashore and was in need of help", "less-rude"},
+                                {"Yeah... not telling you anything", "rude"}}}},
+                    {"rude", {"Okay wow, you are a rude boy..."}},
+                    {"less-rude", {"Um im not even that old..."}}},
         };
 
         game->reg.emplace<DialogTree>(self, convo);
@@ -212,8 +212,10 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
         auto &inter = game->reg.emplace<Interaction>(self);
         inter.action = [&](auto e, entt::registry &r) {
             const auto &dialog = r.get<DialogTree>(e);
+            std::cout << "HERE!" << std::endl;
             DoDialog(game, dialog);
         };
+
     } else if (id == "fishing-man") {
         auto& sprite = game->reg.get<SimpleAnimation>(self);
         sprite.region = Rectangle{ 176, 10, 16, 22 };
@@ -368,7 +370,9 @@ entt::entity SpawnItemWithId(
     spr.tint = WHITE;
     spr.layer = 1.0f;
 
-    if (itemData.catagory == ItemCatagory::Consumable || itemData.catagory == ItemCatagory::Money) {
+    if (itemData.catagory == ItemCatagory::Consumable
+    || itemData.catagory == ItemCatagory::Money
+    || itemData.catagory == ItemCatagory::Ability) {
         spr.texture = Assets::I()->textures[Textures::TEX_ITEMS];
     } else if (itemData.catagory == ItemCatagory::Weapon) {
         spr.texture = Assets::I()->textures[Textures::TEX_EQUIPMENT];

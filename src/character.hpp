@@ -17,6 +17,7 @@ struct Equiped {
     std::optional<Item> leggings;
     std::optional<Item> boots;
     std::optional<Item> weapon;
+    std::optional<Item> ability;
 };
 
 struct Health {

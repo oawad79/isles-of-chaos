@@ -47,9 +47,9 @@ void UpdatePlayerNormalState(
     Health &health,
     Physics& physics, 
     Body& body, 
-    Character& character, 
+    Character& character,
     AdvancedAnimation& sprite
-) { 
+) {
     const auto dt = GetFrameTime();
     const auto equiped = character.equiped;
 
@@ -84,14 +84,18 @@ void UpdatePlayerNormalState(
         body.y += 100.0f * dt;
     }
 
-    if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
-      sprite.currentFrame = 0;
-      sprite.currentAnimation = "rolling";
-      sprite.playback = Playback::FORWARD;
-      player.state = PlayerState::ROLLING; 
-      player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
-      physics.velocity.y = -10000.0f * dt;
-      physics.on_ground = false;
+    if (equiped.ability.has_value()) {
+        if (equiped.ability.value().id == "flippy-feather") {
+            if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
+                sprite.currentFrame = 0;
+                sprite.currentAnimation = "rolling";
+                sprite.playback = Playback::FORWARD;
+                player.state = PlayerState::ROLLING;
+                player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
+                physics.velocity.y = -10000.0f * dt;
+                physics.on_ground = false;
+            }
+        }
     }
 
     player.dodgeRollCooloff -= dt;

@@ -2,10 +2,10 @@
 
 MenuScene::MenuScene(entt::registry& reg) {
   for (size_t i = 0; i < (NUM_RGBS / 3); i++)
-      palette[i] = (Color) {
-          rgbs[i * 3 + 0],
-          rgbs[i * 3 + 1],
-          rgbs[i * 3 + 2],
+      palette[i] = Color{
+              (unsigned char)rgbs[i * 3 + 0],
+              (unsigned char)rgbs[i * 3 + 1],
+              (unsigned char)rgbs[i * 3 + 2],
           255,
       };
 

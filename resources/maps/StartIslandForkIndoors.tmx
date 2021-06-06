@@ -291,7 +291,11 @@
     <property name="target" value="StartIslandFork"/>
    </properties>
   </object>
-  <object id="7" name="Old Man" type="Npc" x="-24" y="0" width="16" height="24"/>
+  <object id="7" name="Old Man" type="Npc" x="-24" y="0" width="16" height="24">
+   <properties>
+    <property name="id" value="old-man"/>
+   </properties>
+  </object>
   <object id="8" type="Port" x="128" y="0" width="16" height="32">
    <properties>
     <property name="id" value="3"/>

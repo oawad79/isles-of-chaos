@@ -28,6 +28,7 @@ void LoadItemDB() {
     auto* weapons = items->FirstChildElement("weapons");
     auto* armor = items->FirstChildElement("armor");
     auto* moneys = items->FirstChildElement("moneys");
+    auto* abilities = items->FirstChildElement("abilities");
 
     auto loadItem = [&](XMLElement* itemXml, ItemCatagory catagory) {
         Item item;
@@ -71,7 +72,7 @@ void LoadItemDB() {
     };
 
     // Loading consumables
-    {
+    if (consumables) {
         auto* itemXml = consumables->FirstChildElement("item");
         while (itemXml) {
             loadItem(itemXml, ItemCatagory::Consumable);
@@ -80,7 +81,7 @@ void LoadItemDB() {
     }
 
     // Weapons
-    {
+    if (weapons) {
         auto* itemXml = weapons->FirstChildElement("item");
         while (itemXml) {
             loadItem(itemXml, ItemCatagory::Weapon);
@@ -89,10 +90,19 @@ void LoadItemDB() {
     }
 
     // Moneys
-    {
+    if (moneys) {
         auto* itemXml = moneys->FirstChildElement("item");
         while (itemXml) {
             loadItem(itemXml, ItemCatagory::Money);
+            itemXml = itemXml->NextSiblingElement();
+        }
+    }
+
+    // Abilities
+    if (abilities) {
+        auto* itemXml = abilities->FirstChildElement("item");
+        while (itemXml) {
+            loadItem(itemXml, ItemCatagory::Ability);
             itemXml = itemXml->NextSiblingElement();
         }
     }

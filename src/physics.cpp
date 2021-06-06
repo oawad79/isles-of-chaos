@@ -158,12 +158,12 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                 if (obj.type == FeatureType::Ladder) {
                     if (CheckCollisionRecs(body, obj.bounds())) {
                         if (body.y + body.height / 2 < obj.y + obj.height / 2) {
-                            const auto depth = (ybody.y + body.height) - obj.y;
-                            if (depth < 1.0f) {
-                                SetOnGround(physics);
-                                physics.velocity.y = 0.0f;
-                                ybody.y -= depth;
-                            }
+//                            const auto depth = (ybody.y + body.height) - obj.y;
+//                            if (depth < 1.0f) {
+//                                SetOnGround(physics);
+//                                physics.velocity.y = 0.0f;
+//                                ybody.y -= depth;
+//                            }
                         }
 
                         physics.on_ladder = true;

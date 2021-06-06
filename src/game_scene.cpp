@@ -14,7 +14,7 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
     game->reg.view<Player, Body, Character>().each([this, &playerHeight](auto& p, auto& body, Character& character){
         respawnLocation = Vector2{body.x, body.y};
         playerHeight = body.height;
-        character.equiped.weapon = Assets::I()->getItemInfo("small-sword"); 
+//        character.equiped.weapon = Assets::I()->getItemInfo("small-sword");
     });
 
     // Spawn checkpoints and kill zones
@@ -59,7 +59,7 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
 }
 
 void GameScene::load(uptr<Game>& game) {
-    loadLevel(game, "resources/maps/StartIsland1.tmx");
+    loadLevel(game, "resources/maps/StartIslandFork.tmx");
 }
 
 void GameScene::update(uptr<Game>& game) {
@@ -150,7 +150,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
                         SetPosition(tmap, {0, 0});
 
                         if (const auto returnPortO = GetPortWithTarget(tmap, tilemap->name, feat.id)){
-                            const auto returnPort = returnPortO.value();
+                            const auto& returnPort = returnPortO.value();
                             const auto f = feat.bounds();
 
                             nextOffset = Vector2{

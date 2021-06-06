@@ -1,7 +1,9 @@
+#pragma once
 #ifndef SKYVAULT_GAME_SCENE_HPP
 #define SKYVAULT_GAME_SCENE_HPP
 
 #include <entt.hpp>
+#include <raylib.h>
 
 #include "scene.hpp"
 #include "gui.hpp"

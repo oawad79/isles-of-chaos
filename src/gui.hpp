@@ -1,6 +1,8 @@
 #ifndef SKYVAULT_GUI_HPP
 #define SKYVAULT_GUI_HPP
 
+#include <raylib.h>
+
 #include "game.hpp"
 #include "gui_state.hpp"
 #include "input.hpp"
