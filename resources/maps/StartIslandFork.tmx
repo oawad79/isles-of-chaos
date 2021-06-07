@@ -2888,7 +2888,7 @@
   <object id="166" name="Shroomba" type="Shroomba" x="-992" y="-48" width="16" height="16"/>
   <object id="167" name="Shroomba" type="Shroomba" x="-1044" y="-54" width="16" height="16"/>
  </objectgroup>
- <objectgroup id="3" name="Solids" visible="0">
+ <objectgroup id="3" name="Solids">
   <object id="4" x="128" y="80" width="192" height="120"/>
   <object id="5" x="416" y="128" width="352.25" height="72"/>
   <object id="6" x="320" y="80">

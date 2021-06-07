@@ -54,11 +54,11 @@
             "scaleInDock": 3
         },
         "StartIsland1.tmx": {
-            "scale": 3,
+            "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -432.3333333333333,
-                "y": -184
+                "x": -721.5,
+                "y": -115
             }
         },
         "StartIsland1.tmx#Tileset": {

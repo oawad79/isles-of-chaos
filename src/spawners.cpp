@@ -259,6 +259,23 @@ entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
+entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto &body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 12;
+    body.height = 20;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.region = {0, 96, 64, 24};
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+}
+
 entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 

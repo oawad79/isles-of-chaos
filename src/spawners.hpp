@@ -46,6 +46,7 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnNpc(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, const std::string& id);
+entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position);
 
 entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnItemWithId(
