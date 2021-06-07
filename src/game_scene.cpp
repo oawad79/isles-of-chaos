@@ -59,7 +59,7 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
 }
 
 void GameScene::load(uptr<Game>& game) {
-    loadLevel(game, "resources/maps/StartIslandFork.tmx");
+    loadLevel(game, "resources/maps/StartIsland1.tmx");
 }
 
 void GameScene::update(uptr<Game>& game) {

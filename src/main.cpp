@@ -101,7 +101,7 @@ int main(const int argc, const char *argv[]) {
 
     LoadSpriteRenderer(game->spriteRenderer);
 
-//     GotoScene(game, new MenuScene(game->reg));
+//    GotoScene(game, new MenuScene(game->reg));
     GotoScene(game, new GameScene(game->reg));
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {

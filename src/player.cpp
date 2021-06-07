@@ -25,7 +25,7 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto dt = GetFrameTime();
 
     constexpr auto xsmooth{20.0f};
-    constexpr auto ysmooth{2.0f};
+    constexpr auto ysmooth{4.0f};
 
     const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * xsmooth * 0.01f;
     const auto ideal_y = body.y + ysmooth * 0.01f;
