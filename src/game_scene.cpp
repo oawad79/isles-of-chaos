@@ -85,40 +85,42 @@ void GameScene::handleDoors(uptr<Game>& game) {
 void GameScene::handlePorts(uptr<Game>& game) {
     auto* tilemap = GetTilemap(game->level);
     const auto id = GetTilemapId(game->level);
+    constexpr float FADE_SPEED { 4.0f };
     if (enteringPort && tilemap) {
-        if (fadeOut) {
-            if (fadeTimer <= 0.01f) {
+        if (fadeState == FadeState::Out)  {
+            fadeTimer -= GetFrameTime() * FADE_SPEED;
+            if (fadeTimer <= 0.02f) {
+                fadeTimer = 0.0f;
+                blackTimer = 1.0f;
+                fadeState = FadeState::Hold;
 
-                // Store a snapshot of the entities
                 archiveEntities(game, id);
                 game->level->currentTilemap = nextTilemap;
-
                 nextTilemap = "";
-                fadeOut = false;
-
                 auto* tmap = GetTilemap(game->level);
-                tmap->alpha = 0.0f;
                 SetPosition(tmap, nextOffset);
-                return;
             }
-        } else {
-            if (fadeTimer > 0.99f) {
-                enteringPort = false;
-                fadeTimer = 1.0f;
+        } else if (fadeState == FadeState::Hold) {
+            if (blackTimer <= 0.0f) {
+                fadeState = FadeState::In;
+                fadeTimer = 0.0f;
+
                 game->physicsPaused = false;
                 nextOffset = Vector2{0,0};
-
                 SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
-
-                // Un archive entities for that tilemap
                 unarchiveEntities(game, GetTilemapId(game->level));
-
-                return;
+            }
+            blackTimer -= GetFrameTime() * 2;
+        } else if (fadeState == FadeState::In) {
+            fadeTimer += GetFrameTime() * FADE_SPEED;
+            if (fadeTimer >= 0.95f) {
+                fadeTimer = 1.0f;
+                enteringPort = false;
             }
         }
 
-        tilemap->alpha = fadeTimer;
-        fadeTimer = lerp(fadeTimer, fadeOut ? 0.0f : 1.0f, GetFrameTime() * 10.0f);
+        tilemap->alpha = 1.0f;
+        game->shade = Clamp(1.0f - fadeTimer, 0.0f, 1.0f);
     }
 
     game->reg.view<Player, Body>()
@@ -142,7 +144,8 @@ void GameScene::handlePorts(uptr<Game>& game) {
                         // Phase out the tilemap
 
                         enteringPort = true;
-                        fadeOut = true;
+                        fadeState = FadeState::Out;
+
                         fadeTimer = 1.0f;
                         nextTilemap = feat.target;
 
@@ -162,7 +165,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
                         } else {
                             std::cout << "ERROR:: Cant find a port that returns to current tilemap!" << std::endl;
                             enteringPort = false;
-                            fadeOut = false;
+                            fadeState = FadeState::In;
                             fadeTimer = 0.0f;
                             nextTilemap = "";
                             nextOffset = Vector2{0, 0};

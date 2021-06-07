@@ -24,7 +24,9 @@ public:
 
     void loadLevel(uptr<Game>& game, const std::string& which);
     void deleteLevel(uptr<Game>& game);
+
 private:
+    enum FadeState { In, Hold, Out };
     entt::entity player{0};
 
     void handlePorts(uptr<Game>& game);
@@ -37,11 +39,13 @@ private:
     float loadTimer {0.0f};
 
     bool enteringPort{false};
-    bool fadeOut{false};
     float fadeTimer = 0.0f;
     std::string nextTilemap{""};
     Vector2 nextOffset{0, 0};
     Vector2 respawnLocation{0, 0};
+
+    FadeState fadeState{FadeState::In};
+    float blackTimer {0.0f};
 };
 
 #endif // SKYVAULT_GAME_SCENE_HPP

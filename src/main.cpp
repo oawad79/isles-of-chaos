@@ -52,15 +52,22 @@ void Render(const uptr<Game>& game) {
         if (tilemap != nullptr) game->backgroundClearColor = tilemap->backgroundColor;
         ClearBackground(game->backgroundClearColor);
 
-        if (tilemap && tilemap->backgroundColor.a == 0)
+        if (tilemap && tilemap->backgroundColor.a == 0) {
             DrawTextureEx(
-                Assets::I()->textures[TEX_BG],
-                {0,0},0.0f,6.0f,
-                WHITE);
+                    Assets::I()->textures[TEX_BG],
+                    {-256*4, -256*2},
+                    0.0f,
+                    12.0f,
+                    WHITE);
+        }
 
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);
-            DrawSprites(game->spriteRenderer, game->reg);
+
+//            BeginShaderMode(Assets::I()->shaders[SPRITE_SHADER]);
+                DrawSprites(game->spriteRenderer, game->reg);
+//            EndShaderMode();
+
             DrawWater(game->reg);
             DrawInteraction(game, game->reg);
             if (IsKeyDown(KEY_TAB))
@@ -70,7 +77,7 @@ void Render(const uptr<Game>& game) {
 
     BeginTextureMode(game->guiCanvas); 
         ClearBackground({0, 0, 0, 0});
-        RenderGui(game); 
+        RenderGui(game);
         RenderGame(game);
     EndTextureMode();
 }
@@ -82,7 +89,7 @@ int main(const int argc, const char *argv[]) {
 
     InitWindow(1280, 720, "DevWindow");
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
-    SetTargetFPS(60);
+    SetTargetFPS(85);
     //HideCursor();
 
 //    SetExitKey(0);
@@ -125,6 +132,9 @@ int main(const int argc, const char *argv[]) {
                         0.0f,
                         WHITE);
             }
+
+            DrawRectangleRec({0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+                             {0, 0, 0, (unsigned char)(255.0f * game->shade)});
 
             {
                 const auto tex = game->guiCanvas.texture;

@@ -174,6 +174,11 @@ void LoadAllAssets() {
     Assets::I()->fonts[Fonts::FONT_SMALL] = LoadFont("resources/fonts/small-font.png");
 //    std::cout << "\n\n" << std::endl;
 
+    Assets::I()->shaders[SPRITE_SHADER] = LoadShader(
+            "resources/shaders/base.vs.glsl",
+            "resources/shaders/base.fs.glsl"
+    );
+
     // auto loadDynShader = [&](Shaders which, const char* pathVS, const char* pathFS) {
     //     Assets::I()->shaders[which] = LoadShader(pathVS, pathFS);
     //     Assets::I()->shaders_info[which] = {

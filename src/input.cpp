@@ -46,7 +46,8 @@ auto Input::EnterDoor() -> bool {
 }
 
 auto Input::Jump() -> bool {
-    return IsKeyPressed(keymapping[InputMap::JUMP]);
+    return IsKeyPressed(keymapping[InputMap::JUMP])
+    || IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
 }
 
 auto Input::DodgeRoll() -> bool {

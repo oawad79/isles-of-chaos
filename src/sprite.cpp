@@ -201,12 +201,11 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 sprite.region.width * sprite.scale.x,
                 sprite.region.height * sprite.scale.y,
             },
-            { ceil(body.x + ox + rw/2), ceil(body.y + oy + rh/2), sw, sh },
+            { (body.x + ox + rw/2), (body.y + oy + rh/2), sw, sh },
             Vector2{rw/2, rh/2},
             sprite.rotation,
             tint
         );
-
     }
 
     for (auto& e : adv_anims) {
@@ -233,11 +232,12 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         const auto sh = frame.height;
 
         const auto [ox, oy] = sprite.offset;
+        const Rectangle rec = { (float)(int)(body.x + ox + rw/2), (float)(int)(body.y + oy + rh/2), sw, sh };
 
         DrawTexturePro(
             sprite.texture,
             {frame.x, frame.y, rw * sprite.scale.x, frame.height},
-            { ceil(body.x + ox + rw/2), ceil(body.y + oy + rh/2), sw, sh },
+            rec,
             Vector2{frame.width/2, frame.height/2},
             sprite.rotation,
             tint

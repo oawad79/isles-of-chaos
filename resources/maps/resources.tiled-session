@@ -10,11 +10,11 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "ActorPalette.tmx": {
-            "scale": 2,
+            "scale": 8,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 95.5,
-                "y": 31.5
+                "x": 197.625,
+                "y": -24.625
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -47,7 +47,7 @@
             "selectedLayer": 7,
             "viewCenter": {
                 "x": 64,
-                "y": -63.75
+                "y": -63.875
             }
         },
         "StartCaveDungeonDoor.tmx#OverworldTileset": {
@@ -57,8 +57,8 @@
             "scale": 1,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -356,
-                "y": -113
+                "x": -638,
+                "y": -132
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -68,30 +68,30 @@
             "scale": 5.5,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -112.72727272727272,
-                "y": -144.72727272727275
+                "x": -384,
+                "y": -127.9090909090909
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 2,
+            "scale": 3,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 40,
-                "y": 24
+                "x": 194,
+                "y": 36
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
-            "scaleInDock": 4
+            "scaleInDock": 8
         },
         "StartIslandForkIndoors.tmx": {
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 111.33333333333331,
-                "y": -4.333333333333314
+                "x": 313.3333333333333,
+                "y": 49.66666666666667
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {

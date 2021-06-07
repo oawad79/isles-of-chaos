@@ -39,6 +39,8 @@ struct Game {
     RenderTexture2D guiCanvas;
     GuiState guiState;
 
+    float shade {0.0f};
+
     std::optional<DialogTree> dialogTree{std::nullopt};
 };
 

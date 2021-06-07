@@ -27,13 +27,13 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     constexpr auto xsmooth{20.0f};
     constexpr auto ysmooth{2.0f};
 
-    const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * dt * xsmooth;
-    const auto ideal_y = body.y + dt * ysmooth;
+    const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * xsmooth * 0.01f;
+    const auto ideal_y = body.y + ysmooth * 0.01f;
 
     camera.zoom = CAMERA_ZOOM;
 
-    camera.target.x = lerp(camera.target.x, ideal_x, xsmooth * dt);
-    camera.target.y = lerp(camera.target.y, ideal_y, ysmooth * dt);
+    camera.target.x = (int)lerp(camera.target.x, ideal_x, xsmooth * dt);
+    camera.target.y = (int)lerp(camera.target.y, ideal_y, ysmooth * dt);
 
     camera.offset.x = CANVAS_WIDTH/2;
     camera.offset.y = CANVAS_HEIGHT/2;
@@ -62,13 +62,15 @@ void UpdatePlayerNormalState(
     if (sprite.playback == Playback::PAUSED)
         sprite.currentFrame = 0;
 
+//    sprite.currentFrame = 1;
+
     sprite.scale.x = physics.facingX;
 
     if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
     if (player.hit) sprite.currentFrame = 2;
 
     if (Input::I()->Jump() && physics.on_ground) {
-        physics.velocity.y -= 18000.0f * dt;
+        physics.velocity.y -= 300.0f;
         physics.on_ground = false;
     }
 
@@ -92,7 +94,8 @@ void UpdatePlayerNormalState(
                 sprite.playback = Playback::FORWARD;
                 player.state = PlayerState::ROLLING;
                 player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
-                physics.velocity.y = -10000.0f * dt;
+                physics.velocity.y = -160.0f;
+                physics.velocity.x *= 1.5f;
                 physics.on_ground = false;
             }
         }
@@ -144,7 +147,6 @@ void UpdatePlayerNormalState(
       if (CheckCollisionRecs(body, ebody)) {
         health.hit(eactor.enemyStats.damage);
       }
-
     }
 }
 
@@ -152,7 +154,7 @@ void UpdatePlayerRollingState(
     uptr<Game>& game,
     Player &player, 
     Physics& physics, 
-    Body& body, 
+    Body& body,
     Character& character, 
     AdvancedAnimation& sprite
 ) { 

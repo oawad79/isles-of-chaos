@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="132">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="133">
  <properties>
   <property name="title" value="The Mushroom Isles"/>
  </properties>
@@ -1460,6 +1460,7 @@
   </object>
   <object id="126" x="-184" y="-256" width="24" height="16"/>
   <object id="127" name="Kiwi" type="KiwiBird" x="0" y="-136" width="8" height="8"/>
+  <object id="132" type="Checkpoint" x="-412.625" y="-336.417" width="40.5" height="80"/>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="2" x="-80" y="-104" width="24" height="80"/>
