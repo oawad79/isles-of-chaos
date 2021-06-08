@@ -265,15 +265,19 @@ entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position) {
     auto &body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 12;
-    body.height = 20;
+    body.width = 32;
+    body.height = 16;
 
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.region = {0, 96, 64, 24};
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+    spr.offset.x -= 16;
+    spr.offset.y -= 8;
 
+    auto& physics = game->reg.emplace<Physics>(self);
+    return self;
 }
 
 entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position) {

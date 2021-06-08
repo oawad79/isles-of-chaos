@@ -160,9 +160,9 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     sprite.region.height * sprite.scale.y,
                 },
                 {ceil(body.x + ox + rw/2),
-                    ceil(body.y + oy + rh/2),
-                    body.width,
-                    body.height},
+                 ceil(body.y + oy + rh/2),
+                 sprite.region.width,
+                 sprite.region.height},
                 Vector2{rw/2, rh/2},
                 sprite.rotation,
                 tint

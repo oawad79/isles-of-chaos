@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="3" nextobjectid="18">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="3" nextobjectid="20">
  <layer id="1" name="Tile Layer 1" width="100" height="100">
   <data encoding="csv"/>
  </layer>
@@ -39,6 +39,10 @@
   <object id="15" name="Kiwi" type="KiwiBird" x="96" y="-40" width="8" height="8"/>
   <object id="17" x="77" y="-76" width="91.4375" height="19">
    <text wrap="1">Npcs</text>
+  </object>
+  <object id="18" name="Small Boat" type="SmallBoat" x="-144" y="-16" width="64" height="24"/>
+  <object id="19" x="-154.5" y="-53.5" width="83" height="19">
+   <text wrap="1" halign="center">Vessels</text>
   </object>
  </objectgroup>
 </map>

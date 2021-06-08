@@ -13,8 +13,8 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 139.66666666666666,
-                "y": -7
+                "x": -4,
+                "y": 4.166666666666657
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -47,7 +47,7 @@
             "selectedLayer": 7,
             "viewCenter": {
                 "x": 64,
-                "y": -63.75
+                "y": -63.875
             }
         },
         "StartCaveDungeonDoor.tmx#OverworldTileset": {
@@ -57,8 +57,8 @@
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -721.5,
-                "y": -115
+                "x": -152,
+                "y": -107
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -79,8 +79,8 @@
             "scale": 1.5,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 218.66666666666663,
-                "y": 172
+                "x": 0,
+                "y": 0.3333333333333144
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
@@ -90,8 +90,8 @@
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 313,
-                "y": 49.33333333333334
+                "x": 486.6666666666667,
+                "y": 68.66666666666667
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {
