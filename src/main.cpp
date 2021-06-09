@@ -8,6 +8,7 @@
 #include "game.hpp"
 #include "tilemap.hpp"
 #include "player.hpp"
+#include "playwright.hpp"
 #include "physics.hpp"
 #include "spawners.hpp"
 #include "timed.hpp"
@@ -33,6 +34,8 @@ void Update(uptr<Game>& game) {
     UpdateGui(game);
 
     if (game->state == AppState::Running) {
+        UpdatePlaywright(game->stage);
+
         UpdateSprites(game->reg);
         UpdatePlayer(game, game->reg);
         UpdatePhysics(game, game->reg);
@@ -72,7 +75,9 @@ void Render(const uptr<Game>& game) {
             DrawInteraction(game, game->reg);
             if (IsKeyDown(KEY_TAB))
                 DrawDebugPhysicsInfo(game, game->reg);
-        EndMode2D(); 
+
+            DrawPlaywright(game->stage);
+        EndMode2D();
     EndTextureMode();
 
     BeginTextureMode(game->guiCanvas); 

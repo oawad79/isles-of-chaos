@@ -64,7 +64,7 @@ set(INCLUDE_DIR src)
 set(APP_SRC src)
 
 file(GLOB_RECURSE FILES
-        "${INCLUDE_DIR}/*.h"
+        "${INCLUDE_DIR}/*.hpp"
         "${APP_SRC}/*.cpp"
         )
 

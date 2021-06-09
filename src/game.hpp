@@ -11,6 +11,7 @@
 #include "scene.hpp"
 #include "dialog.hpp"
 #include "level.hpp"
+#include "playwright.hpp"
 #include "consts.hpp"
 
 enum class AppState {
@@ -38,6 +39,8 @@ struct Game {
     RenderTexture2D mainCanvas;
     RenderTexture2D guiCanvas;
     GuiState guiState;
+
+    Stage stage;
 
     float shade {0.0f};
 
