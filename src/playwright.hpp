@@ -2,25 +2,23 @@
 #define ISLESOFCHAOS_PLAYWRIGHT_HPP
 
 #include <optional>
-#include <vector>
-#include <map>
+#include <set>
 #include <entt.hpp>
 
-enum Actors {
-    None, One, Two, Three, Four, Five, Six
-};
+#include "actor.hpp"
+#include "enttypes.hpp"
 
-struct Step {
-    Actors who{None};
-    bool async{false};
+struct Action {
+    std::set<ActorName> actors;
+    std::function<bool(entt::registry&, const entt::entity&)> tick;
 };
 
 struct Script {
-    std::vector<Step> steps;
+    std::vector<Action> actions;
+    int actionNumber{0};
 };
 
 struct Play {
-    std::map<Actors, entt::entity> actors;
     Script script;
 };
 
@@ -30,7 +28,9 @@ struct Stage {
 
 Play MakeDemoPlay();
 
-void UpdatePlaywright(Stage& stage);
+void DoScreenPlay(Stage& stage, Play& play);
+
+void UpdatePlaywright(Stage& stage, entt::registry& reg);
 void DrawPlaywright(Stage& stage);
 
 #endif //ISLESOFCHAOS_PLAYWRIGHT_HPP

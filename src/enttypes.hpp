@@ -44,4 +44,10 @@ struct Disabled { int mapId {0}; };
 
 #undef GENERATE_MAP
 
+enum class ActorName {
+    Anon,
+    Player,
+    OldMan,
+};
+
 #endif // SKYVAULT_ENTTYPES_HPP

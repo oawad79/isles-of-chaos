@@ -207,6 +207,7 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
                     {"less-rude", {"Um im not even that old..."}}},
         };
 
+        game->reg.get<Actor>(self).actorName = ActorName::OldMan;
         game->reg.emplace<DialogTree>(self, convo);
 
         auto &inter = game->reg.emplace<Interaction>(self);

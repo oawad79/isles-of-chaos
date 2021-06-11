@@ -2,8 +2,9 @@
 #define SKYVAULT_GAME_H_
 
 #include <vector>
-#include <entt.hpp>
 #include <optional>
+
+#include <entt.hpp>
 
 #include "utils.hpp"
 #include "sprite.hpp"

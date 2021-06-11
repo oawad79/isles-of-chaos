@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="143">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="11" nextobjectid="144">
  <properties>
   <property name="title" value="The Mushroom Isles"/>
  </properties>
@@ -1459,14 +1459,14 @@
    </properties>
   </object>
   <object id="126" x="-184" y="-256" width="24" height="16"/>
-  <object id="127" name="Kiwi" type="KiwiBird" x="0" y="-136" width="8" height="8"/>
+  <object id="127" name="Kiwi" type="KiwiBird" x="-111.25" y="-149.75" width="8" height="8"/>
   <object id="133" name="Player" type="Player" x="-133.602" y="-147.352" width="16" height="24"/>
-  <object id="134" name="Item" type="Item" x="-70.3142" y="-118.648" width="8" height="8">
+  <object id="134" name="Item" type="Item" x="-220.314" y="-166.398" width="8" height="8">
    <properties>
     <property name="id" value="flippy-feather"/>
    </properties>
   </object>
-  <object id="135" name="sword" type="Item" x="-53.7312" y="-120.565" width="8" height="8">
+  <object id="135" name="sword" type="Item" x="-203.731" y="-168.315" width="8" height="8">
    <properties>
     <property name="id" value="small-sword"/>
    </properties>
@@ -1476,7 +1476,11 @@
   <object id="138" name="DreadShark" type="DreadShark" x="-727.333" y="-255.333" width="32" height="48"/>
   <object id="139" type="Kill" x="-808" y="-56" width="192" height="72"/>
   <object id="141" name="Small Boat" type="SmallBoat" x="-90.5" y="-211.5" width="64" height="24"/>
-  <object id="142" x="-96" y="-160" width="80" height="8"/>
+  <object id="143" name="Old Man" type="Npc" x="-176" y="-168" width="16" height="24">
+   <properties>
+    <property name="id" value="old-man"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="2" x="-80" y="-104" width="24" height="80"/>

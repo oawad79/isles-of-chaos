@@ -44,13 +44,15 @@ enum class AiType {
 
 struct Actor {
     ActorType type{ActorType::NPC};
+    ActorName actorName{ActorName::Anon};
+
     AiType ai{AiType::NONE};
     ActorState state{ActorState::IDLE};
 
     Enemy enemyStats{};
 
     Vector2 target[8];
-    float timer[8];
+    float timer[8] = {0.0f};
 };
 
 bool IsEnemy(Actor actor);

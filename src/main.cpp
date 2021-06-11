@@ -1,24 +1,14 @@
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <set>
 #include <raylib.h>
 
 #include "utils.hpp"
 #include "level.hpp"
 #include "game.hpp"
-#include "tilemap.hpp"
 #include "player.hpp"
-#include "playwright.hpp"
-#include "physics.hpp"
-#include "spawners.hpp"
-#include "timed.hpp"
-#include "character.hpp"
-#include "actor.hpp"
-#include "interaction.hpp"
-#include "assets.hpp"
 #include "gui.hpp"
-#include "input.hpp"
-#include "enttypes.hpp"
 
 #include "game_scene.hpp"
 #include "menu_scene.hpp"
@@ -34,7 +24,7 @@ void Update(uptr<Game>& game) {
     UpdateGui(game);
 
     if (game->state == AppState::Running) {
-        UpdatePlaywright(game->stage);
+        UpdatePlaywright(game->stage, game->reg);
 
         UpdateSprites(game->reg);
         UpdatePlayer(game, game->reg);
@@ -57,20 +47,16 @@ void Render(const uptr<Game>& game) {
 
         if (tilemap && tilemap->backgroundColor.a == 0) {
             DrawTextureEx(
-                    Assets::I()->textures[TEX_BG],
-                    {-256*4, -256*2},
-                    0.0f,
-                    12.0f,
-                    WHITE);
+                Assets::I()->textures[TEX_BG],
+                {-256*4, -256*2},
+                0.0f,
+                12.0f,
+                WHITE);
         }
 
         if (tilemap != nullptr) DrawTilemap(tilemap);
         BeginMode2D(game->mainCamera);
-
-//            BeginShaderMode(Assets::I()->shaders[SPRITE_SHADER]);
-                DrawSprites(game->spriteRenderer, game->reg);
-//            EndShaderMode();
-
+            DrawSprites(game->spriteRenderer, game->reg);
             DrawWater(game->reg);
             DrawInteraction(game, game->reg);
             if (IsKeyDown(KEY_TAB))
@@ -95,8 +81,6 @@ int main(const int argc, const char *argv[]) {
     InitWindow(1280, 720, "DevWindow");
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
     SetTargetFPS(85);
-    //HideCursor();
-
 //    SetExitKey(0);
 
     auto game = std::make_unique<Game>();
@@ -108,6 +92,44 @@ int main(const int argc, const char *argv[]) {
 
 //    GotoScene(game, new MenuScene(game->reg));
     GotoScene(game, new GameScene(game->reg));
+
+    const std::set<ActorName> actors { ActorName::Player, ActorName::OldMan };
+
+    Play play;
+    play.script = Script{
+        {
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (actor.timer[0] < 1.0f) {
+                        physics.velocity.x = 200;
+                        actor.timer[0] += GetFrameTime();
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            } },
+
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (actor.timer[1] < 1.0f) {
+                        physics.velocity.x = -200;
+                        actor.timer[1] += GetFrameTime();
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            } },
+        },
+    };
+
+    game->stage.currentPlay = play;
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {
         const auto screenWidth = GetScreenWidth();
