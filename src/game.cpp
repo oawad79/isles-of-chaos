@@ -28,6 +28,8 @@ void GotoScene(uptr<Game>& game, SceneLayer* scene) {
 void UpdateGame(uptr<Game>& game) {
     for (auto* scene : game->scenes)
         scene->update(game);
+
+    std::cout << game->physicsPaused << std::endl;
 }
 
 void RenderGame(const uptr<Game>& game) {

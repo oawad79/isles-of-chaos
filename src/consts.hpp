@@ -1,6 +1,10 @@
 #ifndef SKYVAULT_CONSTS
 #define SKYVAULT_CONSTS
 
+#include <string_view>
+
+void LoadSettingsFile(const std::string_view& path);
+
 constexpr auto CANVAS_WIDTH { 256 * 12 };
 constexpr auto CANVAS_HEIGHT { 144 * 12 };
 

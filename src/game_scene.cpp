@@ -88,6 +88,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
     constexpr float FADE_SPEED { 4.0f };
     if (enteringPort && tilemap) {
         if (fadeState == FadeState::Out)  {
+            this->loadTimer = FADE_SPEED;
             fadeTimer -= GetFrameTime() * FADE_SPEED;
             if (fadeTimer <= 0.02f) {
                 fadeTimer = 0.0f;
@@ -112,6 +113,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
             }
             blackTimer -= GetFrameTime() * 2;
         } else if (fadeState == FadeState::In) {
+            this->loadTimer = 0.2f;
             fadeTimer += GetFrameTime() * FADE_SPEED;
             if (fadeTimer >= 0.95f) {
                 fadeTimer = 1.0f;

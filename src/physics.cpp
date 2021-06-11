@@ -79,6 +79,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
         if (!physics.on_ladder) {
             physics.velocity.y += GRAVITY * dt * physics.gravityScale.y;
+            if (physics.velocity.y > GRAVITY) physics.velocity.y = GRAVITY;
         }
 
         Rectangle xbody {body.x + physics.velocity.x * dt, body.y, body.width, body.height};

@@ -57,19 +57,19 @@
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -152,
-                "y": -107
+                "x": -384,
+                "y": -128.25
             }
         },
         "StartIsland1.tmx#Tileset": {
             "scaleInDock": 4
         },
         "StartIsland1Bg.tmx": {
-            "scale": 1.5,
+            "scale": 11,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": -746.6666666666666,
-                "y": -82.66666666666663
+                "x": -736.6363636363636,
+                "y": -126.86363636363637
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
@@ -87,11 +87,11 @@
             "scaleInDock": 3
         },
         "StartIslandForkIndoors.tmx": {
-            "scale": 3,
+            "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 486.6666666666667,
-                "y": 68.66666666666667
+                "x": 302,
+                "y": 98.5
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {
