@@ -5,8 +5,8 @@
 
 void LoadSettingsFile(const std::string_view& path);
 
-constexpr auto CANVAS_WIDTH { 256 * 12 };
-constexpr auto CANVAS_HEIGHT { 144 * 12 };
+constexpr auto CANVAS_WIDTH { 256 };
+constexpr auto CANVAS_HEIGHT { 144 };
 
 constexpr auto GUI_CANVAS_WIDTH { 256 };
 constexpr auto GUI_CANVAS_HEIGHT { 144 };

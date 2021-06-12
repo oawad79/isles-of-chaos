@@ -12,8 +12,9 @@
 #include "scene.hpp"
 #include "dialog.hpp"
 #include "level.hpp"
-#include "playwright.hpp"
 #include "consts.hpp"
+
+#include "playwright_type.hpp"
 
 enum class AppState {
     Running,

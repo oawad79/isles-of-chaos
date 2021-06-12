@@ -18,8 +18,6 @@ entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position) {
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 
-    std::cout << "Spawning Player\n" << std::endl;
-
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
@@ -41,6 +39,8 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& health = game->reg.emplace<Health>(self);
 
     auto& chr = game->reg.emplace<Character>(self);
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.actorName = ActorName::Player;
     // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
 
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));

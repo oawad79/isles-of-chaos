@@ -5,30 +5,13 @@
 #include <set>
 #include <entt.hpp>
 
-#include "actor.hpp"
+#include "playwright_type.hpp"
 #include "enttypes.hpp"
-
-struct Action {
-    std::set<ActorName> actors;
-    std::function<bool(entt::registry&, const entt::entity&)> tick;
-};
-
-struct Script {
-    std::vector<Action> actions;
-    int actionNumber{0};
-};
-
-struct Play {
-    Script script;
-};
-
-struct Stage {
-    std::optional<Play> currentPlay;
-};
+#include "actor.hpp"
 
 Play MakeDemoPlay();
 
-void DoScreenPlay(Stage& stage, Play& play);
+void DoScreenPlay(entt::registry& reg, Stage& stage, Play& play);
 
 void UpdatePlaywright(Stage& stage, entt::registry& reg);
 void DrawPlaywright(Stage& stage);

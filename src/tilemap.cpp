@@ -386,8 +386,9 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                             tileset->texture,
                             region,
                             Vector2{
-                                floor(cox + (float)x*tileset->tilewidth + ox),
-                                floor(coy + (float)y*tileset->tileheight + oy)},
+                                cox + (float)x*tileset->tilewidth + ox,
+                                coy + (float)y*tileset->tileheight + oy
+                            },
                             tint);
                     }
                 }

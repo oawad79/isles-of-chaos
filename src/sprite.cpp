@@ -142,8 +142,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
 
         if (sprite.T == Type::RECTANGLE) {
             DrawRectangle(
-                ceil(body.x),
-                ceil(body.y),
+                int(body.x),
+                int(body.y),
                 body.width,
                 body.height,
                 tint);
@@ -159,8 +159,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     sprite.region.width * sprite.scale.x,
                     sprite.region.height * sprite.scale.y,
                 },
-                {ceil(body.x + ox + rw/2),
-                 ceil(body.y + oy + rh/2),
+                {int(body.x + ox + rw/2),
+                 int(body.y + oy + rh/2),
                  sprite.region.width,
                  sprite.region.height},
                 Vector2{rw/2, rh/2},
@@ -201,7 +201,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 sprite.region.width * sprite.scale.x,
                 sprite.region.height * sprite.scale.y,
             },
-            { (body.x + ox + rw/2), (body.y + oy + rh/2), sw, sh },
+            { int(body.x + ox + rw/2), int(body.y + oy + rh/2), sw, sh },
             Vector2{rw/2, rh/2},
             sprite.rotation,
             tint
@@ -232,7 +232,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         const auto sh = frame.height;
 
         const auto [ox, oy] = sprite.offset;
-        const Rectangle rec = { (float)(int)(body.x + ox + rw/2), (float)(int)(body.y + oy + rh/2), sw, sh };
+        const Rectangle rec = { (body.x + ox + rw/2), (body.y + oy + rh/2), sw, sh };
 
         DrawTexturePro(
             sprite.texture,

@@ -24,21 +24,29 @@ entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Faci
 void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto dt = GetFrameTime();
 
-    constexpr auto xsmooth{20.0f};
-    constexpr auto ysmooth{4.0f};
+    // constexpr auto xsmooth{20.0f};
+    // constexpr auto ysmooth{4.0f};
 
-    const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * xsmooth * 0.01f;
-    const auto ideal_y = body.y + ysmooth * 0.01f;
+    // camera.zoom = CAMERA_ZOOM;
 
-    camera.zoom = CAMERA_ZOOM;
+    // const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * xsmooth * 0.01f;
+    // const auto ideal_y = body.y + ysmooth * 0.01f;
 
-    camera.target.x = (int)lerp(camera.target.x, ideal_x, xsmooth * dt);
-    camera.target.y = (int)lerp(camera.target.y, ideal_y, ysmooth * dt);
+    // camera.target.x = (body.center().x);
+    // camera.target.y = (body.center().y);
 
-    camera.offset.x = CANVAS_WIDTH/2;
-    camera.offset.y = CANVAS_HEIGHT/2;
+    camera.target = Vector2 {
+        body.center().x,
+        body.center().y,
+    };
 
-    const auto delta = GetMouseWheelMove();
+    camera.offset.x = floor(CANVAS_WIDTH/2.0f);
+    camera.offset.y = floor(CANVAS_HEIGHT/2.0f);
+
+    const auto scroll = GetMouseWheelMove();
+    if (scroll != 0) {
+        camera.zoom += scroll * 0.02f;
+    }
 }
 
 void UpdatePlayerNormalState(
@@ -50,14 +58,19 @@ void UpdatePlayerNormalState(
     Character& character,
     AdvancedAnimation& sprite
 ) {
+    const bool inCutscene = game->stage.currentPlay != std::nullopt;
+
     const auto dt = GetFrameTime();
     const auto equiped = character.equiped;
 
     const auto [ax, ay] = Input::I()->GetMovementVector();
 
     sprite.playback = Playback::PAUSED;
-    if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
-    if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
+
+    if (!inCutscene) {
+        if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
+        if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
+    }
 
     if (sprite.playback == Playback::PAUSED)
         sprite.currentFrame = 0;
@@ -66,88 +79,91 @@ void UpdatePlayerNormalState(
 
     sprite.scale.x = physics.facingX;
 
-    if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
-    if (player.hit) sprite.currentFrame = 2;
+    if (!inCutscene) {
+        if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
+        if (player.hit) sprite.currentFrame = 2;
 
-    if (Input::I()->Jump() && physics.on_ground) {
-        physics.velocity.y -= 300.0f;
-        physics.on_ground = false;
-    }
+        if (Input::I()->Jump() && physics.on_ground) {
+            physics.velocity.y -= 300.0f;
+            physics.on_ground = false;
+        }
 
-    if (Input::I()->Ascend() && physics.on_ladder) {
-        physics.velocity.y -= 1000.0f * dt;
-    }
+        if (Input::I()->Ascend() && physics.on_ladder) {
+            physics.velocity.y -= 1000.0f * dt;
+        }
 
-    if (Input::I()->Descend() && physics.on_ladder) {
-        physics.velocity.y += 1000.0f * dt;
-    }
+        if (Input::I()->Descend() && physics.on_ladder) {
+            physics.velocity.y += 1000.0f * dt;
+        }
 
-    if (Input::I()->Descend() && physics.on_ladder && physics.on_ground) {
-        body.y += 100.0f * dt;
-    }
+        if (Input::I()->Descend() && physics.on_ladder && physics.on_ground) {
+            body.y += 100.0f * dt;
+        }
 
-    if (equiped.ability.has_value()) {
-        if (equiped.ability.value().id == "flippy-feather") {
-            if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
-                sprite.currentFrame = 0;
-                sprite.currentAnimation = "rolling";
-                sprite.playback = Playback::FORWARD;
-                player.state = PlayerState::ROLLING;
-                player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
-                physics.velocity.y = -160.0f;
-                physics.velocity.x *= 1.5f;
-                physics.on_ground = false;
+        if (equiped.ability.has_value()) {
+            if (equiped.ability.value().id == "flippy-feather") {
+                if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
+                    sprite.currentFrame = 0;
+                    sprite.currentAnimation = "rolling";
+                    sprite.playback = Playback::FORWARD;
+                    player.state = PlayerState::ROLLING;
+                    player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
+                    physics.velocity.y = -160.0f;
+                    physics.velocity.x *= 1.5f;
+                    physics.on_ground = false;
+                }
+            }
+        }
+
+        player.dodgeRollCooloff -= dt;
+
+        if (player.hit && game->reg.valid(player.hit.value())) {
+            auto& hitBody = game->reg.get<Body>(player.hit.value());
+            auto& spr = game->reg.get<Sprite>(player.hit.value());
+
+            spr.scale.x = physics.facingX;
+
+            hitBody.x = body.center().x - hitBody.width / 2 + hitBody.width * physics.facingX;
+            hitBody.y = body.center().y - hitBody.height / 2;
+        } else {
+            player.hit = std::nullopt;
+        }
+
+        // Attack
+        if (Input::I()->Attack() && !player.hit) {
+            if (auto o = equiped.weapon) {
+                auto weaponItem = o.value();
+
+                sprite.currentFrame = 2;
+                // physics.velocity.x = 0.0f;
+
+                player.hit = std::optional{
+                    SpawnPlayerHit(
+                        game,
+                        weaponItem,
+                        body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
+                        body.center().y - weaponItem.region.height / 2,
+                        physics.facingX)
+                };
+            }
+        }
+
+        // Handle enemy collisions
+        auto view = game->reg.view<Actor, Body, Physics>(entt::exclude<Player, Disabled>);
+        for (auto& ent : view) {
+            auto& eactor = game->reg.get<Actor>(ent);
+            if (!IsEnemy(eactor)) continue;
+        
+            auto& ebody = game->reg.get<Body>(ent);
+            
+            if (CheckCollisionRecs(body, ebody)) {
+                health.hit(eactor.enemyStats.damage);
             }
         }
     }
 
-    player.dodgeRollCooloff -= dt;
-
     UpdateCameraTracking(body, physics, game->mainCamera);
 
-    if (player.hit && game->reg.valid(player.hit.value())) {
-        auto& hitBody = game->reg.get<Body>(player.hit.value());
-        auto& spr = game->reg.get<Sprite>(player.hit.value());
-
-        spr.scale.x = physics.facingX;
-
-        hitBody.x = body.center().x - hitBody.width / 2 + hitBody.width * physics.facingX;
-        hitBody.y = body.center().y - hitBody.height / 2;
-    } else {
-        player.hit = std::nullopt;
-    }
-
-    // Attack
-    if (Input::I()->Attack() && !player.hit) {
-        if (auto o = equiped.weapon) {
-            auto weaponItem = o.value();
-
-            sprite.currentFrame = 2;
-            // physics.velocity.x = 0.0f;
-
-            player.hit = std::optional{
-                SpawnPlayerHit(
-                    game,
-                    weaponItem,
-                    body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
-                    body.center().y - weaponItem.region.height / 2,
-                    physics.facingX)
-            };
-        }
-    }
-
-    // Handle enemy collisions
-    auto view = game->reg.view<Actor, Body, Physics>(entt::exclude<Player, Disabled>);
-    for (auto& ent : view) {
-      auto& eactor = game->reg.get<Actor>(ent);
-      if (!IsEnemy(eactor)) continue;
-  
-      auto& ebody = game->reg.get<Body>(ent);
-     
-      if (CheckCollisionRecs(body, ebody)) {
-        health.hit(eactor.enemyStats.damage);
-      }
-    }
 }
 
 void UpdatePlayerRollingState(

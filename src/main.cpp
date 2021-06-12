@@ -8,6 +8,7 @@
 #include "level.hpp"
 #include "game.hpp"
 #include "player.hpp"
+#include "playwright.hpp"
 #include "gui.hpp"
 
 #include "game_scene.hpp"
@@ -27,7 +28,9 @@ void Update(uptr<Game>& game) {
         UpdatePlaywright(game->stage, game->reg);
 
         UpdateSprites(game->reg);
+
         UpdatePlayer(game, game->reg);
+
         UpdatePhysics(game, game->reg);
         UpdateTimed(game->reg);
         UpdateCharacter(game->reg);
@@ -102,11 +105,12 @@ int main(const int argc, const char *argv[]) {
                 auto& actor = reg.get<Actor>(self);
                 auto& physics = reg.get<Physics>(self);
                 if (actor.actorName == ActorName::Player) {
-                    if (actor.timer[0] < 1.0f) {
-                        physics.velocity.x = 200;
+                    if (actor.timer[0] < 2.0f) {
+                        physics.velocity.x = 20;
                         actor.timer[0] += GetFrameTime();
                         return false;
                     } else {
+                        actor.timer[0] = 0.0f;
                         return true;
                     }
                 }
@@ -117,25 +121,44 @@ int main(const int argc, const char *argv[]) {
                 auto& actor = reg.get<Actor>(self);
                 auto& physics = reg.get<Physics>(self);
                 if (actor.actorName == ActorName::Player) {
-                    if (actor.timer[1] < 1.0f) {
-                        physics.velocity.x = -200;
-                        actor.timer[1] += GetFrameTime();
+                    if (actor.timer[0] < 2.0f) {
+                        physics.velocity.x = -20;
+                        actor.timer[0] += GetFrameTime();
                         return false;
                     } else {
+                        physics.velocity.y = -300.0f;
+                        physics.on_ground = false;
                         return true;
                     }
                 }
+                return false;
+            } },
+
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (physics.on_ground) return true;
+                }
+                return false;
             } },
         },
+        .onInit = [](entt::registry& reg, const entt::entity& self){
+            std::cout << "Hello World" << std::endl;
+            auto& actor = reg.get<Actor>(self);
+            actor.timer[0] = 0.0f;
+            return true;
+        }
     };
-
-    game->stage.currentPlay = play;
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
         if (IsWindowFocused() || true) {
+            if (IsKeyPressed(KEY_Y))
+                DoScreenPlay(game->reg, game->stage, play);
+
             Update(game);
             Render(game);
 
