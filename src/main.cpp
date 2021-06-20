@@ -51,9 +51,9 @@ void Render(const uptr<Game>& game) {
         if (tilemap && tilemap->backgroundColor.a == 0) {
             DrawTextureEx(
                 Assets::I()->textures[TEX_BG],
-                {-256*4, -256*2},
+                {0, -25},
                 0.0f,
-                12.0f,
+                1.0f,
                 WHITE);
         }
 
@@ -62,6 +62,7 @@ void Render(const uptr<Game>& game) {
             DrawSprites(game->spriteRenderer, game->reg);
             DrawWater(game->reg);
             DrawInteraction(game, game->reg);
+
             if (IsKeyDown(KEY_TAB))
                 DrawDebugPhysicsInfo(game, game->reg);
 
@@ -143,7 +144,7 @@ int main(const int argc, const char *argv[]) {
                 return false;
             } },
         },
-        .onInit = [](entt::registry& reg, const entt::entity& self){
+        [](entt::registry& reg, const entt::entity& self){
             std::cout << "Hello World" << std::endl;
             auto& actor = reg.get<Actor>(self);
             actor.timer[0] = 0.0f;

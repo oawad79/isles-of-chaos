@@ -42,6 +42,7 @@ private:
     float fadeTimer = 0.0f;
     std::string nextTilemap{""};
     Vector2 nextOffset{0, 0};
+    Vector2 portCenter{0, 0};
     Vector2 respawnLocation{0, 0};
 
     FadeState fadeState{FadeState::In};

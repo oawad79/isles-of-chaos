@@ -110,6 +110,12 @@ void GameScene::handlePorts(uptr<Game>& game) {
                 nextOffset = Vector2{0,0};
                 SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
                 unarchiveEntities(game, GetTilemapId(game->level));
+
+                // Fix players position
+                game->reg.view<Player, Body>().each([&](auto& _p, auto& body){
+                    body.x = this->portCenter.x - body.width / 2;
+                    body.y = this->portCenter.y - body.height / 2;
+                });
             }
             blackTimer -= GetFrameTime() * 2;
         } else if (fadeState == FadeState::In) {
@@ -162,6 +168,9 @@ void GameScene::handlePorts(uptr<Game>& game) {
                                 f.x - returnPort.x,
                                 f.y - returnPort.y
                             };
+
+                            portCenter.x = f.x + f.width / 2;
+                            portCenter.y = f.y + f.height / 2;
 
                             game->physicsPaused = true;
                         } else {

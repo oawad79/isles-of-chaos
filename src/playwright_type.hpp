@@ -14,8 +14,8 @@ struct Action {
 
 struct Script {
     std::vector<Action> actions;
-    int actionNumber{0};
     std::function<bool(entt::registry&, const entt::entity&)> onInit;
+    int actionNumber{0};
 };
 
 struct Play {
