@@ -111,10 +111,11 @@ void GameScene::handlePorts(uptr<Game>& game) {
                 SpawnEntitiesFromTileMap(GetTilemap(game->level), game);
                 unarchiveEntities(game, GetTilemapId(game->level));
 
-                // Fix players position
-                game->reg.view<Player, Body>().each([&](auto& _p, auto& body){
+                // Fix players position and velocity
+                game->reg.view<Player, Body, Physics>().each([&](auto& _p, auto& body, auto& physics){
                     body.x = this->portCenter.x - body.width / 2;
-                    body.y = this->portCenter.y - body.height / 2;
+                    body.y = this->portCenter.y - body.height;
+                    physics.velocity = Vector2Zero();
                 });
             }
             blackTimer -= GetFrameTime() * 2;
@@ -170,7 +171,7 @@ void GameScene::handlePorts(uptr<Game>& game) {
                             };
 
                             portCenter.x = f.x + f.width / 2;
-                            portCenter.y = f.y + f.height / 2;
+                            portCenter.y = f.y + f.height;
 
                             game->physicsPaused = true;
                         } else {
