@@ -5,7 +5,7 @@ GameScene::GameScene(entt::registry& reg) {}
 void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
     game->level = LoadLevel(which);
     game->physicsPaused = true;
-    loadTimer = 1.0f;
+    loadTimer = 0.0f;
     auto* tilemap = GetTilemap(game->level);
 
     SpawnEntitiesFromTileMap(tilemap, game);
@@ -66,17 +66,6 @@ void GameScene::update(uptr<Game>& game) {
     handlePorts(game);
     game->physicsPaused = loadTimer > 0.0f;
     loadTimer -= GetFrameTime();
-
-    // Handle rooms
-
-//    auto* tilemap = GetTilemap(game->level);
-//    if (tilemap) {
-//        for (auto& room : tilemap->rooms) {
-//            game->reg.view<Player, Body>().each([&room](auto& _player, auto& body){
-//                room.active = CheckCollisionRecs(body, room);
-//            });
-//        }
-//    }
 }
 
 void GameScene::handleDoors(uptr<Game>& game) {

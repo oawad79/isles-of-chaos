@@ -34,6 +34,7 @@ private:
 
     void archiveEntities(uptr<Game>& game, int id=0);
     void unarchiveEntities(uptr<Game>& game, int id=0);
+
     bool archived{false};
 
     float loadTimer {0.0f};

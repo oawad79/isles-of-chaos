@@ -1,6 +1,8 @@
 #include "menu_scene.hpp"
+#include "game_scene.hpp"
 
 MenuScene::MenuScene(entt::registry& reg) {
+
   for (size_t i = 0; i < (NUM_RGBS / 3); i++)
       palette[i] = Color{
               (unsigned char)rgbs[i * 3 + 0],
@@ -14,6 +16,8 @@ MenuScene::MenuScene(entt::registry& reg) {
 
   for (int i = 0; i < FIRE_WIDTH; i++)
       firePixels[i + (FIRE_HEIGHT - 1) * FIRE_WIDTH] = 36;
+
+  menuBg = LoadTexture("resources/textures/MainMenuBg.png");
 }
 
 void MenuScene::load(uptr<Game>& game) {
@@ -34,51 +38,45 @@ void MenuScene::spreadFire(int src) {
 }
 
 void MenuScene::update(uptr<Game>& game) {
-  for (int x = 0; x < FIRE_WIDTH; x++) {
-    for (int y = FIRE_HEIGHT - 1; y >= 1; y--) {
-      spreadFire(y * FIRE_WIDTH + x);
-    }
+  static float timer = 0;
+
+  if (IsKeyPressed(KEY_ENTER)) {
+    GotoScene(game, new GameScene(game->reg));
+  }
+
+  if (timer > 0.001f) {
+      for (int x = 0; x < FIRE_WIDTH; x++) {
+          for (int y = FIRE_HEIGHT - 1; y >= 1; y--) {
+              spreadFire(y * FIRE_WIDTH + x);
+          }
+      }
+      timer = 0;
+  } else {
+      timer += GetFrameTime();
   }
 }
 
 void MenuScene::render(const uptr<Game>& game) {
-  // std::cout << "HERE!" << std::endl;
-  // DrawRectangle(0, 0, 100, 100, RED);
+//  DrawTexturePro(this->menuBg, Rectangle{0, 0, 256, 144}, Rectangle{0, 0, 256, 144}, Vector2{0, 0}, 0.0f, WHITE);
+
+  const auto size = MeasureText("Isles of Chaos!", 20);
+  DrawText("Isles of Chaos!", CANVAS_WIDTH / 2 - size / 2, 10, 20, WHITE);
+
   for (int x = 0; x < FIRE_WIDTH; x++) {
       for (int y = 0; y < FIRE_HEIGHT; y++) {
           int i = firePixels[y * FIRE_WIDTH + x];
-
-          // float c = (float)i / 36.0f;
-          // if (c > 1.0f) c = 1.0f;
-          // if (c < 0.0f) c = 0.0f;
-          // Vector4 a = COLOR_TO_VEC4(palette[i]);
-          // a.z = 0.0f;
-
-          // Vector4 b = Vector4{0.2f, 0.5f, 0.5f, c};
-
-          // Vector4 total = Vector4{
-          //   a.x + b.x,
-          //   a.y + b.y,
-          //   a.z + b.z,
-          //   a.w + b.w
-          // };
-
-          // Color color = VEC4_TO_COLOR(total);
           Color color = palette[i];
           color.r = 255 - color.r;
           color.g = 255 - color.g;
           color.b = 255 - color.b;
 
-          DrawRectangle(x, (FIRE_HEIGHT-y), 1, 1, color);
-
-          DrawRectangle(x, y + FIRE_HEIGHT, 1, 1, color);
-
-          // if (GetTime() < 20
-          //     DrawRectangle(x, FIRE_HEIGHT - y, 1, 1, color);
-          // } else {
-          // }
+          DrawRectangle(x, y, 1, 1, color);
       }
   }
+
+  const auto size2 = MeasureText("Press enter to start", 10);
+  DrawRectangle((CANVAS_WIDTH/2-size2/2) - 10, CANVAS_HEIGHT/2-20, size2 + 20, 30, {0,0,0,100});
+  DrawText("Press enter to start", CANVAS_WIDTH/2 - size2/2, CANVAS_HEIGHT/2-10, 10, ORANGE);
 }
 
 void MenuScene::destroy(uptr<Game>& game) {

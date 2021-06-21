@@ -94,8 +94,8 @@ int main(const int argc, const char *argv[]) {
 
     LoadSpriteRenderer(game->spriteRenderer);
 
-//    GotoScene(game, new MenuScene(game->reg));
-    GotoScene(game, new GameScene(game->reg));
+    GotoScene(game, new MenuScene(game->reg));
+//    GotoScene(game, new GameScene(game->reg));
 
     const std::set<ActorName> actors { ActorName::Player, ActorName::OldMan };
 
@@ -156,7 +156,7 @@ int main(const int argc, const char *argv[]) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
-        if (IsWindowFocused() || true) {
+        if (IsWindowFocused()) {
             if (IsKeyPressed(KEY_Y))
                 DoScreenPlay(game->reg, game->stage, play);
 
