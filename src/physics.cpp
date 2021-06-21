@@ -73,19 +73,22 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
     const auto* tilemap = GetTilemap(game->level);
 
+    static float high = 0.0f;
+
     for (auto& e : view) {
         auto& physics = reg.get<Physics>(e);
         auto& body = reg.get<Body>(e);
 
         if (!physics.on_ladder) {
             physics.velocity.y += GRAVITY * dt * physics.gravityScale.y;
-            if (physics.velocity.y > GRAVITY) physics.velocity.y = GRAVITY;
+//            if (physics.velocity.y > 100.0f) physics.velocity.y = 100.0f;
         }
 
         Rectangle xbody {body.x + physics.velocity.x * dt, body.y, body.width, body.height};
         Rectangle ybody {body.x, body.y + physics.velocity.y * dt, body.width, body.height};
+        Rectangle ybody_half_vel {body.x, body.y + (physics.velocity.y * 0.25f) * dt, body.width, body.height};
 
-        physics.colliding_with_solid = false;
+      physics.colliding_with_solid = false;
 
         if (physics.on_ground_timer <= 0)
             physics.on_ground = false;
@@ -116,7 +119,8 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     }
                 } else {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
-                    const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
+                    auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
+                    ycoll = ycoll || CheckCollisionRecs(ybody_half_vel, poly.bounds());
 
                     if (xcoll && poly.height != 0 && physics.type != PhysicsType::KINEMATIC) {
                         const float depth = body.y + body.height - poly.bounds().y;
@@ -147,7 +151,6 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                                 ybody.y = poly.bounds().y + poly.height;
                             }
                         }
-
                     }
 
                     if (xcoll || ycoll) physics.colliding_with_solid = true;

@@ -103,8 +103,9 @@ void GameScene::handlePorts(uptr<Game>& game) {
                 // Fix players position and velocity
                 game->reg.view<Player, Body, Physics>().each([&](auto& _p, auto& body, auto& physics){
                     body.x = this->portCenter.x - body.width / 2;
-                    body.y = this->portCenter.y - body.height;
-                    physics.velocity = Vector2Zero();
+                    body.y = this->portCenter.y - body.height - 1;
+                    physics.velocity.x = 0.0f;
+                    physics.on_ground = true;
                 });
             }
             blackTimer -= GetFrameTime() * 2;

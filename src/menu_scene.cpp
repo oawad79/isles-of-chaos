@@ -66,9 +66,10 @@ void MenuScene::render(const uptr<Game>& game) {
       for (int y = 0; y < FIRE_HEIGHT; y++) {
           int i = firePixels[y * FIRE_WIDTH + x];
           Color color = palette[i];
-          color.r = 255 - color.r;
-          color.g = 255 - color.g;
-          color.b = 255 - color.b;
+
+//            color.r = color.r;
+//            color.g = color.g;
+//            color.b = color.b;
 
           DrawRectangle(x, y, 1, 1, color);
       }
