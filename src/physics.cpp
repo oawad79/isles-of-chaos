@@ -1,6 +1,7 @@
 #include "physics.hpp"
 
 constexpr float GRAVITY {1000.0f};
+constexpr float MAX_GRAVITY {200.0f};
 
 float IntervalDistance(float min_a, float max_a, float min_b, float max_b) {
     if (max_a < min_b) return min_a - max_a;
@@ -81,7 +82,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
         if (!physics.on_ladder) {
             physics.velocity.y += GRAVITY * dt * physics.gravityScale.y;
-//            if (physics.velocity.y > 100.0f) physics.velocity.y = 100.0f;
+            if (physics.velocity.y > MAX_GRAVITY) physics.velocity.y = MAX_GRAVITY;
         }
 
         Rectangle xbody {body.x + physics.velocity.x * dt, body.y, body.width, body.height};

@@ -145,7 +145,6 @@ int main(const int argc, const char *argv[]) {
             } },
         },
         [](entt::registry& reg, const entt::entity& self){
-            std::cout << "Hello World" << std::endl;
             auto& actor = reg.get<Actor>(self);
             actor.timer[0] = 0.0f;
             return true;
@@ -166,12 +165,12 @@ int main(const int argc, const char *argv[]) {
             BeginDrawing();
             ClearBackground(BLACK);
             // DrawTexture(game->mainCanvas.texture, 0, 0, WHITE);
-            const float aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
-            const float width = GetScreenWidth();
-            const float height = width * aspect;
+            const auto aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
 
-            const float x = screenWidth / 2.0f - width / 2.0f;
-            const float y = screenHeight / 2.0f - height / 2.0f;
+            const auto width = (float) GetScreenWidth();
+            const auto height = width * aspect;
+            const auto x = screenWidth / 2.0f - width / 2.0f;
+            const auto y = screenHeight / 2.0f - height / 2.0f;
 
             {
                 const auto tex = game->mainCanvas.texture;
@@ -193,7 +192,7 @@ int main(const int argc, const char *argv[]) {
                 DrawTexturePro(
                         tex,
                         {0, 0, (float) tex.width, -(float) tex.height},
-                        {0, 0, (GetScreenHeight() * aspect), (float) GetScreenHeight()},
+                        {0, 0, (float) GetScreenHeight() * aspect, (float) GetScreenHeight()},
                         Vector2Zero(),
                         0.0f,
                         WHITE);
