@@ -3,9 +3,11 @@
 
 #include <vector>
 #include <optional>
+#include <filesystem>
 
 #include <entt.hpp>
 
+#include "gif.hpp"
 #include "utils.hpp"
 #include "sprite.hpp"
 #include "gui_state.hpp"
@@ -15,6 +17,9 @@
 #include "consts.hpp"
 
 #include "playwright_type.hpp"
+
+constexpr int GIF_WIDTH { CANVAS_WIDTH * 2 };
+constexpr int GIF_HEIGHT { CANVAS_HEIGHT * 2 };
 
 enum class AppState {
     Running,
@@ -43,8 +48,13 @@ struct Game {
     GuiState guiState;
 
     Stage stage;
+    std::vector<std::vector<uint8_t>> totalFrames;
+    float frameTimer = 0.0f;
 
     float shade {0.0f};
+
+    bool recordingGif{false};
+    GifWriter gifWriter;
 
     std::optional<DialogTree> dialogTree{std::nullopt};
 };
@@ -53,6 +63,9 @@ void LoadGame(uptr<Game>& game);
 void PushScene(uptr<Game>& game, SceneLayer* scene);
 void PopScene(uptr<Game>& game);
 void GotoScene(uptr<Game>& game, SceneLayer* scene);
+
+bool SaveGameState(uptr<Game>& game, const std::string& name);
+bool LoadGameState(uptr<Game>& game, const std::string& name);
 
 void UpdateGame(uptr<Game>& game);
 void RenderGame(const uptr<Game>& game);

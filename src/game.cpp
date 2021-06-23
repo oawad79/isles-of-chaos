@@ -8,6 +8,24 @@ void LoadGame(uptr<Game>& game) {
     game->mainCamera.zoom = 1;
 }
 
+bool SaveGameState(uptr<Game>& game, const std::string& name) {
+  auto saveDirPath = std::filesystem::current_path().append("/ioc-saves");
+  if (!std::filesystem::exists(saveDirPath)) {
+    if (!std::filesystem::create_directory(saveDirPath)) {
+      std::cout << "Failed to create saves directory (ABORTING)" << std::endl;
+      return false;
+    }
+  }
+  const auto saveFilePath = saveDirPath.append("/save_" + name + ".sky-save");
+
+  return false;
+}
+
+bool LoadGameState(uptr<Game>& game, const std::string& name) {
+
+  return false;
+}
+
 void PushScene(uptr<Game>& game, SceneLayer* scene) {
     scene->load(game);
     game->scenes.emplace_back(scene);
@@ -26,8 +44,47 @@ void GotoScene(uptr<Game>& game, SceneLayer* scene) {
 }
 
 void UpdateGame(uptr<Game>& game) {
-    for (auto* scene : game->scenes)
-        scene->update(game);
+  if (IsKeyPressed(KEY_P)) {
+    SaveGameState(game, "demo_save");
+  }
+
+  constexpr int delay = -0.1f;
+
+  if (IsKeyPressed(KEY_F1)) {
+    if (game->recordingGif) {
+      std::cout << "Ending Recording" << std::endl;
+      const auto fileName = "recording.gif";
+      GifBegin(&game->gifWriter, fileName, GIF_WIDTH, GIF_HEIGHT, delay);
+      for (int i = 0; i < game->totalFrames.size(); i+=1) {
+        auto& buffer = game->totalFrames[i];
+        GifWriteFrame(&game->gifWriter, buffer.data(), GIF_WIDTH, GIF_HEIGHT, 0.0f);
+      }
+      GifEnd(&game->gifWriter);
+      game->totalFrames.clear();
+    } else {
+      game->recordingGif = true;
+//      game->gifWriter = GifWriter();
+    }
+  }
+
+  if (game->recordingGif) {
+//    if (game->frameTimer >= 0.1f) {
+      Image screenImage = GetScreenData();
+      ImageResizeNN(&screenImage, GIF_WIDTH, GIF_HEIGHT);
+      std::vector<uint8_t> buffer;
+      buffer.resize(GIF_WIDTH * GIF_HEIGHT * 4);
+      for (int i = 0; i < screenImage.width * screenImage.height * 4; i++) {
+        buffer[i] = ((uint8_t *) screenImage.data)[i];
+      }
+      game->totalFrames.push_back(buffer);
+      UnloadImage(screenImage);
+//    } else {
+//      game->frameTimer += GetFrameTime();
+//    }
+  }
+
+  for (auto* scene : game->scenes)
+      scene->update(game);
 }
 
 void RenderGame(const uptr<Game>& game) {

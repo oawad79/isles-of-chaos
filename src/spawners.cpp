@@ -232,6 +232,34 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
     return self;
 }
 
+entt::entity SpawnSmallWorm(const uptr<Game>& game, const Vector2 position) {
+  auto self = game->reg.create();
+
+  auto& body = game->reg.emplace<Body>(self);
+  body.x = position.x;
+  body.y = position.y;
+  body.width = 6;
+  body.height = 6;
+
+  auto& spr = game->reg.emplace<SimpleAnimation>(self);
+  spr.T = Type::ANIMATION;
+  spr.tint = WHITE;
+  spr.region = {72, 98, 6, 6};
+  spr.number_of_frames = 5;
+  spr.offset.x = 0;
+  spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+  auto& physics = game->reg.emplace<Physics>(self);
+  game->reg.emplace<Health>(self);
+
+  auto& actor = game->reg.emplace<Actor>(self);
+  actor.type = ActorType::BUG;
+
+//  game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
+  return self;
+}
+
 entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 

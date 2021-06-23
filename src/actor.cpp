@@ -334,9 +334,7 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
                 vel.x *= (5000.0f + dist * 4) * dt;
                 vel.y *= (3000.0f + dist * 4) * dt;
                 physics.velocity = vel;
-            } else {
             }
-
 
             break;
         }
@@ -344,6 +342,50 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
         default:
             break;
     }
+}
+
+void UpdateBug(entt::registry& reg, const entt::entity& self) {
+  auto& actor = reg.get<Actor>(self);
+  auto& body = reg.get<Body>(self);
+  auto& physics = reg.get<Physics>(self);
+  auto& sprite = reg.get<SimpleAnimation>(self);
+
+  auto playerBody = Body{0};
+
+  reg.view<Body, Player>().each([&](auto& body, auto& _p){
+    playerBody = body;
+  });
+
+  constexpr auto speed = 20;
+
+  switch (actor.state) {
+    case ActorState::IDLE: {
+      actor.target[0] = Vector2{body.center().x + -100 + RandFloat() * 200, body.center().y};
+      actor.timer[0] = RandFloat(0.2f, 2.0f);
+      actor.state = ActorState::WONDER;
+      break;
+    }
+    case ActorState::WONDER: {
+      physics.velocity.x += (1.0f + (0.5f * cosf(GetTime()))) * (body.center().x > actor.target[0].x ? -1 : 1) * speed * GetFrameTime();
+      if (Vector2Distance(body.center(), actor.target[0]) < body.width / 2.f || actor.timer[0] <= 0.0f) {
+        actor.state = ActorState::IDLE;
+      }
+      actor.timer[0] -= GetFrameTime();
+      break;
+    }
+    case ActorState::DEAD: {
+      physics.velocity.x = 0;
+      sprite.playback = Playback::PAUSED;
+      sprite.current_frame = 5;
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (CheckCollisionRecs(playerBody, body)) {
+    actor.state = ActorState::DEAD;
+  }
 }
 
 bool IsEnemy(Actor actor) {
@@ -420,6 +462,10 @@ void UpdateActor(entt::registry& reg) {
             case ActorType::SHROOMBA: {
                 auto& sprite = reg.get<Sprite>(ent);
                 UpdateShroombaAi(reg, body, physics, actor, sprite);
+                break;
+            }
+            case ActorType::BUG: {
+                UpdateBug(reg, ent);
                 break;
             }
             default: break;

@@ -85,7 +85,7 @@ int main(const int argc, const char *argv[]) {
     InitWindow(1280, 720, "DevWindow");
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
     SetTargetFPS(85);
-//    SetExitKey(0);
+    SetExitKey(0);
 
     auto game = std::make_unique<Game>();
 

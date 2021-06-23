@@ -21,7 +21,8 @@
     E(DreadShark)      \
     E(Chest)           \
     E(Particle)        \
-    E(SmallBoat)      \
+    E(SmallBoat)       \
+    E(SmallWorm)       \
     E(Item)
 
 enum class EntType {X_ENT_TYPES(GENERATE_ENUM)};

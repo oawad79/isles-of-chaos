@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="179">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="181">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -2887,6 +2887,11 @@
   <object id="165" name="DreadShark" type="DreadShark" x="-117.5" y="-70.5" width="32" height="48"/>
   <object id="166" name="Shroomba" type="Shroomba" x="-992" y="-48" width="16" height="16"/>
   <object id="167" name="Shroomba" type="Shroomba" x="-1044" y="-54" width="16" height="16"/>
+  <object id="180" name="Item" type="Item" x="-1128.5" y="-41.125" width="8" height="8">
+   <properties>
+    <property name="id" value="flippy-feather"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="4" x="128" y="80" width="192" height="120"/>

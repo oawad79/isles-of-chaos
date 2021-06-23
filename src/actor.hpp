@@ -15,6 +15,7 @@
 enum class ActorType {
     NPC,
     KIWI_BIRD,
+    BUG,
 
     ENEMY_START,
 
@@ -36,6 +37,7 @@ enum class ActorState {
     JUMPING,
     JUMP,
     ATTACKING,
+    DEAD,
 };
 
 enum class AiType {
