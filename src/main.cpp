@@ -23,27 +23,18 @@ std::once_flag Input::once;
 void Update(uptr<Game>& game) {
     UpdateGame(game);
     UpdateGui(game);
-
-    if (game->state == AppState::Running) {
-        UpdatePlaywright(game->stage, game->reg);
-
-        UpdateSprites(game->reg);
-
-        UpdatePlayer(game, game->reg);
-
-        UpdatePhysics(game, game->reg);
-        UpdateTimed(game->reg);
-        UpdateCharacter(game->reg);
-        UpdateActor(game->reg);
-        UpdateWater(game->reg);
-        UpdateInteraction(game, game->reg);
-    }
 }
 
 void Render(const uptr<Game>& game) {
     const auto* tilemap = GetTilemap(game->level);
-    if (tilemap != nullptr)
-        DrawTilemapToTarget(tilemap, game->mainCamera, game->spriteRenderer);
+
+    Camera2D cameraCopy = game->mainCamera;
+    cameraCopy.target.x = floor(cameraCopy.target.x);
+    cameraCopy.target.y = floor(cameraCopy.target.y);
+
+  if (tilemap != nullptr)
+        DrawTilemapToTarget(tilemap, cameraCopy, game->spriteRenderer);
+
     BeginTextureMode(game->mainCanvas);
         if (tilemap != nullptr) game->backgroundClearColor = tilemap->backgroundColor;
         ClearBackground(game->backgroundClearColor);

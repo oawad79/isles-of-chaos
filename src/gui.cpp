@@ -87,6 +87,7 @@ struct InvSpacial {
     Vector2 weaponPos;
 };
 
+void DrawPauseMenu(const uptr<Game> &uniquePtr);
 InvSpacial GetInvSpacial(Inventory& inv) {
     const float width = inv.maxColumns * (cellSize + margin);
     const float height = inv.maxRows * (cellSize + margin);
@@ -291,6 +292,14 @@ void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
     }
 }
 
+void UpdatePauseMenu(const uptr<Game>& game) {
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    const auto tmp = game->state;
+    game->state = game->lastState;
+    game->lastState = tmp;
+  }
+}
+
 void UpdateGui(const uptr<Game>& game) {
     auto& state = game->guiState;
 
@@ -309,7 +318,19 @@ void UpdateGui(const uptr<Game>& game) {
 
     UpdateHud(game, state);
 
-    if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
+    if (IsKeyPressed(KEY_ESCAPE)) {
+      if (game->state != AppState::PauseMenu) {
+        game->lastState = game->state;
+        game->state = AppState::PauseMenu;
+      }
+    }
+
+    if (game->state == AppState::PauseMenu) {
+      UpdatePauseMenu(game);
+      return; // Important (Dont want to update dialog and stuff)
+    }
+
+  if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
         auto& dialog = game->dialogTree.value();
         UpdateDialog(dialog, game);
     }
@@ -475,6 +496,10 @@ void DrawBanner(BannerState& state) {
         fontSize, 1.0f, true, textColor);
 }
 
+void DrawPauseMenu(const uptr<Game> &uniquePtr) {
+  DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, Color{0,0,0,100});
+}
+
 void RenderGui(const uptr<Game>& game) {
     auto& state = game->guiState; 
 
@@ -494,6 +519,8 @@ void RenderGui(const uptr<Game>& game) {
         auto dialog = game->dialogTree.value();
         DrawDialog(dialog);
     }
+
+    DrawPauseMenu(game);
 }
 
 void DoAreaBanner(const uptr<Game>& game, const std::string& text) {

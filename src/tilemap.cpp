@@ -338,18 +338,6 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
         ClearBackground({0,0,0,0});
         const auto* tileset = &tilemap->tileset;
 
-        // for (const auto& bill : tilemap->billboards) {
-        //     DrawSprite(
-        //         ren,
-        //         (Sprite)bill,
-        //         Body{
-        //             bill.position.x + ox,
-        //             bill.position.y + oy,
-        //             bill.region.width,
-        //             bill.region.height,
-        //         });
-        // }
-
 //        bool roomActive = false;
 //        for (auto& room : tilemap->rooms) {
 //            if (room.active) {

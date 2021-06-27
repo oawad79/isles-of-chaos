@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "playwright.hpp"
 
 void LoadGame(uptr<Game>& game) {
     game->mainCanvas = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -83,8 +84,25 @@ void UpdateGame(uptr<Game>& game) {
 //    }
   }
 
+  if (game->state == AppState::Running) {
+    UpdatePlaywright(game->stage, game->reg);
+
+    UpdateSprites(game->reg);
+
+    UpdatePlayer(game, game->reg);
+
+    UpdatePhysics(game, game->reg);
+    UpdateTimed(game->reg);
+    UpdateCharacter(game->reg);
+    UpdateActor(game->reg);
+    UpdateWater(game->reg);
+    UpdateInteraction(game, game->reg);
+  } else if (game->state == AppState::PauseMenu) {
+  }
+
   for (auto* scene : game->scenes)
-      scene->update(game);
+    scene->update(game);
+
 }
 
 void RenderGame(const uptr<Game>& game) {
@@ -98,6 +116,8 @@ void DoDialog(const uptr<Game>& game, const DialogTree& tree) {
     }
 
     game->dialogTree = std::optional<DialogTree>(tree);
+    if (game->state != AppState::InDialog)
+      game->lastState = game->state;
     game->state = AppState::InDialog;
 }
 

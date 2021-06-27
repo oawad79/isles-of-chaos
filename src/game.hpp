@@ -24,6 +24,7 @@ constexpr int GIF_HEIGHT { CANVAS_HEIGHT * 2 };
 enum class AppState {
     Running,
     Paused,
+    PauseMenu,
     InDialog,
     InCutscene,
     Stopped
@@ -31,6 +32,8 @@ enum class AppState {
 
 struct Game {
     AppState state{AppState::Running};
+    AppState lastState{};
+
     entt::registry reg;
     SpriteRenderer spriteRenderer;
     uptr<Level> level;
