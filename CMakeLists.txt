@@ -68,7 +68,7 @@ file(GLOB_RECURSE FILES
         "${APP_SRC}/*.cpp"
         )
 
-add_executable(${PROJECT_NAME} ${FILES} src/gif.cpp)
+add_executable(${PROJECT_NAME} ${FILES} src/gif.cpp src/gui_state.cpp src/window_sizing.hpp src/window_sizing.cpp)
 
 # COPY RESOURCES
 # we don't want to copy if we're building in the source dir

@@ -86,11 +86,8 @@ void UpdateGame(uptr<Game>& game) {
 
   if (game->state == AppState::Running) {
     UpdatePlaywright(game->stage, game->reg);
-
     UpdateSprites(game->reg);
-
     UpdatePlayer(game, game->reg);
-
     UpdatePhysics(game, game->reg);
     UpdateTimed(game->reg);
     UpdateCharacter(game->reg);
@@ -131,20 +128,6 @@ Vector2 MouseCanvasPosition(const uptr<Game>& game) {
 
     const float ws = (float)CANVAS_WIDTH / (float)width;
     const float hs = (float)CANVAS_HEIGHT / (float)height;
-
-    return {mx*ws, my*hs};
-}
-
-Vector2 MouseGuiCanvasPosition(const uptr<Game>& game) {
-    const float mx = GetMouseX();
-    const float my = GetMouseY();
-
-    const float aspect = (float)GUI_CANVAS_HEIGHT / (float)GUI_CANVAS_WIDTH;
-    const float width = GetScreenWidth();
-    const float height = GetScreenHeight();
-
-    const float ws = (float)GUI_CANVAS_WIDTH / (float)width;
-    const float hs = (float)GUI_CANVAS_HEIGHT / (float)height;
 
     return {mx*ws, my*hs};
 }

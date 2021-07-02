@@ -4,6 +4,7 @@
 #include <set>
 #include <raylib.h>
 
+#include "window_sizing.hpp"
 #include "utils.hpp"
 #include "level.hpp"
 #include "game.hpp"
@@ -27,6 +28,8 @@ void Update(uptr<Game>& game) {
 
 void Render(const uptr<Game>& game) {
     const auto* tilemap = GetTilemap(game->level);
+
+    GetWindowSize(true);
 
     Camera2D cameraCopy = game->mainCamera;
     cameraCopy.target.x = floor(cameraCopy.target.x);

@@ -1,8 +1,30 @@
 #pragma once
 
 #include <optional>
+#include <string>
+#include <stdint.h>
+
+#include "raylib.h"
+
+#include "window_sizing.hpp"
+#include "consts.hpp"
 
 constexpr auto BANNER_MAX_TIME { 4.0f };
+
+constexpr Color BTN_FG { 100, 200, 200, 255 };
+constexpr Color BTN_BG { 8, 20, 10, 255 };
+
+enum GuiFlag : uint64_t {
+  GUI_FLAG_NONE = 1lu << 0lu,
+  GUI_FLAG_CENTER_X = 1lu << 1lu,
+  GUI_FLAG_CENTER_Y = 1lu << 2lu,
+  GUI_FLAG_RIGHT = 1lu << 3lu,
+};
+
+struct Button {
+  Rectangle position{0};
+  std::string title;
+};
 
 struct BannerState {
   std::string text{""};
@@ -22,5 +44,14 @@ struct GuiState {
     float frameTarget{0.0f};
 
     BannerState banner;
+
+    void setPadding(float newPadding);
+    bool doButton(Rectangle shape, const std::string& title, int fontSize=10, uint64_t flags=GUI_FLAG_NONE);
+
+private:
+    float padding{2.0f};
 };
+
+Vector2 MousePositionCanvasSpace();
+Vector2 MouseGuiCanvasPosition();
 

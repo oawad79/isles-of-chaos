@@ -18,8 +18,8 @@
 
 #include "playwright_type.hpp"
 
-constexpr int GIF_WIDTH { CANVAS_WIDTH * 2 };
-constexpr int GIF_HEIGHT { CANVAS_HEIGHT * 2 };
+constexpr float GIF_WIDTH { CANVAS_WIDTH * 2.0f };
+constexpr float GIF_HEIGHT { CANVAS_HEIGHT * 2.0f };
 
 enum class AppState {
     Running,
@@ -76,6 +76,5 @@ void RenderGame(const uptr<Game>& game);
 void DoDialog(const uptr<Game>& game, const DialogTree& tree);
 
 Vector2 MouseCanvasPosition(const uptr<Game>& game);
-Vector2 MouseGuiCanvasPosition(const uptr<Game>& game);
 
 #endif // SKYVAULT_GAME_H_

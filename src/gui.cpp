@@ -88,6 +88,7 @@ struct InvSpacial {
 };
 
 void DrawPauseMenu(const uptr<Game> &uniquePtr);
+
 InvSpacial GetInvSpacial(Inventory& inv) {
     const float width = inv.maxColumns * (cellSize + margin);
     const float height = inv.maxRows * (cellSize + margin);
@@ -292,16 +293,39 @@ void UpdateDialog(DialogTree& dialog, const uptr<Game>& game){
     }
 }
 
+void ShowPauseMenu(const uptr<Game>& game) {
+  const auto tmp = game->state;
+  game->state = game->lastState;
+  game->lastState = tmp;
+}
+
+void ClosePauseMenu(const uptr<Game>& game) {
+  const auto temp = game->lastState;
+  game->state = game->lastState;
+  game->lastState = temp;
+}
+
 void UpdatePauseMenu(const uptr<Game>& game) {
   if (IsKeyPressed(KEY_ESCAPE)) {
-    const auto tmp = game->state;
-    game->state = game->lastState;
-    game->lastState = tmp;
+    ShowPauseMenu(game);
   }
 }
 
 void UpdateGui(const uptr<Game>& game) {
-    auto& state = game->guiState;
+    if (IsKeyPressed(KEY_ESCAPE)) {
+      if (game->state != AppState::PauseMenu) {
+        game->lastState = game->state;
+        game->state = AppState::PauseMenu;
+        return;
+      }
+    }
+
+    if (game->state == AppState::PauseMenu) {
+      UpdatePauseMenu(game);
+      return; // Important (Dont want to update dialog and stuff)
+    }
+
+  auto& state = game->guiState;
 
     if (state.banner.timeLeft >= 0.0f) {
         if (state.banner.color.a < 256 - 4) {
@@ -318,19 +342,7 @@ void UpdateGui(const uptr<Game>& game) {
 
     UpdateHud(game, state);
 
-    if (IsKeyPressed(KEY_ESCAPE)) {
-      if (game->state != AppState::PauseMenu) {
-        game->lastState = game->state;
-        game->state = AppState::PauseMenu;
-      }
-    }
-
-    if (game->state == AppState::PauseMenu) {
-      UpdatePauseMenu(game);
-      return; // Important (Dont want to update dialog and stuff)
-    }
-
-  if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
+    if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
         auto& dialog = game->dialogTree.value();
         UpdateDialog(dialog, game);
     }
@@ -355,7 +367,7 @@ void UpdateGui(const uptr<Game>& game) {
                 for (int x = 0; x < inventory.maxColumns; x++) {
 
                     if (IsKeyDown(KEY_LEFT_SHIFT) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(),
                                                    {cx, cy, cellSize, cellSize})) {
                             if (auto o = inventory.getItem(x, y)) {
                                 const Item item = o.value();
@@ -372,7 +384,7 @@ void UpdateGui(const uptr<Game>& game) {
                             }
                         }
 
-                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(),
                                                    {wx, wy, cellSize, cellSize})) {
                             if (character.equiped.weapon) {
                                 inventory.putItem(character.equiped.weapon.value());
@@ -380,7 +392,7 @@ void UpdateGui(const uptr<Game>& game) {
                             }
                         }
 
-                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(),
                                                    {wx, wy - (cellSize + margin), cellSize, cellSize})) {
                             if (character.equiped.ability) {
                                 inventory.putItem(character.equiped.ability.value());
@@ -390,7 +402,7 @@ void UpdateGui(const uptr<Game>& game) {
                     } 
 
                     if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(game),
+                        if (CheckCollisionPointRec(MouseGuiCanvasPosition(),
                                                    {cx, cy, cellSize, cellSize})) {
                             // Drop item
                             if (auto o = inventory.getItem(x, y)) {
@@ -496,8 +508,43 @@ void DrawBanner(BannerState& state) {
         fontSize, 1.0f, true, textColor);
 }
 
-void DrawPauseMenu(const uptr<Game> &uniquePtr) {
-  DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, Color{0,0,0,100});
+void DrawPauseMenu(const uptr<Game> &game, GuiState& guiState) {
+  DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, Color{0,0,0,200});
+
+  constexpr float buttonWidth { 200 };
+  constexpr float buttonHeight { 12 };
+  constexpr float startX { GUI_CANVAS_WIDTH / 1.75f };
+  constexpr float margin { 6.0f };
+
+  int i = 1;
+
+  if (guiState.doButton({startX, 10, buttonWidth, buttonHeight}, "Resume!", 10)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Save", 10)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Load", 10)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Settings", 10, GUI_FLAG_CENTER_Y | GUI_FLAG_CENTER_X)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Hack Tools", 10)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit", 10)) {
+    ClosePauseMenu(game);
+  }
+
+  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit To Desktop", 10)) {
+    ClosePauseMenu(game);
+  }
 }
 
 void RenderGui(const uptr<Game>& game) {
@@ -510,7 +557,7 @@ void RenderGui(const uptr<Game>& game) {
     const auto tex = Assets::I()->textures[Textures::TEX_GUI];
     DrawInventory(game, state);
 
-    const auto [cx, cy] = MouseGuiCanvasPosition(game);
+    const auto [cx, cy] = MousePositionCanvasSpace();
     DrawCircle(cx, cy, 2, BLUE);
 
     DrawHud(game, state, tex);
@@ -520,7 +567,8 @@ void RenderGui(const uptr<Game>& game) {
         DrawDialog(dialog);
     }
 
-    DrawPauseMenu(game);
+    if (game->state == AppState::PauseMenu)
+      DrawPauseMenu(game, state);
 }
 
 void DoAreaBanner(const uptr<Game>& game, const std::string& text) {
