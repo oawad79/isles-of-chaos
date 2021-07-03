@@ -511,39 +511,54 @@ void DrawBanner(BannerState& state) {
 void DrawPauseMenu(const uptr<Game> &game, GuiState& guiState) {
   DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, Color{0,0,0,200});
 
-  constexpr float buttonWidth { 200 };
+  constexpr float buttonWidth { 180 };
   constexpr float buttonHeight { 12 };
-  constexpr float startX { GUI_CANVAS_WIDTH / 1.75f };
+  constexpr float startX { GUI_CANVAS_WIDTH / 2.50f };
   constexpr float margin { 6.0f };
 
+  game->frameTimer += GetFrameTime() * 0.65f;
+  if (game->frameTimer > 1.0f)
+    game->frameTimer = 1.0f;
+
   int i = 1;
+  int diff = 10;
 
-  if (guiState.doButton({startX, 10, buttonWidth, buttonHeight}, "Resume!", 10)) {
+  float x = startX;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10, buttonWidth, buttonHeight}, "Resume!", 10)) {
     ClosePauseMenu(game);
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Save", 10)) {
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Save", 10, GUI_FLAG_CENTER_Y)) {
     ClosePauseMenu(game);
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Load", 10)) {
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Load", 10, GUI_FLAG_CENTER_Y)) {
     ClosePauseMenu(game);
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Settings", 10, GUI_FLAG_CENTER_Y | GUI_FLAG_CENTER_X)) {
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Settings", 10, GUI_FLAG_CENTER_Y)) {
     ClosePauseMenu(game);
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Hack Tools", 10)) {
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Hack Tools", 10, GUI_FLAG_CENTER_Y)) {
     ClosePauseMenu(game);
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit", 10)) {
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit", 10, GUI_FLAG_CENTER_Y)) {
     ClosePauseMenu(game);
+    GotoScene(game, new MenuScene(game->reg));
   }
 
-  if (guiState.doButton({startX, 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit To Desktop", 10)) {
-    ClosePauseMenu(game);
+  x = startX + diff * i;
+  if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Exit To Desktop", 10, GUI_FLAG_CENTER_Y)) {
+    //TODO(Dustin): Prompt asking if they are sure, then clean up nicely
+    CloseWindow();
+    exit(EXIT_SUCCESS);
   }
 }
 

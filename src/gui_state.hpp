@@ -12,13 +12,15 @@
 constexpr auto BANNER_MAX_TIME { 4.0f };
 
 constexpr Color BTN_FG { 100, 200, 200, 255 };
-constexpr Color BTN_BG { 8, 20, 10, 255 };
+constexpr Color BTN_BG { 8, 8, 10, 255 };
 
 enum GuiFlag : uint64_t {
-  GUI_FLAG_NONE = 1lu << 0lu,
-  GUI_FLAG_CENTER_X = 1lu << 1lu,
-  GUI_FLAG_CENTER_Y = 1lu << 2lu,
-  GUI_FLAG_RIGHT = 1lu << 3lu,
+  GUI_FLAG_NONE               = 1lu << 0lu,
+  GUI_FLAG_CENTER_X           = 1lu << 1lu,
+  GUI_FLAG_CENTER_Y           = 1lu << 2lu,
+  GUI_FLAG_CONTAINER_CENTER_X = 1lu << 3lu,
+  GUI_FLAG_CONTAINER_CENTER_Y = 1lu << 4lu,
+  GUI_FLAG_RIGHT              = 1lu << 5lu,
 };
 
 struct Button {

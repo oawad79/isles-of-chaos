@@ -20,7 +20,7 @@ MenuScene::MenuScene(entt::registry& reg) {
   menuBg = LoadTexture("resources/textures/MainMenuBg.png");
 }
 
-void MenuScene::load(uptr<Game>& game) {
+void MenuScene::load(const uptr<Game>& game) {
 
 }
 
@@ -37,7 +37,7 @@ void MenuScene::spreadFire(int src) {
     }
 }
 
-void MenuScene::update(uptr<Game>& game) {
+void MenuScene::update(const uptr<Game>& game) {
   static float timer = 0;
 
   if (IsKeyPressed(KEY_ENTER)) {
@@ -57,9 +57,12 @@ void MenuScene::update(uptr<Game>& game) {
 }
 
 void MenuScene::render(const uptr<Game>& game) {
-//  DrawTexturePro(this->menuBg, Rectangle{0, 0, 256, 144}, Rectangle{0, 0, 256, 144}, Vector2{0, 0}, 0.0f, WHITE);
 
   const auto size = MeasureText("Isles of Chaos!", 20);
+  const auto size2 = MeasureText("Press enter to start", 10);
+
+  DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, {0,0,0,255});
+
   DrawText("Isles of Chaos!", CANVAS_WIDTH / 2 - size / 2, 10, 20, WHITE);
 
   for (int x = 0; x < FIRE_WIDTH; x++) {
@@ -67,19 +70,50 @@ void MenuScene::render(const uptr<Game>& game) {
           int i = firePixels[y * FIRE_WIDTH + x];
           Color color = palette[i];
 
-//            color.r = color.r;
-//            color.g = color.g;
-//            color.b = color.b;
+           color.r = 1 - color.r;
+           color.g = 1 - color.g;
+           color.b = 1 - color.b;
 
           DrawRectangle(x, y, 1, 1, color);
       }
   }
 
-  const auto size2 = MeasureText("Press enter to start", 10);
-  DrawRectangle((CANVAS_WIDTH/2-size2/2) - 10, CANVAS_HEIGHT/2-20, size2 + 20, 30, {0,0,0,100});
-  DrawText("Press enter to start", CANVAS_WIDTH/2 - size2/2, CANVAS_HEIGHT/2-10, 10, ORANGE);
+  constexpr float h = 15;
+
+  if (game->guiState.doButton(
+        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - (h + 6), 120, h}, 
+        "New Game", 
+        10, 
+          GUI_FLAG_CENTER_X 
+        | GUI_FLAG_CENTER_Y 
+        | GUI_FLAG_CONTAINER_CENTER_X 
+        | GUI_FLAG_CONTAINER_CENTER_Y)) {
+    GotoScene(game, new GameScene(game->reg));
+  }
+
+  if (game->guiState.doButton(
+        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 120, h}, 
+        "Load Game", 
+        10, 
+          GUI_FLAG_CENTER_X 
+        | GUI_FLAG_CENTER_Y 
+        | GUI_FLAG_CONTAINER_CENTER_X 
+        | GUI_FLAG_CONTAINER_CENTER_Y)) {
+  }
+
+  if (game->guiState.doButton(
+        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + h + 6, 120, h}, 
+        "Exit", 
+        10, 
+          GUI_FLAG_CENTER_X 
+        | GUI_FLAG_CENTER_Y 
+        | GUI_FLAG_CONTAINER_CENTER_X 
+        | GUI_FLAG_CONTAINER_CENTER_Y)) {
+    CloseWindow();
+    exit(EXIT_SUCCESS);
+  }
 }
 
-void MenuScene::destroy(uptr<Game>& game) {
+void MenuScene::destroy(const uptr<Game>& game) {
 
 }

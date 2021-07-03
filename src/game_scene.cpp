@@ -2,7 +2,7 @@
 
 GameScene::GameScene(entt::registry& reg) {}
 
-void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
+void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
     game->level = LoadLevel(which);
     game->physicsPaused = true;
     loadTimer = 0.0f;
@@ -58,20 +58,20 @@ void GameScene::loadLevel(uptr<Game>& game, const std::string& which){
     }
 }
 
-void GameScene::load(uptr<Game>& game) {
+void GameScene::load(const uptr<Game>& game) {
     loadLevel(game, "resources/maps/StartIsland1.tmx");
 }
 
-void GameScene::update(uptr<Game>& game) {
+void GameScene::update(const uptr<Game>& game) {
     handlePorts(game);
     game->physicsPaused = loadTimer > 0.0f;
     loadTimer -= GetFrameTime();
 }
 
-void GameScene::handleDoors(uptr<Game>& game) {
+void GameScene::handleDoors(const uptr<Game>& game) {
 }
 
-void GameScene::handlePorts(uptr<Game>& game) {
+void GameScene::handlePorts(const uptr<Game>& game) {
     auto* tilemap = GetTilemap(game->level);
     const auto id = GetTilemapId(game->level);
     constexpr float FADE_SPEED { 4.0f };
@@ -180,18 +180,18 @@ void GameScene::handlePorts(uptr<Game>& game) {
     });
 }
 
-void GameScene::deleteLevel(uptr<Game>& game) {
+void GameScene::deleteLevel(const uptr<Game>& game) {
     game->reg.clear();
 }
 
 void GameScene::render(const uptr<Game>& game) {
 }
 
-void GameScene::destroy(uptr<Game>& game) {
+void GameScene::destroy(const uptr<Game>& game) {
     game->reg.clear();
 }
 
-void GameScene::archiveEntities(uptr<Game>& game, int id) {
+void GameScene::archiveEntities(const uptr<Game>& game, int id) {
     game->reg.each([&game, id](auto entity){
         if (game->reg.has<Player>(entity)) return;
         if (game->reg.has<Actor>(entity) && game->reg.get<Actor>(entity).type == ActorType::KIWI_BIRD) return;
@@ -201,7 +201,7 @@ void GameScene::archiveEntities(uptr<Game>& game, int id) {
     archived = true;
 }
 
-void GameScene::unarchiveEntities(uptr<Game>& game, int id) {
+void GameScene::unarchiveEntities(const uptr<Game>& game, int id) {
     game->reg.each([&game, id](auto entity){
         if (game->reg.has<Disabled>(entity)) {
             auto& d = game->reg.get<Disabled>(entity);

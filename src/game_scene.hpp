@@ -17,23 +17,23 @@
 class GameScene : public SceneLayer {
 public:
     GameScene(entt::registry& reg);
-    void load(uptr<Game>& game) override;
-    void update(uptr<Game>& game) override;
+    void load(const uptr<Game>& game) override;
+    void update(const uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
-    void destroy(uptr<Game>& game) override;
+    void destroy(const uptr<Game>& game) override;
 
-    void loadLevel(uptr<Game>& game, const std::string& which);
-    void deleteLevel(uptr<Game>& game);
+    void loadLevel(const uptr<Game>& game, const std::string& which);
+    void deleteLevel(const uptr<Game>& game);
 
 private:
     enum FadeState { In, Hold, Out };
     entt::entity player{0};
 
-    void handlePorts(uptr<Game>& game);
-    void handleDoors(uptr<Game>& game);
+    void handlePorts(const uptr<Game>& game);
+    void handleDoors(const uptr<Game>& game);
 
-    void archiveEntities(uptr<Game>& game, int id=0);
-    void unarchiveEntities(uptr<Game>& game, int id=0);
+    void archiveEntities(const uptr<Game>& game, int id=0);
+    void unarchiveEntities(const uptr<Game>& game, int id=0);
 
     bool archived{false};
 

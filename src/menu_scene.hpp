@@ -29,10 +29,10 @@ class MenuScene : public SceneLayer {
 public:
     MenuScene(entt::registry& reg);
 
-    void load(uptr<Game>& game) override;
-    void update(uptr<Game>& game) override;
+    void load(const uptr<Game>& game) override;
+    void update(const uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
-    void destroy(uptr<Game>& game) override;
+    void destroy(const uptr<Game>& game) override;
 
 private:
     void spreadFire(int src);

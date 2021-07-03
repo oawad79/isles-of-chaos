@@ -31,6 +31,8 @@ enum class AppState {
 };
 
 struct Game {
+    // TODO(Dustin): We need to make game states a stack, because nested menus will
+    // want to know how to jump back, right now we can only go back 1 step, eg. pause, to unpause
     AppState state{AppState::Running};
     AppState lastState{};
 
@@ -63,9 +65,9 @@ struct Game {
 };
 
 void LoadGame(uptr<Game>& game);
-void PushScene(uptr<Game>& game, SceneLayer* scene);
-void PopScene(uptr<Game>& game);
-void GotoScene(uptr<Game>& game, SceneLayer* scene);
+void PushScene(const uptr<Game>& game, SceneLayer* scene);
+void PopScene(const uptr<Game>& game);
+void GotoScene(const uptr<Game>& game, SceneLayer* scene);
 
 bool SaveGameState(uptr<Game>& game, const std::string& name);
 bool LoadGameState(uptr<Game>& game, const std::string& name);

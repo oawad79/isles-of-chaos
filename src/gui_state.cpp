@@ -8,24 +8,32 @@ void GuiState::setPadding(float newPadding) {
 bool GuiState::doButton(Rectangle shape, const std::string& title, int fontSize, uint64_t flags) {
   const auto& defFont = GetFontDefault();
 
-  const auto mpos = MousePositionCanvasSpace();
-  bool hot = CheckCollisionPointRec(mpos, Rectangle{shape.x, shape.y, shape.width, shape.height});
-
   float x = shape.x - padding;
   float y = shape.y - padding;
 
-  float fx = x;
-  float fy = y;
+  if (flags & GUI_FLAG_CONTAINER_CENTER_X) {
+    x -= (shape.width + padding * 2) / 2.0f;
+  }
+
+  if (flags & GUI_FLAG_CONTAINER_CENTER_Y) {
+    y -= (shape.height + padding * 2) / 2.0f;
+  }
+
+  float fx = x + padding;
+  float fy = y + padding;
 
   if (flags & GUI_FLAG_CENTER_X || flags & GUI_FLAG_CENTER_Y) {
     const auto strSize = MeasureTextEx(defFont, title.c_str(), fontSize, 1.0f);
     if (flags & GUI_FLAG_CENTER_X) {
-      fx = shape.x + shape.width / 2 - strSize.x / 2;
+      fx = x + shape.width / 2 - strSize.x / 2;
     }
     if (flags & GUI_FLAG_CENTER_Y) {
-      fy = shape.y + shape.height / 2 - strSize.y / 2;
+      fy = y + shape.height / 2 - strSize.y / 2;
     }
   }
+
+  const auto mpos = MousePositionCanvasSpace();
+  bool hot = CheckCollisionPointRec(mpos, Rectangle{x, y, shape.width + padding*2.0f, shape.height + padding*2.0f});
 
   DrawRectangle(x, y, shape.width + padding*2.f, shape.height + padding*2.f, BTN_BG);
 

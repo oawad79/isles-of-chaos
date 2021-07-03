@@ -27,19 +27,19 @@ bool LoadGameState(uptr<Game>& game, const std::string& name) {
   return false;
 }
 
-void PushScene(uptr<Game>& game, SceneLayer* scene) {
+void PushScene(const uptr<Game>& game, SceneLayer* scene) {
     scene->load(game);
     game->scenes.emplace_back(scene);
 }
 
-void PopScene(uptr<Game>& game) {
+void PopScene(const uptr<Game>& game) {
     if (game->scenes.size() > 0) {
         game->scenes[game->scenes.size() - 1]->destroy(game);
         game->scenes.pop_back();
     }
 }
 
-void GotoScene(uptr<Game>& game, SceneLayer* scene) {
+void GotoScene(const uptr<Game>& game, SceneLayer* scene) {
     PopScene(game);
     PushScene(game, scene);
 }

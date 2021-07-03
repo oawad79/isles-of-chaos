@@ -5,6 +5,7 @@
 
 #include "game.hpp"
 #include "gui_state.hpp"
+#include "menu_scene.hpp"
 #include "input.hpp"
 #include "player.hpp"
 #include "inventory.hpp"
