@@ -15,7 +15,7 @@ std::filesystem::path GetSavePath(const std::string name) {
   if (!std::filesystem::exists(saveDirPath)) {
     if (!std::filesystem::create_directory(saveDirPath)) {
       std::cout << "Failed to create saves directory (ABORTING)" << std::endl;
-      return false;
+      return saveDirPath / ("save_" + name + ".sky-save");
     }
   }
 
