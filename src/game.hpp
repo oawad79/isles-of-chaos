@@ -4,9 +4,11 @@
 #include <vector>
 #include <optional>
 #include <filesystem>
+#include <fstream>
 
 #include <entt.hpp>
 
+#include "tinyxml2.hpp"
 #include "gif.hpp"
 #include "utils.hpp"
 #include "sprite.hpp"
@@ -69,8 +71,8 @@ void PushScene(const uptr<Game>& game, SceneLayer* scene);
 void PopScene(const uptr<Game>& game);
 void GotoScene(const uptr<Game>& game, SceneLayer* scene);
 
-bool SaveGameState(uptr<Game>& game, const std::string& name);
-bool LoadGameState(uptr<Game>& game, const std::string& name);
+bool SaveGameState(const uptr<Game>& game, const std::string& name);
+bool LoadGameState(const uptr<Game>& game, const std::string& name);
 
 void UpdateGame(uptr<Game>& game);
 void RenderGame(const uptr<Game>& game);

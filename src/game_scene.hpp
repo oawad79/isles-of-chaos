@@ -5,6 +5,7 @@
 #include <entt.hpp>
 #include <raylib.h>
 
+#include "consts.hpp"
 #include "scene.hpp"
 #include "gui.hpp"
 #include "game.hpp"
@@ -16,7 +17,7 @@
 
 class GameScene : public SceneLayer {
 public:
-    GameScene(entt::registry& reg);
+    GameScene(entt::registry& reg, const std::string gameLevel=START_GAME_LEVEL);
     void load(const uptr<Game>& game) override;
     void update(const uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
@@ -28,6 +29,8 @@ public:
 private:
     enum FadeState { In, Hold, Out };
     entt::entity player{0};
+
+    const std::string startGameLevel{""};
 
     void handlePorts(const uptr<Game>& game);
     void handleDoors(const uptr<Game>& game);
@@ -41,7 +44,7 @@ private:
 
     bool enteringPort{false};
     float fadeTimer = 0.0f;
-    std::string nextTilemap{""};
+    std::string nextTilemap;
     Vector2 nextOffset{0, 0};
     Vector2 portCenter{0, 0};
     Vector2 respawnLocation{0, 0};

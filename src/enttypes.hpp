@@ -51,4 +51,8 @@ enum class ActorName {
     OldMan,
 };
 
+struct Ent {
+  EntType entType{EntType::None};
+};
+
 #endif // SKYVAULT_ENTTYPES_HPP

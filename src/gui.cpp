@@ -530,11 +530,13 @@ void DrawPauseMenu(const uptr<Game> &game, GuiState& guiState) {
 
   x = startX + diff * i;
   if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Save", 10, GUI_FLAG_CENTER_Y)) {
+    SaveGameState(game, "demo_save");
     ClosePauseMenu(game);
   }
 
   x = startX + diff * i;
   if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10 + (i++ * (buttonHeight + margin)), buttonWidth, buttonHeight}, "Load", 10, GUI_FLAG_CENTER_Y)) {
+    LoadGameState(game, "demo_save");
     ClosePauseMenu(game);
   }
 

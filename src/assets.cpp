@@ -171,7 +171,7 @@ void LoadAllAssets() {
     Assets::I()->fonts[Fonts::FONT_NONE] = GetFontDefault();
 
 //    std::cout << "HERE!!" << "\n\n" << std::endl;
-    Assets::I()->fonts[Fonts::FONT_SMALL] = LoadFont("resources/fonts/small-font.png");
+//    Assets::I()->fonts[Fonts::FONT_SMALL] = LoadFont("resources/fonts/small-font.png");
 //    std::cout << "\n\n" << std::endl;
 
     Assets::I()->shaders[SPRITE_SHADER] = LoadShader(

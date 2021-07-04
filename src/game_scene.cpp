@@ -1,9 +1,9 @@
 #include "game_scene.hpp"
 
-GameScene::GameScene(entt::registry& reg) {}
+GameScene::GameScene(entt::registry& reg, const std::string gameLevel) : startGameLevel(gameLevel) {}
 
 void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
-    game->level = LoadLevel(which);
+    game->level = LoadLevel("resources/maps/" + startGameLevel + ".tmx");
     game->physicsPaused = true;
     loadTimer = 0.0f;
     auto* tilemap = GetTilemap(game->level);
@@ -59,7 +59,7 @@ void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
 }
 
 void GameScene::load(const uptr<Game>& game) {
-    loadLevel(game, "resources/maps/StartIsland1.tmx");
+    loadLevel(game, startGameLevel);
 }
 
 void GameScene::update(const uptr<Game>& game) {

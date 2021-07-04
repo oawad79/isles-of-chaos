@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include "game_scene.hpp"
 #include "playwright.hpp"
 
 void LoadGame(uptr<Game>& game) {
@@ -9,20 +10,187 @@ void LoadGame(uptr<Game>& game) {
     game->mainCamera.zoom = 1;
 }
 
-bool SaveGameState(uptr<Game>& game, const std::string& name) {
-  auto saveDirPath = std::filesystem::current_path().append("/ioc-saves");
+std::filesystem::path GetSavePath(const std::string name) {
+  auto saveDirPath = std::filesystem::current_path().append("ioc-saves");
   if (!std::filesystem::exists(saveDirPath)) {
     if (!std::filesystem::create_directory(saveDirPath)) {
       std::cout << "Failed to create saves directory (ABORTING)" << std::endl;
       return false;
     }
   }
-  const auto saveFilePath = saveDirPath.append("/save_" + name + ".sky-save");
+
+  return saveDirPath / ("save_" + name + ".sky-save");
+}
+
+bool SaveGameState(const uptr<Game>& game, const std::string& name) {
+  using namespace tinyxml2;
+
+  const auto saveFilePath = GetSavePath(name);
+
+  std::cout << "Creating save: => " << saveFilePath << std::endl;
+
+  XMLDocument doc;
+  auto* root = doc.NewElement("save");
+  root->SetAttribute("name", name.c_str());
+  doc.InsertFirstChild(root);
+
+  auto* worldGroupFirst = doc.NewElement("world");
+  auto* worldGroup = root->InsertFirstChild(worldGroupFirst);
+
+  auto* entityGroupFirst = doc.NewElement("entities");
+  auto* entityGroup = root->InsertFirstChild(entityGroupFirst);
+
+  if (game->scenes.size() > 0) {
+    auto* s = game->scenes[0];
+    if (dynamic_cast<GameScene*>(s) != nullptr) {
+      auto* gs = dynamic_cast<GameScene*>(s);
+
+      // TODO(Save game state stuff)
+
+    } else {
+      std::cout << "Save can't find game state (ABORTING)" << std::endl;
+      return false;
+    }
+  } else {
+    std::cout << "Save can't find game state (ABORTING)" << std::endl;
+    return false;
+  }
+
+  {
+    for (const auto* tilemap : game->level->tilemaps) {
+      auto* tm = doc.NewElement("loaded-tilemap");
+      tm->SetAttribute("name", tilemap->name.c_str());
+      tm->SetAttribute("path", tilemap->path.c_str());
+      tm->SetAttribute("position-updated", tilemap->positionUpdated);
+      worldGroup->InsertFirstChild(tm);
+    }
+
+    worldGroupFirst->SetAttribute("current", game->level->currentTilemap.c_str());
+
+    {
+      auto* tilemap = GetTilemap(game->level);
+      worldGroupFirst->SetAttribute("position.x", tilemap->position.x);
+      worldGroupFirst->SetAttribute("position.y", tilemap->position.y);
+    }
+  }
+
+  {
+    game->reg.each([&](auto entity) {
+      if (game->reg.has<Water>(entity)) return;
+
+      auto* entityNode = doc.NewElement("entity");
+
+      if (game->reg.has<Ent>(entity)) {
+        auto& ent = game->reg.get<Ent>(entity);
+        entityNode->SetAttribute("name", EntTypeS[(int)ent.entType].c_str());
+        entityNode->SetAttribute("entType", (int)ent.entType);
+        entityGroup->InsertFirstChild(entityNode);
+      } else {
+//        std::cout << "Required component Ent is not found on entity" << std::endl;
+        return;
+      }
+
+      if (game->reg.has<Disabled>(entity)) {
+        entityNode->SetAttribute("disabled", true);
+      }
+
+      if (game->reg.has<Body>(entity)) {
+        auto &body = game->reg.get<Body>(entity);
+
+        auto* bodyNode = doc.NewElement("c");
+        entityNode->InsertFirstChild(bodyNode);
+
+        bodyNode->SetAttribute("typeName", "Body");
+        bodyNode->SetAttribute("x", body.x);
+        bodyNode->SetAttribute("y", body.y);
+        bodyNode->SetAttribute("width", body.width);
+        bodyNode->SetAttribute("height", body.height);
+      }
+
+      if (game->reg.has<Physics>(entity))  {
+        auto &physics = game->reg.get<Physics>(entity);
+
+        auto* physicsNode = doc.NewElement("c");
+        entityNode->InsertFirstChild(physicsNode);
+
+        physicsNode->SetAttribute("typeName", "Physics");
+        physicsNode->SetAttribute("type", (int)physics.type);
+        physicsNode->SetAttribute("velocity.x", physics.velocity.x);
+        physicsNode->SetAttribute("velocity.y", physics.velocity.y);
+        physicsNode->SetAttribute("friction", physics.friction);
+        physicsNode->SetAttribute("gravityScale.x", physics.gravityScale.x);
+        physicsNode->SetAttribute("gravityScale.y", physics.gravityScale.y);
+        physicsNode->SetAttribute("on_ground", physics.on_ground);
+        physicsNode->SetAttribute("on_ladder", physics.on_ladder);
+        physicsNode->SetAttribute("on_ground_timer", physics.on_ground_timer);
+        physicsNode->SetAttribute("colliding_with_solid", physics.colliding_with_solid);
+        //...
+        physicsNode->SetAttribute("facingX", physics.facingX);
+      }
+    });
+  }
+
+  doc.SaveFile(saveFilePath.string().c_str());
 
   return false;
 }
 
-bool LoadGameState(uptr<Game>& game, const std::string& name) {
+bool LoadGameState(const uptr<Game>& game, const std::string& name) {
+  using namespace tinyxml2;
+
+  const auto saveFilePath = GetSavePath(name);
+
+  XMLDocument doc;
+  doc.LoadFile(saveFilePath.string().c_str());
+
+  auto* root = doc.FirstChildElement("save");
+
+  auto* world = root->FirstChildElement("world");
+
+  Vector2 tilemapPosition = Vector2{
+    world->FloatAttribute("position.x", 0.0f),
+    world->FloatAttribute("position.y", 0.0f)
+  };
+
+  const auto* currentTilemap = world->Attribute("current");
+
+  auto* entities = root->FirstChildElement("entities");
+  XMLElement* entity = entities->FirstChildElement("entity");
+
+  while (entity) {
+    EntType entType = static_cast<EntType>(entity->IntAttribute("entType"));
+
+    switch (entType) {
+      case EntType::Player: {
+        auto pos = Vector2Zero();
+
+        auto *comp = entity->FirstChildElement("c");
+        while (comp){
+
+          if (strcmp(comp->Attribute("typeName"), "Body") == 0) {
+            pos.x = comp->FloatAttribute("x", 0.0f);
+            pos.y = comp->FloatAttribute("y", 0.0f);
+            std::cout << "HERE: X" << pos.x << " Y: " << pos.y << std::endl;
+          }
+
+          comp = comp->NextSiblingElement("c");
+        }
+
+        auto self = Spawn(entType, game, pos);
+//        game->reg.get<Physics>(self).gravityScale.y = 0.0f  ;
+
+        break;
+      }
+    }
+
+    entity = entity->NextSiblingElement("entity");
+  }
+
+  GotoScene(game, new GameScene(game->reg, currentTilemap));
+
+  auto* tilemap = GetTilemap(game->level);
+  SetPosition(tilemap, tilemapPosition);
+//  tilemap->position = tilemapPosition;
 
   return false;
 }

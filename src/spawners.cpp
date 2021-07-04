@@ -197,6 +197,8 @@ entt::entity SpawnNpc(const uptr<Game>& game, const Vector2 position) {
 
 entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, const std::string& id) {
     const auto self = SpawnNpc(game, position);
+    auto& ent = game->reg.emplace<Ent>(self);
+    ent.entType = EntType::Npc;
 
     if (id == "old-man") {
         auto convo = DialogTree{
@@ -405,6 +407,8 @@ entt::entity SpawnItemWithId(
   const Vector2 position,
   const std::string& id) {
     auto self = reg.create();
+    auto& ent = reg.emplace<Ent>(self);
+    ent.entType = EntType::Item;
 
     const auto itemData = Assets::I()->getItemInfo(id);
     reg.emplace<Item>(self, itemData);
@@ -492,7 +496,17 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             else
                 game->reg.emplace<Loot>(chest, Assets::I()->getLootInfo(obj.props["loot"]));
         } else {
+          if (obj.type == EntType::Player)  {
+            bool playerExists = false;
+            game->reg.view<Player>().each([&playerExists](auto _p){
+              playerExists = true;
+            });
+            if (!playerExists) {
+              Spawn(obj.type, game, {x, y});
+            }
+          } else {
             Spawn(obj.type, game, {x, y});
+          };
         }
     }
 
@@ -500,5 +514,7 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
 }
 
 entt::entity Spawn(const EntType which, const uptr<Game>& game, const Vector2 position) {
-    return SpawnerMap[(int)which](game, position);
+  auto self = SpawnerMap[(int)which](game, position);
+  game->reg.emplace<Ent>(self, which);
+  return self;
 }

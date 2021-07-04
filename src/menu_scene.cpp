@@ -40,10 +40,6 @@ void MenuScene::spreadFire(int src) {
 void MenuScene::update(const uptr<Game>& game) {
   static float timer = 0;
 
-  if (IsKeyPressed(KEY_ENTER)) {
-    GotoScene(game, new GameScene(game->reg));
-  }
-
   if (timer > 0.001f) {
       for (int x = 0; x < FIRE_WIDTH; x++) {
           for (int y = FIRE_HEIGHT - 1; y >= 1; y--) {
@@ -99,6 +95,7 @@ void MenuScene::render(const uptr<Game>& game) {
         | GUI_FLAG_CENTER_Y 
         | GUI_FLAG_CONTAINER_CENTER_X 
         | GUI_FLAG_CONTAINER_CENTER_Y)) {
+    LoadGameState(game, "demo_save");
   }
 
   if (game->guiState.doButton(
