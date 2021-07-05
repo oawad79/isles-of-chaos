@@ -521,7 +521,7 @@ void DrawPauseMenu(const uptr<Game> &game, GuiState& guiState) {
     game->frameTimer = 1.0f;
 
   int i = 1;
-  int diff = 10;
+  int diff = 12;
 
   float x = startX;
   if (guiState.doButton({Lerp(x + buttonWidth, x, BounceOut(game->frameTimer)), 10, buttonWidth, buttonHeight}, "Resume!", 10)) {

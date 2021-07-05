@@ -515,6 +515,7 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
 
 entt::entity Spawn(const EntType which, const uptr<Game>& game, const Vector2 position) {
   auto self = SpawnerMap[(int)which](game, position);
-  game->reg.emplace<Ent>(self, which);
+  if (self != entt::entity(0))
+    game->reg.emplace<Ent>(self, which);
   return self;
 }

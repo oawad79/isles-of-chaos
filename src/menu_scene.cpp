@@ -53,13 +53,14 @@ void MenuScene::update(const uptr<Game>& game) {
 }
 
 void MenuScene::render(const uptr<Game>& game) {
+  constexpr auto titleSize {20};
 
-  const auto size = MeasureText("Isles of Chaos!", 20);
+  const auto size = MeasureText("Isles of Chaos!", titleSize);
   const auto size2 = MeasureText("Press enter to start", 10);
 
   DrawRectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, {0,0,0,255});
 
-  DrawText("Isles of Chaos!", CANVAS_WIDTH / 2 - size / 2, 10, 20, WHITE);
+  DrawText("Isles of Chaos!", CANVAS_WIDTH / 2 - size / 2, 10, titleSize, WHITE);
 
   for (int x = 0; x < FIRE_WIDTH; x++) {
       for (int y = 0; y < FIRE_HEIGHT; y++) {
@@ -74,14 +75,15 @@ void MenuScene::render(const uptr<Game>& game) {
       }
   }
 
-  constexpr float h = 15;
+  constexpr float h = 14;
+  constexpr float m = 8;
 
   if (game->guiState.doButton(
-        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - (h + 6), 120, h}, 
-        "New Game", 
-        10, 
-          GUI_FLAG_CENTER_X 
-        | GUI_FLAG_CENTER_Y 
+        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 - (h + m), 120, h},
+        "New Game",
+        10,
+          GUI_FLAG_CENTER_X
+        | GUI_FLAG_CENTER_Y
         | GUI_FLAG_CONTAINER_CENTER_X 
         | GUI_FLAG_CONTAINER_CENTER_Y)) {
     GotoScene(game, new GameScene(game->reg));
@@ -90,16 +92,16 @@ void MenuScene::render(const uptr<Game>& game) {
   if (game->guiState.doButton(
         {CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 120, h}, 
         "Load Game", 
-        10, 
-          GUI_FLAG_CENTER_X 
-        | GUI_FLAG_CENTER_Y 
-        | GUI_FLAG_CONTAINER_CENTER_X 
+        10,
+          GUI_FLAG_CENTER_X
+        | GUI_FLAG_CENTER_Y
+        | GUI_FLAG_CONTAINER_CENTER_X
         | GUI_FLAG_CONTAINER_CENTER_Y)) {
     LoadGameState(game, "demo_save");
   }
 
   if (game->guiState.doButton(
-        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + h + 6, 120, h}, 
+        {CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + h + m, 120, h},
         "Exit", 
         10, 
           GUI_FLAG_CENTER_X 

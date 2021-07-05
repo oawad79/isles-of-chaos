@@ -17,7 +17,7 @@
 
 class GameScene : public SceneLayer {
 public:
-    GameScene(entt::registry& reg, const std::string gameLevel=START_GAME_LEVEL);
+    GameScene(entt::registry& reg, const std::string gameLevel=START_GAME_LEVEL, const Vector2 tilemapPosition=Vector2{0,0});
     void load(const uptr<Game>& game) override;
     void update(const uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
@@ -31,6 +31,7 @@ private:
     entt::entity player{0};
 
     const std::string startGameLevel{""};
+    const Vector2 startGamePosition{0.0f,0.0f};
 
     void handlePorts(const uptr<Game>& game);
     void handleDoors(const uptr<Game>& game);

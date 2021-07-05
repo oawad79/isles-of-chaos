@@ -170,7 +170,6 @@ bool LoadGameState(const uptr<Game>& game, const std::string& name) {
           if (strcmp(comp->Attribute("typeName"), "Body") == 0) {
             pos.x = comp->FloatAttribute("x", 0.0f);
             pos.y = comp->FloatAttribute("y", 0.0f);
-            std::cout << "HERE: X" << pos.x << " Y: " << pos.y << std::endl;
           }
 
           comp = comp->NextSiblingElement("c");
@@ -186,10 +185,9 @@ bool LoadGameState(const uptr<Game>& game, const std::string& name) {
     entity = entity->NextSiblingElement("entity");
   }
 
-  GotoScene(game, new GameScene(game->reg, currentTilemap));
+  GotoScene(game, new GameScene(game->reg, currentTilemap, tilemapPosition));
 
-  auto* tilemap = GetTilemap(game->level);
-  SetPosition(tilemap, tilemapPosition);
+//  auto* tilemap = GetTilemap(game->level);
 //  tilemap->position = tilemapPosition;
 
   return false;

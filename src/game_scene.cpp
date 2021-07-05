@@ -1,12 +1,16 @@
 #include "game_scene.hpp"
 
-GameScene::GameScene(entt::registry& reg, const std::string gameLevel) : startGameLevel(gameLevel) {}
+GameScene::GameScene(entt::registry& reg, const std::string gameLevel, const Vector2 tilemapPosition)
+    : startGameLevel(gameLevel)
+    , startGamePosition(tilemapPosition) {}
 
 void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
     game->level = LoadLevel("resources/maps/" + startGameLevel + ".tmx");
     game->physicsPaused = true;
     loadTimer = 0.0f;
     auto* tilemap = GetTilemap(game->level);
+
+    SetPosition(tilemap, startGamePosition);
 
     SpawnEntitiesFromTileMap(tilemap, game);
 

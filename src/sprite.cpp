@@ -201,7 +201,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 sprite.region.width * sprite.scale.x,
                 sprite.region.height * sprite.scale.y,
             },
-            { (float)int(body.x + ox + rw/2), (float)int(body.y + oy + rh/2), sw, sh },
+            { body.x + ox + rw/2, body.y + oy + rh/2, sw, sh },
             Vector2{rw/2, rh/2},
             sprite.rotation,
             tint
@@ -232,7 +232,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         const auto sh = frame.height;
 
         const auto [ox, oy] = sprite.offset;
-        const Rectangle rec = { (body.x + ox + rw/2), (body.y + oy + rh/2), sw, sh };
+        const Rectangle rec = { body.x + ox + rw/2 + 1, body.y + oy + rh/2 + 1, sw, sh };
 
         DrawTexturePro(
             sprite.texture,

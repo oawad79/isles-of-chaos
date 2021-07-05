@@ -11,8 +11,8 @@
 
 constexpr auto BANNER_MAX_TIME { 4.0f };
 
-constexpr Color BTN_FG { 100, 200, 200, 255 };
-constexpr Color BTN_BG { 8, 8, 10, 255 };
+constexpr Color BTN_FG { 200, 200, 180, 255 };
+constexpr Color BTN_BG { 20, 20, 18, 255 };
 
 enum GuiFlag : uint64_t {
   GUI_FLAG_NONE               = 1lu << 0lu,
