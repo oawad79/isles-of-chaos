@@ -1,6 +1,7 @@
 #include "sprite.hpp"
 
 #include <variant>
+#include "actor.hpp"
 
 struct SpriteBody {
     Sprite sprite;
@@ -43,29 +44,37 @@ void UpdateSprites(entt::registry& reg) {
     auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled>);
     auto items = reg.view<Sprite, Item, Physics>(entt::exclude<Disabled>);
 
-    for (auto& ent : sprites) {
-        auto& sprite = reg.get<Sprite>(ent);
+    const auto get_tint = [&](entt::entity ent) {
+		Color tint = WHITE;
         if (reg.has<Health>(ent)) {
             auto& health = reg.get<Health>(ent);
             if (!health.canHit()) {
-                sprite.tint2 = RED;
+                tint = RED;
             } else {
-                sprite.tint2 = WHITE;
+                tint = WHITE;
             }
         }
+
+        if (reg.has<Actor>(ent)) {
+          auto &actor = reg.get<Actor>(ent);
+          if (actor.stunTimer > BASE_STUN_TIME - 0.05f) {
+            tint = YELLOW;
+          }
+        }
+
+        return tint;
+    };
+
+    for (auto& ent : sprites) {
+        auto& sprite = reg.get<Sprite>(ent);
+		sprite.tint2 = get_tint(ent); 
+		sprite.tint  = get_tint(ent); 
     }
 
     for (auto& ent : sim_anims) {
-        auto& sprite = reg.get<SimpleAnimation>(ent);
-
-        if (reg.has<Health>(ent)) {
-            auto& health = reg.get<Health>(ent);
-            if (!health.canHit()) {
-                sprite.tint2 = RED;
-            } else {
-                sprite.tint2 = WHITE;
-            }
-        }
+        auto& sprite = reg.get<SimpleAnimation>(ent); 
+        sprite.tint2 = get_tint(ent);
+		sprite.tint  = get_tint(ent); 
 
         if (sprite.T != Type::ANIMATION) continue;
 
@@ -82,14 +91,8 @@ void UpdateSprites(entt::registry& reg) {
 
     for (auto& ent : adv_anims) {
         auto& sprite = reg.get<AdvancedAnimation>(ent);
-        if (reg.has<Health>(ent)) {
-            auto& health = reg.get<Health>(ent);
-            if (!health.canHit()) {
-                sprite.tint2 = RED;
-            } else {
-                sprite.tint2 = WHITE;
-            }
-        }
+        sprite.tint2 = get_tint(ent);
+		sprite.tint  = get_tint(ent); 
 
         if (sprite.T != Type::ANIMATION || sprite.currentAnimation == "") continue;
         if (sprite.playback == Playback::FORWARD) {
@@ -223,7 +226,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
 
         const auto& animation = sprite.animations[sprite.currentAnimation];
 
-        auto frame = animation.frames[sprite.currentFrame]; 
+        const auto& frame = animation.frames[sprite.currentFrame]; 
 
         int rw = frame.width;
         int rh = frame.height;

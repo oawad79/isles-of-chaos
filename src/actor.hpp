@@ -12,6 +12,8 @@
 #include "item.hpp"
 #include "particles.hpp"
 
+constexpr auto BASE_STUN_TIME{0.25f};
+ 
 enum class ActorType {
     NPC,
     KIWI_BIRD,
@@ -38,6 +40,7 @@ enum class ActorState {
     JUMP,
     ATTACKING,
     DEAD,
+    STUNNED,
 };
 
 enum class AiType {
@@ -55,7 +58,12 @@ struct Actor {
 
     Vector2 target[8];
     float timer[8] = {0.0f};
+
+    float stunTimer = 0.0f;
+    ActorState last{ActorState::IDLE};
 };
+
+void Stun(Actor& actor);
 
 bool IsEnemy(Actor actor);
 void UpdateActor(entt::registry& reg);

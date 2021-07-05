@@ -1,4 +1,5 @@
 #include "physics.hpp"
+#include "player.hpp"
 
 constexpr float GRAVITY {1000.0f};
 constexpr float MAX_GRAVITY {200.0f};
@@ -254,5 +255,11 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
                 body.x+body.width-1,
                 body.y+body.height-1, BLUE);
         }
+    }
+
+    auto view2 = reg.view<Body, PlayerHit>(entt::exclude<Disabled>);
+    for (auto e : view2) {
+      auto& body = reg.get<Body>(e);
+      DrawRectangleLinesEx(body, 1, BLUE);
     }
 }

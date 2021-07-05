@@ -19,7 +19,7 @@ void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics&
 
     auto& sprite = reg.get<SimpleAnimation>(self);
     
-    if (distToPlayer < TRACKING_DIST) {
+    if (distToPlayer < TRACKING_DIST && actor.state != ActorState::STUNNED) {
       actor.state = ActorState::TRACKING;
     }
 
@@ -393,7 +393,21 @@ bool IsEnemy(Actor actor) {
     && actor.type < ActorType::ENEMY_END;
 }
 
+void Stun(Actor& actor) {
+  actor.stunTimer = BASE_STUN_TIME;
+  actor.last = actor.state;
+  actor.state = ActorState::STUNNED;
+}
+
 void UpdateActor(entt::registry& reg) {
+    bool playerExists = false;
+    Body playerBody = Body{0};
+
+    reg.view<Player,Body>().each([&playerBody, &playerExists](auto& player, Body &body){
+      playerBody = body;
+      playerExists = true;
+    });
+
     auto view = reg.view<Actor, Physics, Body>(entt::exclude<Disabled>);
 
     for (auto& ent : view) {
@@ -404,18 +418,19 @@ void UpdateActor(entt::registry& reg) {
         if (physics.velocity.x > 0) physics.facingX = RIGHT;
         else physics.facingX = LEFT;
 
-        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) { 
+        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END && actor.state != ActorState::STUNNED) {
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;
                 if (CheckCollisionRecs(body, obody)) {
-                    const auto dir = body.center().x > obody.center().x ? 1 : -1;
+                    const auto dir = body.center().x > playerBody.center().x ? 1 : -1;
                     if (reg.has<Health>(ent)) {
                         auto& health = reg.get<Health>(ent);
 
                         if (health.canHit()) {
                             SpawnHitParticles(reg, body.center());
-                            physics.velocity.x = 4000 * dir * GetFrameTime();
-                            physics.velocity.y = 9000 * dir * GetFrameTime();
+                            physics.velocity.x = 40 * dir;
+                            physics.velocity.y = 90 * dir;
+                            Stun(actor);
                         }
 
                         health.hit(damage);
@@ -438,6 +453,17 @@ void UpdateActor(entt::registry& reg) {
                     }
                 }
             });
+        }
+
+      if (actor.state == ActorState::STUNNED) {
+          if (actor.stunTimer > 0.0f)  {
+            actor.stunTimer -= GetFrameTime();
+          } else {
+            actor.stunTimer = 0.0f;
+            auto tmp = actor.state;
+            actor.state = actor.last;
+            actor.last = tmp;
+          };
         }
 
         switch (actor.type) {
