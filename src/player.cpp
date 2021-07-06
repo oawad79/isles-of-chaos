@@ -156,8 +156,19 @@ void UpdatePlayerNormalState(
         
             auto& ebody = game->reg.get<Body>(ent);
             
-            if (CheckCollisionRecs(body, ebody)) {
+            if (CheckCollisionRecs(body, ebody) && health.canHit()) {
                 health.hit(eactor.enemyStats.damage);
+
+                // Do knockback
+                float side = body.center().x > ebody.center().x ? 1.f : -1.f;
+                physics.velocity.x = 50 * side;
+                physics.velocity.y = -150;
+
+                if (game->reg.has<Physics>(ent)) {
+                  auto &ephysics = game->reg.get<Physics>(ent);
+                  ephysics.velocity.y = physics.velocity.y;
+                  ephysics.velocity.x = -physics.velocity.x;
+                }
             }
         }
     }
