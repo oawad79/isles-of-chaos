@@ -21,7 +21,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 10;
+    body.width = 8;
     body.height = 18;
 
     auto& spr = game->reg.emplace<AdvancedAnimation>(self);
@@ -29,6 +29,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
     spr.offset.y -= 2;
+    spr.offset.x -= 3;
 
     spr.currentAnimation = "moving"; 
     spr.animations["moving"] = CreateUniformAnimation({ 0, 0, 12, 20 }, 4);

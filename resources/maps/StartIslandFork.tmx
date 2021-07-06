@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="182">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="183">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -2788,7 +2788,6 @@
   <object id="33" x="-312" y="-40" width="24"/>
   <object id="35" name="Kill" type="Kill" x="-361.667" y="182.333" width="467.667" height="76.6667"/>
   <object id="47" type="Checkpoint" x="-224" y="-64" width="32" height="72"/>
-  <object id="50" name="Water" type="Water" x="-800" y="-8" width="176" height="267"/>
   <object id="51" x="-560" y="-40" width="104" height="168"/>
   <object id="55" x="-624" y="-24" width="64" height="224"/>
   <object id="58" x="-944" y="0" width="320" height="200"/>

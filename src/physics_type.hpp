@@ -12,7 +12,8 @@ enum class PhysicsType {
 
 enum Facing {
     LEFT = -1,
-    RIGHT = 1
+    RIGHT = 1,
+    UP = 2,
 };
 
 struct Physics {

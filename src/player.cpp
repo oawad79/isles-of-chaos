@@ -3,20 +3,33 @@
 
 entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Facing facing) {
     auto self = game->reg.create();
-    game->reg.emplace<Item>(self, item);
-    game->reg.emplace<Body>(self, Body{
-        x,
-        y,
-        item.region.width,
-        item.region.height
-    });
+
     game->reg.emplace<PlayerHit>(self);
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.region = item.region;
     spr.scale.x = -1;
+
+    auto width = item.region.width;
+    auto height = item.region.height;
+
     spr.texture = Assets::I()->textures[Textures::TEX_EQUIPMENT];
+
+    //if (facing == Facing::UP) {
+    //  spr.rotation = 90.0f;
+    //  std::swap(width, height);
+    //}
+
+    game->reg.emplace<Item>(self, item);
+
+    game->reg.emplace<Body>(self, Body{
+        x,
+        y,
+        width,
+        height
+    });
+
     game->reg.emplace<TimedDestroy>(self, TimedDestroy{0.2f});
     return self;
 }
@@ -68,8 +81,16 @@ void UpdatePlayerNormalState(
     sprite.playback = Playback::PAUSED;
 
     if (!inCutscene) {
-        if (ax < 0) { physics.facingX = LEFT; sprite.playback = Playback::FORWARD; }
-        if (ax > 0) { physics.facingX = RIGHT; sprite.playback = Playback::FORWARD; }
+      if (ax < 0) {
+        physics.facingX = LEFT;
+        sprite.playback = Playback::FORWARD;
+        player.facing = -1.0f;
+      }
+      if (ax > 0) {
+        physics.facingX = RIGHT;
+        sprite.playback = Playback::FORWARD;
+        player.facing = 1.0f;
+      }
     }
 
     if (sprite.playback == Playback::PAUSED)
@@ -77,14 +98,14 @@ void UpdatePlayerNormalState(
 
 //    sprite.currentFrame = 1;
 
-    sprite.scale.x = physics.facingX;
+    sprite.scale.x = player.facing;
 
     if (!inCutscene) {
         if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
         if (player.hit) sprite.currentFrame = 2;
 
         if (Input::I()->Jump() && physics.on_ground) {
-            physics.velocity.y -= 300.0f;
+            physics.velocity.y -= 330.0f;
             physics.on_ground = false;
         }
 
@@ -107,7 +128,7 @@ void UpdatePlayerNormalState(
                     sprite.currentAnimation = "rolling";
                     sprite.playback = Playback::FORWARD;
                     player.state = PlayerState::ROLLING;
-                    player.dodgeRollVel = DODGEROLL_X_SPEED * physics.facingX;
+                    player.dodgeRollVel = DODGEROLL_X_SPEED * player.facing;
                     physics.velocity.y = -160.0f;
                     physics.velocity.x *= 1.5f;
                     physics.on_ground = false;
@@ -117,14 +138,18 @@ void UpdatePlayerNormalState(
 
         player.dodgeRollCooloff -= dt;
 
-        if (player.hit && game->reg.valid(player.hit.value())) {
+        constexpr auto startPerc = 0.45f;
+
+        if (player.hit && game->reg.valid(player.hit.value())) { 
             auto& hitBody = game->reg.get<Body>(player.hit.value());
             auto& spr = game->reg.get<Sprite>(player.hit.value());
 
             spr.scale.x = physics.facingX;
 
-            hitBody.x = body.center().x - hitBody.width / 2 + hitBody.width * physics.facingX;
-            hitBody.y = body.center().y - hitBody.height / 2;
+            hitBody.x = body.center().x - hitBody.width / 2 + ((hitBody.width * 0.9f) * player.swingAnimTimer) * player.facing;
+            hitBody.y = body.center().y - hitBody.height / 2 - 1;
+
+            player.swingAnimTimer = Lerp(player.swingAnimTimer, 1.0f, GetFrameTime()*SWING_ANIM_SPEED);
         } else {
             player.hit = std::nullopt;
         }
@@ -135,15 +160,15 @@ void UpdatePlayerNormalState(
                 auto weaponItem = o.value();
 
                 sprite.currentFrame = 2;
-                // physics.velocity.x = 0.0f;
+                player.swingAnimTimer = startPerc;
 
                 player.hit = std::optional{
                     SpawnPlayerHit(
                         game,
                         weaponItem,
-                        body.center().x - weaponItem.region.width / 2 + weaponItem.region.width * physics.facingX,
-                        body.center().y - weaponItem.region.height / 2,
-                        physics.facingX)
+                        body.center().x - weaponItem.region.width / 2 + ((weaponItem.region.width * 0.9f) * startPerc) * player.facing,
+                        body.center().y - weaponItem.region.height / 2 - 1,
+                        Facing::LEFT)
                 };
             }
         }
@@ -162,7 +187,7 @@ void UpdatePlayerNormalState(
                 // Do knockback
                 float side = body.center().x > ebody.center().x ? 1.f : -1.f;
                 physics.velocity.x = 50 * side;
-                physics.velocity.y = -150;
+                physics.velocity.y = -130;
 
                 if (game->reg.has<Physics>(ent)) {
                   auto &ephysics = game->reg.get<Physics>(ent);
