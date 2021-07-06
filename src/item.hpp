@@ -92,6 +92,8 @@ struct Item {
     int value{1};
     uint32_t flags{0};
 
+    float usageCooloff{0.0f};
+
     int amount{1}; // Items can also be a stack
 };
 

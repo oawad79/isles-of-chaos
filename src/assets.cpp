@@ -39,13 +39,14 @@ void LoadItemDB() {
 
         itemXml->QueryFloatAttribute("effectValue", &item.effectValue);
         itemXml->QueryIntAttribute("value", &item.value);
+        itemXml->QueryFloatAttribute("cooloff", &item.usageCooloff);
 
         std::stringstream ss(itemXml->Attribute("region"));
         ss >> item.region.x;
         ss >> item.region.y;
         ss >> item.region.width;
         ss >> item.region.height;
-
+ 
         if (catagory == ItemCatagory::Consumable) {
             std::string consumableEffect
                 = std::string{itemXml->Attribute("consumableEffect")};

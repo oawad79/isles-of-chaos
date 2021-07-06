@@ -13,8 +13,8 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 37,
-                "y": 7.666666666666686
+                "x": 9.666666666666657,
+                "y": 31.499999999999993
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -76,11 +76,11 @@
             "scaleInDock": 5.5
         },
         "StartIslandFork.tmx": {
-            "scale": 2,
+            "scale": 3,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": -386,
-                "y": -59.5
+                "x": -390.99999999999994,
+                "y": -48.5
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {

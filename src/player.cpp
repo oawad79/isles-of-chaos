@@ -159,17 +159,22 @@ void UpdatePlayerNormalState(
             if (auto o = equiped.weapon) {
                 auto weaponItem = o.value();
 
-                sprite.currentFrame = 2;
-                player.swingAnimTimer = startPerc;
+                if (player.attackCooloff > 0.0f) { 
+                    player.attackCooloff -= GetFrameTime(); 
+                } else { 
+                    player.attackCooloff = weaponItem.usageCooloff;
+					sprite.currentFrame = 2;
+					player.swingAnimTimer = startPerc;
 
-                player.hit = std::optional{
-                    SpawnPlayerHit(
-                        game,
-                        weaponItem,
-                        body.center().x - weaponItem.region.width / 2 + ((weaponItem.region.width * 0.9f) * startPerc) * player.facing,
-                        body.center().y - weaponItem.region.height / 2 - 1,
-                        Facing::LEFT)
-                };
+					player.hit = std::optional{
+						SpawnPlayerHit(
+							game,
+							weaponItem,
+							body.center().x - weaponItem.region.width / 2 + ((weaponItem.region.width * 0.9f) * startPerc) * player.facing,
+							body.center().y - weaponItem.region.height / 2 - 1,
+							Facing::LEFT)
+					};
+                }
             }
         }
 

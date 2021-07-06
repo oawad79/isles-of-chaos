@@ -85,7 +85,7 @@ add_executable(${PROJECT_NAME} ${FILES} src/gif.cpp src/gui_state.cpp src/window
 #endif()
 
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} raylib)
+    target_link_libraries(${PROJECT_NAME} raylib) 
 else()
     target_link_libraries(${PROJECT_NAME}
             ${CMAKE_THREAD_LIBS_INIT}

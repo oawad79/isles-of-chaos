@@ -33,6 +33,7 @@ struct Player {
     float dodgeRollVel { 0.0f };
 
     float swingAnimTimer{0.0f};
+    float attackCooloff{0.0f};
 
     PlayerState state { PlayerState::NORMAL };
 };
