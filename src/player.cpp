@@ -9,7 +9,7 @@ entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Faci
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.region = item.region;
-    spr.scale.x = -1;
+    spr.scale.x = facing == Facing::LEFT ? -1 : 1;
 
     auto width = item.region.width;
     auto height = item.region.height;
@@ -144,7 +144,7 @@ void UpdatePlayerNormalState(
             auto& hitBody = game->reg.get<Body>(player.hit.value());
             auto& spr = game->reg.get<Sprite>(player.hit.value());
 
-            spr.scale.x = physics.facingX;
+            spr.scale.x = sprite.scale.x;
 
             hitBody.x = body.center().x - hitBody.width / 2 + ((hitBody.width * 0.9f) * player.swingAnimTimer) * player.facing;
             hitBody.y = body.center().y - hitBody.height / 2 - 1;
@@ -155,27 +155,32 @@ void UpdatePlayerNormalState(
         }
 
         // Attack
-        if (Input::I()->Attack() && !player.hit) {
+        if (Input::I()->Attack() && !player.hit && player.attackCooloff <= -0.1f) {
             if (auto o = equiped.weapon) {
                 auto weaponItem = o.value();
 
-                if (player.attackCooloff > 0.0f) { 
-                    player.attackCooloff -= GetFrameTime(); 
-                } else { 
-                    player.attackCooloff = weaponItem.usageCooloff;
-					sprite.currentFrame = 2;
-					player.swingAnimTimer = startPerc;
+                player.attackCooloff = weaponItem.usageCooloff;
+                sprite.currentFrame = 2;
+                player.swingAnimTimer = startPerc;
 
-					player.hit = std::optional{
-						SpawnPlayerHit(
-							game,
-							weaponItem,
-							body.center().x - weaponItem.region.width / 2 + ((weaponItem.region.width * 0.9f) * startPerc) * player.facing,
-							body.center().y - weaponItem.region.height / 2 - 1,
-							Facing::LEFT)
-					};
-                }
+                player.hit = std::optional{
+                    SpawnPlayerHit(
+                        game,
+                        weaponItem,
+                        body.center().x - weaponItem.region.width / 2 + ((weaponItem.region.width * 0.9f) * startPerc) * player.facing,
+                        body.center().y - weaponItem.region.height / 2 - 1,
+                        Facing::LEFT)
+                };
             }
+        }
+
+        if (player.attackCooloff <= 0.0f && player.attackCooloff > -0.1f) {
+            sprite.currentFrame = 3;
+        }
+
+        if (player.attackCooloff > -0.1f) {
+            player.attackCooloff -= GetFrameTime();
+            std::cout << player.attackCooloff << std::endl;
         }
 
         // Handle enemy collisions

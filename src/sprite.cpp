@@ -173,12 +173,6 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         }
     };
 
-    for (auto e : sprites){
-        const auto& sprite = reg.get<Sprite>(e);
-        const auto& body = reg.get<Body>(e);
-        drawSprite(body, sprite);
-    }
-
     for (auto e : sim_anims) {
         const auto& sprite = reg.get<SimpleAnimation>(e);
         const auto& body = reg.get<Body>(e);
@@ -246,6 +240,13 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             tint
         );
     }
+
+    for (auto e : sprites){
+        const auto& sprite = reg.get<Sprite>(e);
+        const auto& body = reg.get<Body>(e);
+        drawSprite(body, sprite);
+    }
+
 
     for (auto e : items){
         const auto& sprite = reg.get<Sprite>(e);

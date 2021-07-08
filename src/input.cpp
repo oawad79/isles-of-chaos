@@ -91,8 +91,8 @@ auto Input::ShouldPause() -> bool {
 }
 
 auto Input::Attack() -> bool {
-    return IsMouseButtonPressed(MOUSE_LEFT_BUTTON)
-        || IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT);
+    return IsMouseButtonDown(MOUSE_LEFT_BUTTON)
+        || IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_LEFT);
 }
 
 auto Input::Interact() -> bool {

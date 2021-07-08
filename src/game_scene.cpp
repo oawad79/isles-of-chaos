@@ -19,6 +19,7 @@ void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
         respawnLocation = Vector2{body.x, body.y};
         playerHeight = body.height;
         character.equiped.weapon = Assets::I()->getItemInfo("small-sword");
+        character.equiped.ability = Assets::I()->getItemInfo("flippy-feather");
     });
 
     // Spawn checkpoints and kill zones

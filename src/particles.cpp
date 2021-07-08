@@ -39,8 +39,8 @@ void SpawnHitParticles(entt::registry& reg, const Vector2 center) {
             PARTICLE_HIT_REGIONS[RandInt(0, ARR_LEN(PARTICLE_HIT_REGIONS) - 1)]
         };
         SpawnParticleWithDesc(reg, desc, {
-            RandFloat(center.x - 8.0f, center.x + 8.0f),
-            RandFloat(center.y - 8.0f, center.y + 8.0f),
+            RandFloat(center.x - 2.0f, center.x + 4.0f),
+            RandFloat(center.y - 2.0f, center.y + 4.0f),
         });
     }
 }

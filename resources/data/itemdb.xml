@@ -59,7 +59,7 @@
           effectValue="20.0"
           region="0 0 13 3"
           value="4"
-          cooloff="0.00005"/>
+          cooloff="0.3"/>
 
     <item id="small-dagger"
           name="A Small Dagger"
@@ -69,7 +69,7 @@
           effectValue="5.0"
           region="16 0 9 3"
           value="4"
-          cooloff="0.001"/>
+          cooloff="0.05"/>
 
     <item id="long-sword"
           name="A long sword"
@@ -79,7 +79,7 @@
           effectValue="25.0"
           region="0 4 18 5"
           value="4"
-          cooloff="0.4"/>
+          cooloff="0.7"/>
   </weapons>
 
   <abilities>

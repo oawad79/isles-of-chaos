@@ -403,9 +403,12 @@ void UpdateActor(entt::registry& reg) {
     bool playerExists = false;
     Body playerBody = Body{0};
 
-    reg.view<Player,Body>().each([&playerBody, &playerExists](auto& player, Body &body){
+    Player* playerState = NULL;
+
+    reg.view<Player,Body>().each([&playerBody, &playerExists, &playerState](auto& player, Body &body){
       playerBody = body;
       playerExists = true;
+      playerState = &player;
     });
 
     auto view = reg.view<Actor, Physics, Body>(entt::exclude<Disabled>);
@@ -436,6 +439,11 @@ void UpdateActor(entt::registry& reg) {
                         health.hit(damage);
 
                         if (health.shouldDie()) {
+
+                            // Giving the player an extra attack after killing a monster
+                            // @MECHANIC
+                            playerState->attackCooloff = 0.0f;
+
                             // Handle loot dropping from enemies w/ loot
                             if (reg.has<Loot>(ent)) {
                                 SpawnLoot(
