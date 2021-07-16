@@ -38,17 +38,19 @@ enum Fonts {
 };
 
 enum Shaders {
-    MAIN_SHADER,
     SPRITE_SHADER,
+    WATER_SHADER,
     SHADER_NUM_SHADERS,
 };
 
-struct ShaderAssetInfo {
-    std::filesystem::file_time_type last_write_time_1;
-    std::filesystem::file_time_type last_write_time_2;
+constexpr int SHADER_RELOAD_SLOT = 32 - 1; // We get 32 from MAX_SHADER_LOCATIONS (config.h in raylib)
 
-    std::filesystem::path path1;
-    std::filesystem::path path2;
+struct ShaderAssetInfo {
+    std::filesystem::file_time_type vs_write_time;
+    std::filesystem::file_time_type fs_write_time;
+
+    std::filesystem::path pathVS;
+    std::filesystem::path pathFS;
 
     Shaders id;
 };

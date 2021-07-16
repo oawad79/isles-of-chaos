@@ -34,6 +34,7 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     spr.currentAnimation = "moving"; 
     spr.animations["moving"] = CreateUniformAnimation({ 0, 0, 12, 20 }, 4);
     spr.animations["rolling"] = CreateUniformAnimation({ 0, 28, 16, 20 }, 6, 200.0f / 3.0f); 
+    spr.animations["jumping"] = CreateUniformAnimation({ 48, 0, 12, 20 }, 3, 0); 
 
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);
@@ -215,8 +216,7 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
 
         auto &inter = game->reg.emplace<Interaction>(self);
         inter.action = [&](auto e, entt::registry &r) {
-            const auto &dialog = r.get<DialogTree>(e);
-            std::cout << "HERE!" << std::endl;
+            const auto dialog = r.get<DialogTree>(e);
             DoDialog(game, dialog);
         };
 
@@ -233,6 +233,26 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
     }
 
     return self;
+}
+
+entt::entity SpawnShopKeeper(const uptr<Game>& game, const Vector2 position) {
+  auto self = game->reg.create();
+
+  auto& body = game->reg.emplace<Body>(self);
+  body.x = position.x;
+  body.y = position.y;
+  body.width = 16;
+  body.height = 18;
+
+  auto& spr = game->reg.emplace<SimpleAnimation>(self);
+  spr.T = Type::SPRITE;
+  spr.tint = WHITE;
+  spr.region = {104, 48, 24, 16};
+  spr.offset.x = 0;
+  spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+  spr.number_of_frames = 1;
+
+  return self;
 }
 
 entt::entity SpawnSmallWorm(const uptr<Game>& game, const Vector2 position) {
@@ -297,18 +317,19 @@ entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position) {
     auto &body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 32;
-    body.height = 16;
+    body.width = 64;
+    body.height = 24;
 
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
-    spr.region = {0, 96, 64, 24};
+    spr.region = {0, 128, 64, 24};
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
-    spr.offset.x -= 16;
-    spr.offset.y -= 8;
 
     auto& physics = game->reg.emplace<Physics>(self);
+    physics.type = PhysicsType::KINEMATIC;
+    physics.gravityScale.y = 0.0f;
+
     return self;
 }
 
@@ -325,6 +346,32 @@ entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position) {
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.region = {32, 0, 16, 16};
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+    auto& physics = game->reg.emplace<Physics>(self);
+    game->reg.emplace<Health>(self);
+
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::SHROOMBA;
+
+    game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
+    return self;
+}
+
+entt::entity SpawnMimic(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 16;
+    body.height = 16;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.region = {16, 32, 13, 13};
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
 
     auto& physics = game->reg.emplace<Physics>(self);
@@ -377,20 +424,6 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
     };
 
     auto& physics = game->reg.emplace<Physics>(self);
-
-    return self;
-}
-
-entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position) {
-    auto self = game->reg.create();
-
-    auto& body = game->reg.emplace<Body>(self);
-    body.x = position.x;
-    body.y = position.y;
-    body.width = 16;
-    body.height = 16;
-
-    game->reg.emplace<Water>(self);
 
     return self;
 }
@@ -485,11 +518,12 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             SpawnItemWithId(game->reg, {x, y}, obj.id);
         } else if (obj.type == EntType::Npc) {
             SpawnNpcWithId(game, {x,y}, obj.id);
-        } else if (obj.type == EntType::Water) {
-            const auto ent = SpawnWater(game, {x, y});
-            auto& body = game->reg.get<Body>(ent);
-            body.width = obj.width;
-            body.height = obj.height;
+//        Water is no longer an entity
+//        } else if (obj.type == EntType::Water) {
+//            const auto ent = SpawnWater(game, {x, y});
+//            auto& body = game->reg.get<Body>(ent);
+//            body.width = obj.width;
+//            body.height = obj.height;
         } else if (obj.type == EntType::Chest){
             auto chest = Spawn(obj.type, game, {x, y});
             if (obj.props.find("loot") == obj.props.end())

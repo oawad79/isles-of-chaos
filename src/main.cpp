@@ -22,7 +22,10 @@ uptr<Input> Input::it;
 std::once_flag Input::once;
 
 void Update(uptr<Game>& game) {
+    UpdateAssets();
     UpdateGame(game);
+    auto* tilemap = GetTilemap(game->level);
+    if (tilemap != nullptr) UpdateTilemap(tilemap);
     UpdateGui(game);
 }
 
@@ -52,9 +55,9 @@ void Render(const uptr<Game>& game) {
         }
 
         if (tilemap != nullptr) DrawTilemap(tilemap);
+
         BeginMode2D(game->mainCamera);
             DrawSprites(game->spriteRenderer, game->reg);
-            DrawWater(game->reg);
             DrawInteraction(game, game->reg);
 
             if (IsKeyDown(KEY_TAB))
@@ -62,7 +65,9 @@ void Render(const uptr<Game>& game) {
 
             DrawPlaywright(game->stage);
         EndMode2D();
-    EndTextureMode();
+
+        if (tilemap != nullptr) DrawTilemapForeground(tilemap);
+  EndTextureMode();
 
     BeginTextureMode(game->guiCanvas); 
         ClearBackground({0, 0, 0, 0});
@@ -149,7 +154,7 @@ int main(const int argc, const char *argv[]) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
-        if (IsWindowFocused()) {
+        if (true) {
             if (IsKeyPressed(KEY_Y))
                 DoScreenPlay(game->reg, game->stage, play);
 

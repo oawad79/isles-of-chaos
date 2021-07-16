@@ -25,7 +25,8 @@ struct PlayerHit {};
 
 struct Player {
     int health{3};
-	float facing = 1.0f;
+    float facing = 1.0f;
+
     std::optional<entt::entity> hit;
     std::optional<Vector2> target;
 
@@ -34,6 +35,8 @@ struct Player {
 
     float swingAnimTimer{0.0f};
     float attackCooloff{0.0f};
+
+    bool isJumping{false};
 
     PlayerState state { PlayerState::NORMAL };
 };

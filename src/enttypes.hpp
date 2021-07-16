@@ -11,14 +11,15 @@
     E(None)            \
     E(Npc)             \
     E(Player)          \
-    E(KiwiBird)       \
+    E(KiwiBird)        \
+    E(ShopKeeper)      \
     E(Test)            \
     E(Zambie)          \
     E(Ghost)           \
     E(Shroomba)        \
     E(Pot)             \
-    E(Water)           \
     E(DreadShark)      \
+    E(Mimic)           \
     E(Chest)           \
     E(Particle)        \
     E(SmallBoat)       \

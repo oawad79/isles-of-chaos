@@ -62,11 +62,19 @@ Vector2 MousePositionCanvasSpace() {
   };
 }
 
+Vector2 GetMouseGuiPosition() {
+  const auto [mx, my] = GetMousePosition();
+  const auto [ww, wh] = GetWindowSize();
+
+  float sx = ww / (float) GUI_CANVAS_WIDTH;
+  float sy = wh / (float) GUI_CANVAS_HEIGHT;
+  return Vector2{ mx / sx, my / sy };
+}
+
 Vector2 MouseGuiCanvasPosition() {
   const float mx = GetMouseX();
   const float my = GetMouseY();
 
-  const float aspect = (float)GUI_CANVAS_HEIGHT / (float)GUI_CANVAS_WIDTH;
   const float width = GetScreenWidth();
   const float height = GetScreenHeight();
 

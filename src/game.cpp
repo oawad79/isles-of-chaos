@@ -76,8 +76,6 @@ bool SaveGameState(const uptr<Game>& game, const std::string& name) {
 
   {
     game->reg.each([&](auto entity) {
-      if (game->reg.has<Water>(entity)) return;
-
       auto* entityNode = doc.NewElement("entity");
 
       if (game->reg.has<Ent>(entity)) {
@@ -258,7 +256,6 @@ void UpdateGame(uptr<Game>& game) {
     UpdateTimed(game->reg);
     UpdateCharacter(game->reg);
     UpdateActor(game->reg);
-    UpdateWater(game->reg);
     UpdateInteraction(game, game->reg);
   } else if (game->state == AppState::PauseMenu) {
   }

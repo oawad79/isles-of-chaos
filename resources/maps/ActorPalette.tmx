@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="3" nextobjectid="22">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="3" nextobjectid="24">
  <layer id="1" name="Tile Layer 1" width="100" height="100">
   <data encoding="csv"/>
  </layer>
@@ -50,5 +50,7 @@
    </properties>
   </object>
   <object id="21" name="Small Worm" type="SmallWorm" x="232" y="-40" width="6" height="6"/>
+  <object id="22" name="Shop Keeper" type="ShopKeeper" x="48" y="-40" width="24" height="16"/>
+  <object id="23" name="Mimic" type="Mimic" x="232" y="-34" width="13" height="13"/>
  </objectgroup>
 </map>

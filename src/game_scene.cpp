@@ -15,11 +15,17 @@ void GameScene::loadLevel(const uptr<Game>& game, const std::string& which){
     SpawnEntitiesFromTileMap(tilemap, game);
 
     float playerHeight = 64;
-    game->reg.view<Player, Body, Character>().each([this, &playerHeight](auto& p, auto& body, Character& character){
+    game->reg.view<Player, Body, Character, Inventory>().each([this, &playerHeight](auto& p, auto& body, Character& character, Inventory& inv){
         respawnLocation = Vector2{body.x, body.y};
         playerHeight = body.height;
         character.equiped.weapon = Assets::I()->getItemInfo("small-sword");
-        character.equiped.ability = Assets::I()->getItemInfo("flippy-feather");
+        inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
+        inv.putItem(Assets::I()->getItemInfo("zombie-flesh"));
     });
 
     // Spawn checkpoints and kill zones

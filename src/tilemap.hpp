@@ -18,6 +18,7 @@ extern "C" {
 #include <tuple>
 
 #include "tinyxml2.hpp"
+#include "tilemap_features.hpp"
 #include "utils.hpp"
 #include "sprite.hpp"
 #include "consts.hpp"
@@ -28,17 +29,6 @@ using Tile = uint32_t;
 enum class SolidType {
     Rectangle,
     Polygon
-};
-
-enum class FeatureType {
-    None,
-    Ladder,
-    Port,
-    Door,
-    Room,
-    Checkpoint,
-    Kill,
-    Banner,
 };
 
 struct Polygon : Rectangle {
@@ -64,23 +54,6 @@ struct SpawnLocation : Rectangle {
     EntType type{EntType::None};
     std::string id{""}; // Used for items and npcs
     std::map<std::string, std::string> props;
-
-    inline auto bounds() const { return Rectangle{
-        x + offset.x,
-        y + offset.y,
-        width,
-        height
-    }; }
-};
-
-struct Feature : Rectangle {
-    Vector2 offset{0, 0};
-
-    FeatureType type{FeatureType::None};
-    std::string target{""};
-    std::string id{""};
-
-    bool active = false;
 
     inline auto bounds() const { return Rectangle{
         x + offset.x,
@@ -122,11 +95,13 @@ struct Tilemap {
     std::vector<Layer> layers;
     std::vector<Polygon> geometry;
     std::vector<SpawnLocation> objects;
-    std::vector<Feature> features; // Ladders / Doors / Ports
+    std::vector<Feature> features; // Ladders / Doors / Ports / Water
     std::vector<Billboard> billboards;
     std::vector<Feature> rooms;
 
     RenderTexture2D target;
+    RenderTexture2D foregroundTarget;
+
     float alpha {1.0f};
 
     bool positionUpdated{false};
@@ -159,4 +134,8 @@ void DrawTilemapToTarget(const uptr<Tilemap>& tilemap, const Camera2D camera, Sp
 void DrawTilemap(const uptr<Tilemap>& tilemap);
 
 void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRenderer& ren);
+
+void UpdateTilemap(Tilemap* tilemap);
+
 void DrawTilemap(const Tilemap* tilemap);
+void DrawTilemapForeground(const Tilemap* tilemap);

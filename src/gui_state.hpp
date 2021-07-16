@@ -6,8 +6,9 @@
 
 #include "raylib.h"
 
-#include "window_sizing.hpp"
 #include "consts.hpp"
+#include "item.hpp"
+#include "window_sizing.hpp"
 
 constexpr auto BANNER_MAX_TIME { 4.0f };
 
@@ -47,6 +48,8 @@ struct GuiState {
 
     BannerState banner;
 
+    std::optional<Item> dragItem;
+
     void setPadding(float newPadding);
     bool doButton(Rectangle shape, const std::string& title, int fontSize=10, uint64_t flags=GUI_FLAG_NONE);
 
@@ -54,6 +57,7 @@ private:
     float padding{2.0f};
 };
 
+Vector2 GetMouseGuiPosition();
 Vector2 MousePositionCanvasSpace();
 Vector2 MouseGuiCanvasPosition();
 

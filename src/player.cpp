@@ -37,17 +37,6 @@ entt::entity SpawnPlayerHit(uptr<Game>& game, Item& item, float x, float y, Faci
 void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     const auto dt = GetFrameTime();
 
-    // constexpr auto xsmooth{20.0f};
-    // constexpr auto ysmooth{4.0f};
-
-    // camera.zoom = CAMERA_ZOOM;
-
-    // const auto ideal_x = body.x + body.width / 2 + physics.velocity.x * xsmooth * 0.01f;
-    // const auto ideal_y = body.y + ysmooth * 0.01f;
-
-    // camera.target.x = (body.center().x);
-    // camera.target.y = (body.center().y);
-
     camera.target = Vector2 {
         body.center().x,
         body.center().y,
@@ -60,6 +49,9 @@ void UpdateCameraTracking(Body& body, Physics& physics, Camera2D& camera) {
     if (scroll != 0) {
         camera.zoom += scroll * 0.02f;
     }
+
+    if (IsKeyPressed(KEY_EQUAL))
+      camera.zoom = 0;
 }
 
 void UpdatePlayerNormalState(
@@ -102,11 +94,30 @@ void UpdatePlayerNormalState(
 
     if (!inCutscene) {
         if (!player.hit) physics.velocity.x += ax * 400.0f * dt; 
-        if (player.hit) sprite.currentFrame = 2;
+        if (player.hit && !player.isJumping) sprite.currentFrame = 2;
 
         if (Input::I()->Jump() && physics.on_ground) {
             physics.velocity.y -= 330.0f;
             physics.on_ground = false;
+            player.isJumping = true;
+        }
+
+        // Handle jump sprites
+        if (player.isJumping) {
+
+          if (physics.velocity.y < 0) {
+            sprite.currentAnimation = "jumping";
+            sprite.currentFrame = 0;
+            sprite.playback = Playback::PAUSED;
+          } else { 
+            sprite.currentFrame = 1;
+          } 
+
+          if (physics.on_ground) {
+            player.isJumping = false;
+            sprite.currentAnimation = "moving";
+            sprite.playback = Playback::FORWARD;
+          }
         }
 
         if (Input::I()->Ascend() && physics.on_ladder) {
@@ -160,7 +171,8 @@ void UpdatePlayerNormalState(
                 auto weaponItem = o.value();
 
                 player.attackCooloff = weaponItem.usageCooloff;
-                sprite.currentFrame = 2;
+                if (!player.isJumping)
+					sprite.currentFrame = 2;
                 player.swingAnimTimer = startPerc;
 
                 player.hit = std::optional{
@@ -174,7 +186,7 @@ void UpdatePlayerNormalState(
             }
         }
 
-        if (player.attackCooloff <= 0.0f && player.attackCooloff > -0.1f) {
+        if (player.attackCooloff <= 0.0f && player.attackCooloff > -0.1f && !player.isJumping) {
             sprite.currentFrame = 3;
         }
 

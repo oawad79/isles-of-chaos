@@ -1,35 +1,19 @@
 <save name="demo_save">
     <entities>
-        <entity name="Player" entType="2">
-            <c typeName="Physics" type="0" velocity.x="2.7705598" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="1"/>
-            <c typeName="Body" x="-347.11978" y="-194.05992" width="10" height="18"/>
-        </entity>
-        <entity name="Chest" entType="11" disabled="true">
+        <entity name="Chest" entType="10">
             <c typeName="Physics" type="0" velocity.x="0" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="1"/>
             <c typeName="Body" x="-184" y="-273" width="24" height="17"/>
         </entity>
         <entity name="KiwiBird" entType="3">
-            <c typeName="Physics" type="1" velocity.x="-61.509724" velocity.y="-10.423958" friction="0.0099999998" gravityScale.x="1" gravityScale.y="0" on_ground="false" on_ladder="false" on_ground_timer="0" colliding_with_solid="false" facingX="-1"/>
-            <c typeName="Body" x="-294.47232" y="-135.44833" width="8" height="8"/>
+            <c typeName="Physics" type="1" velocity.x="-58.795639" velocity.y="-7.4992881" friction="0.0099999998" gravityScale.x="1" gravityScale.y="0" on_ground="false" on_ladder="false" on_ground_timer="0" colliding_with_solid="false" facingX="-1"/>
+            <c typeName="Body" x="36.585697" y="-90.803535" width="8" height="8"/>
         </entity>
-        <entity name="SmallWorm" entType="14">
-            <c typeName="Physics" type="0" velocity.x="6.7720561" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="1"/>
-            <c typeName="Body" x="-350.97369" y="-230.13232" width="6" height="6"/>
-        </entity>
-        <entity name="SmallWorm" entType="14">
-            <c typeName="Physics" type="0" velocity.x="-6.7029328" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="-1"/>
-            <c typeName="Body" x="-297.53918" y="-246.05992" width="6" height="6"/>
-        </entity>
-        <entity name="SmallWorm" entType="14">
-            <c typeName="Physics" type="0" velocity.x="6.5190854" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="1"/>
-            <c typeName="Body" x="-338.29581" y="-230.06195" width="6" height="6"/>
-        </entity>
-        <entity name="SmallWorm" entType="14">
-            <c typeName="Physics" type="0" velocity.x="-6.7907681" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="-1"/>
-            <c typeName="Body" x="-304.02646" y="-246.04854" width="6" height="6"/>
+        <entity name="Player" entType="2">
+            <c typeName="Physics" type="0" velocity.x="-34.864521" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="-1"/>
+            <c typeName="Body" x="22.067444" y="-82.0252" width="8" height="18"/>
         </entity>
     </entities>
-    <world current="StartIsland1Bg" position.x="-224" position.y="-88">
+    <world current="StartIsland1" position.x="0" position.y="0">
         <loaded-tilemap name="StartCaveDungeonDoor" path="resources/maps/StartCaveDungeonDoor.tmx" position-updated="false"/>
         <loaded-tilemap name="StartIslandForkIndoors" path="resources/maps/StartIslandForkIndoors.tmx" position-updated="false"/>
         <loaded-tilemap name="StartIslandFork" path="resources/maps/StartIslandFork.tmx" position-updated="false"/>

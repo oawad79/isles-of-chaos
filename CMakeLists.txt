@@ -68,21 +68,7 @@ file(GLOB_RECURSE FILES
         "${APP_SRC}/*.cpp"
         )
 
-add_executable(${PROJECT_NAME} ${FILES} src/gif.cpp src/gui_state.cpp src/window_sizing.hpp src/window_sizing.cpp)
-
-# COPY RESOURCES
-# we don't want to copy if we're building in the source dir
-#if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-#    message(STATUS "Copying resources to output directory ${CMAKE_CURRENT_BINARY_DIR}/Resources")
-#
-#    # list of files for which we add a copy rule
-#    set(resources background.png lester.png ProggyClean.ttf)
-#
-#    foreach(item IN LISTS resources)
-#        message(STATUS "Copying Resources/${item}")
-#        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Resources/${item}" "${CMAKE_CURRENT_BINARY_DIR}/Resources/${item}" COPYONLY)
-#    endforeach()
-#endif()
+add_executable(${PROJECT_NAME} ${FILES})
 
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} raylib) 
