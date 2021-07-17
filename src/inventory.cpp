@@ -1,5 +1,7 @@
 #include "inventory.hpp"
 
+Inventory::Inventory() {}
+
 Inventory::Inventory(size_t _maxColumns, size_t _maxRows)
     : maxColumns(_maxColumns)
     , maxRows(_maxRows)

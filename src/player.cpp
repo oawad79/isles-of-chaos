@@ -132,8 +132,8 @@ void UpdatePlayerNormalState(
             body.y += 100.0f * dt;
         }
 
-        if (equiped.ability.has_value()) {
-            if (equiped.ability.value().id == "flippy-feather") {
+        if (character.hasAbility()) {
+            if (character.getAbility().value().id == "flippy-feather") {
                 if (Input::I()->DodgeRoll() && player.dodgeRollCooloff <= 0.0f) {
                     sprite.currentFrame = 0;
                     sprite.currentAnimation = "rolling";
@@ -167,7 +167,7 @@ void UpdatePlayerNormalState(
 
         // Attack
         if (Input::I()->Attack() && !player.hit && player.attackCooloff <= -0.1f) {
-            if (auto o = equiped.weapon) {
+            if (auto o = character.getWeapon()) {
                 auto weaponItem = o.value();
 
                 player.attackCooloff = weaponItem.usageCooloff;

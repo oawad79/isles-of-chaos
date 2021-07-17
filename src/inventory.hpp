@@ -5,6 +5,7 @@
 
 #include <array>
 #include <optional>
+#include <iostream>
 
 constexpr auto MAX_INV_COLUMNS {30};
 constexpr auto MAX_INV_ROWS {20};
@@ -16,7 +17,8 @@ struct Slot {
 };
 
 struct Inventory {
-    Inventory(size_t _maxColumns=5, size_t _maxRows=3);
+    Inventory();
+    Inventory(size_t _maxColumns, size_t _maxRows);
 
     std::vector<Slot> slots;
 
@@ -32,6 +34,10 @@ struct Inventory {
     void decOrClear(unsigned int column, unsigned int row);
 
     void clear();
+
+    inline bool isFull() {
+      return slots.size() > maxColumns * maxRows;
+    }
 
     inline int getIndex(int x, int y) {
       return x + y * maxColumns;

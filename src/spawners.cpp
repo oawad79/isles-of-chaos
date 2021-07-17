@@ -43,7 +43,6 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& chr = game->reg.emplace<Character>(self);
     auto& actor = game->reg.emplace<Actor>(self);
     actor.actorName = ActorName::Player;
-    // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
 
     game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
 

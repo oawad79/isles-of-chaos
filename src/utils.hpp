@@ -5,6 +5,8 @@
 #include <raylib.h>
 #include <string>
 
+#define HERE std::cout << "[" << __FILE__ << "] " << "(" << __LINE__ << ") " << "HERE!" << std::endl;
+
 struct Range1D { float min; float max; };
 
 union Range2D {

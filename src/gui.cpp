@@ -204,11 +204,41 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
     }
   };
 
+  const auto consu = Assets::I()->textures[Textures::TEX_ITEMS];
+  const auto equip = Assets::I()->textures[Textures::TEX_EQUIPMENT];
+
+  const auto drawSlot = [&](Slot slot, float cx, float cy) {
+    const int rx = cx + slot.column * (cellSize + margin);
+    const int ry = cy + slot.row * (cellSize + margin);
+    DrawRectangle(rx, ry, cellSize, cellSize, {0, 0, 0, 200});
+
+    auto color = BLACK;
+    if (slot.column < 0.0f) { color = GOLD; }
+    DrawRectangleLines(rx, ry, cellSize, cellSize, color);
+
+    if (CheckCollisionPointRec(GetMouseGuiPosition(), {(float) rx, (float) ry, cellSize, cellSize})) {
+      DrawRectangleLines(rx, ry, cellSize, cellSize, WHITE);
+    }
+
+    if (slot.it) {
+      Item o = slot.it.value();
+      auto tex = (o.catagory == ItemCatagory::Consumable || o.catagory == ItemCatagory::Money || o.catagory == ItemCatagory::Ability) ? consu : equip;
+      drawItem(rx, ry, cellSize, tex, o);
+
+      // Amount display
+      const char *text = FormatText("%d", o.amount);
+      DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
+      DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
+
+      drawTooltip(o, cx, cy);
+    }
+  };
+
   game->reg
           .view<Player, Inventory, Character>()
-          .each([&state, &drawEquipmentSquare, &drawTooltip, &drawItem, &game](auto &player, Inventory &inventory, Character &character) {
+          .each([&](auto &player, Inventory &inventory, Character &character) {
             if (state.playerInvOpen) {
-              const auto equiped = character.equiped;
+              const auto &equiped = character.equiped;
 
               const auto sp = GetInvSpacial(inventory);
               auto [ex, ey] = sp.equipStartPos;
@@ -219,55 +249,8 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
 
               auto [cx, cy] = sp.startPos;
 
-              auto slotCopy = inventory.slots;
-              slotCopy.emplace_back(Slot{-1, 0, equiped.helmet});
-              slotCopy.emplace_back(Slot{-1, 1, equiped.chestPiece});
-              slotCopy.emplace_back(Slot{-1, 2, equiped.leggings});
-              slotCopy.emplace_back(Slot{-1, 3, equiped.boots});
-              slotCopy.emplace_back(Slot{-2, 1, equiped.weapon});
-              slotCopy.emplace_back(Slot{-2, 2, equiped.ability});
-
-              for (const auto &slot : slotCopy) {
-                const int rx = cx + slot.column * (cellSize + margin);
-                const int ry = cy + slot.row * (cellSize + margin);
-                DrawRectangle(rx, ry, cellSize, cellSize, {0, 0, 0, 200});
-
-                auto color = BLACK;
-                if (slot.column < 0.0f) { color = GOLD; }
-                DrawRectangleLines(rx, ry, cellSize, cellSize, color);
-
-                if (CheckCollisionPointRec(GetMouseGuiPosition(), {(float) rx, (float) ry, cellSize, cellSize})) {
-                  DrawRectangleLines(rx, ry, cellSize, cellSize, WHITE);
-                }
-
-                if (slot.it) {
-                  Item o = slot.it.value();
-                  auto tex = (o.catagory == ItemCatagory::Consumable || o.catagory == ItemCatagory::Money || o.catagory == ItemCatagory::Ability) ? consu : equip;
-                  drawItem(rx, ry, cellSize, tex, o);
-
-                  // Amount display
-                  const char *text = FormatText("%d", o.amount);
-                  DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
-                  DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
-
-                  drawTooltip(o, cx, cy);
-                }
-              }
-
-//              // Draw equipment
-//              drawEquipmentSquare(wx, wy, equiped.weapon);
-//              drawTooltip(equiped.weapon, wx, wy);
-//
-//              // Ability
-//              drawEquipmentSquare(wx, wy - (cellSize + margin), equiped.ability, GOLD);
-//              drawTooltip(equiped.ability, wx, wy - (cellSize + margin));
-//
-//              float cursor = ey;
-//              drawEquipmentSquare(ex, cursor, equiped.helmet);
-//              if (equiped.helmet) drawTooltip(equiped.helmet, ex, cursor);
-//              cursor += ey + (cellSize + margin);
-//              drawEquipmentSquare(ex, cursor, equiped.chestPiece);
-//              if (equiped.chestPiece) drawTooltip(equiped.chestPiece, ex, cursor);
+              for (const auto &slot : inventory.slots) drawSlot(slot, cx, cy);
+              for (const auto &slot : equiped.slots) drawSlot(slot, cx, cy);
             }
           });
 }
@@ -359,76 +342,46 @@ void UpdateGui(const uptr<Game> &game) {
             if (state.playerInvOpen) {
               const auto sp = GetInvSpacial(inventory);
 
-              auto slotCopy = inventory.slots;
-              slotCopy.emplace_back(Slot{-1, 0, character.equiped.helmet});
-              slotCopy.emplace_back(Slot{-1, 1, character.equiped.chestPiece});
-              slotCopy.emplace_back(Slot{-1, 2, character.equiped.leggings});
-              slotCopy.emplace_back(Slot{-1, 3, character.equiped.boots});
-              slotCopy.emplace_back(Slot{-2, 1, character.equiped.weapon});
-              slotCopy.emplace_back(Slot{-2, 2, character.equiped.ability});
-
               const auto [cx, cy] = sp.startPos;
 
-              for (auto &slot : slotCopy) {
+              for (auto &slot : inventory.slots) {
                 const int rx = cx + slot.column * (cellSize + margin);
                 const int ry = cy + slot.row * (cellSize + margin);
 
-             c  const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
+                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
                                                                                 ry,
                                                                                 cellSize,
                                                                                 cellSize});
                 if (!slot.it) continue;
-                auto &item = slot.it.value();
-                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                  if (IsKeyDown(KEY_LEFT_SHIFT)) {
-                    if (item.catagory == ItemCatagory::Weapon) {
-                      slot.it = character.equiped.weapon;
-                      character.equiped.weapon = item;
-                    } else if (item.catagory == ItemCatagory::Ability) {
-                      slot.it = character.equiped.ability;
-                      character.equiped.ability = item;
-                    }
-                  }
+              }
 
-                  if (hot) {
-                    if (IsKeyDown(KEY_LEFT_SHIFT)) {
-                      if (item.catagory == ItemCatagory::Weapon) {
-                        slot.it = character.equiped.weapon;
-                        character.equiped.weapon = item;
-                      } else if (item.catagory == ItemCatagory::Ability) {
-                        slot.it = character.equiped.ability;
-                        character.equiped.ability = item;
-                      }
-                    }
+              for (auto &slot : character.equiped.slots) {
+                const int rx = cx + slot.column * (cellSize + margin);
+                const int ry = cy + slot.row * (cellSize + margin);
 
-                    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-                      if (slot.column >= 0.0f) {
-                        SpawnItemWithId(
-                                game->reg,
-                                {body.center().x, body.center().y},
-                                item.id);
+                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
+                                                                                ry,
+                                                                                cellSize,
+                                                                                cellSize});
+                if (!slot.it) continue;
 
-                        inventory.decOrClear(slot.column, slot.row);
-                      }
-                    }
-                  }
+                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
+                  inventory.putItem(slot.it.value());
+                  slot.it = std::nullopt;
                 }
               }
-            }
 
-            for (int y = 0; y < inventory.maxRows; y++) {
-              for (int x = 0; x < inventory.maxColumns; x++) {
-                auto o = inventory.getItem(inventory.getIndex(x, y));
-                if (!o) continue;
-                const Item item = o.value();
+              for (auto &slot : inventory.slots) {
+                const int rx = cx + slot.column * (cellSize + margin);
+                const int ry = cy + slot.row * (cellSize + margin);
 
-                if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-                  SpawnItemWithId(
-                          game->reg,
-                          {body.center().x, body.center().y},
-                          item.id);
-
-                  inventory.decOrClear(x, y);
+                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
+                                                                                ry,
+                                                                                cellSize,
+                                                                                cellSize});
+                if (!slot.it) continue;
+                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && character.equip(slot.it.value())) {
+                  slot.it = std::nullopt;
                 }
               }
             }
