@@ -1,17 +1,6 @@
 #include "character.hpp"
 #include "enttypes.hpp"
 
-Character::Character() {
-    equiped.slots.emplace_back(Slot{-1, 0, std::nullopt});
-    equiped.slots.emplace_back(Slot{-1, 1, std::nullopt});
-    equiped.slots.emplace_back(Slot{-1, 2, std::nullopt});
-    equiped.slots.emplace_back(Slot{-1, 3, std::nullopt});
-    equiped.slots.emplace_back(Slot{-2, 1, std::nullopt});
-    equiped.slots.emplace_back(Slot{-2, 2, std::nullopt});
-    equiped.maxColumns = 1;
-    equiped.maxRows = equiped.slots.size();
-}
-
 void Health::hit(float damage) {
   if (!canHit()) return;
   amount -= damage;
@@ -30,22 +19,33 @@ bool Health::canHit() {
   return hitTimer <= 0;
 }
 
+Character::Character() {
+  equiped.slots.emplace_back(Slot{-1, 0, std::nullopt});
+  equiped.slots.emplace_back(Slot{-1, 1, std::nullopt});
+  equiped.slots.emplace_back(Slot{-1, 2, std::nullopt});
+  equiped.slots.emplace_back(Slot{-1, 3, std::nullopt});
+  equiped.slots.emplace_back(Slot{-2, 1, std::nullopt});
+  equiped.slots.emplace_back(Slot{-2, 2, std::nullopt});
+  equiped.maxColumns = 1;
+  equiped.maxRows = equiped.slots.size();
+}
+
 std::optional<Item> Character::equip(Item item) {
   if (item.catagory == ItemCatagory::Weapon) {
-    auto &ret = equiped.slots[EquipSlots::EQUIP_SLOT_WEAPON].it;
+    auto ret = equiped.slots[EquipSlots::EQUIP_SLOT_WEAPON].it;
     equiped.slots[EquipSlots::EQUIP_SLOT_WEAPON].it = item;
     return ret;
   }
 
   if (item.catagory == ItemCatagory::Ability) {
-    auto &ret = equiped.slots[EquipSlots::EQUIP_SLOT_ABILITY].it;
+    auto ret = equiped.slots[EquipSlots::EQUIP_SLOT_ABILITY].it;
     equiped.slots[EquipSlots::EQUIP_SLOT_ABILITY].it = item;
     return ret;
   }
 
   if (item.armorClass > ArmorClass::None && item.armorClass <= ArmorClass::Boots) {
-    auto &ret = equiped.slots[static_cast<size_t>(item.armorClass)].it;
-    equiped.slots[static_cast<size_t>(item.armorClass)].it = item;
+    auto ret = equiped.slots[static_cast<size_t>(item.armorClass)-1].it;
+    equiped.slots[static_cast<size_t>(item.armorClass)-1].it = item;
     return ret;
   }
 

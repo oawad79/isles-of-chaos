@@ -198,7 +198,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 sprite.region.width * sprite.scale.x,
                 sprite.region.height * sprite.scale.y,
             },
-            { body.x + ox + rw/2, body.y + oy + rh/2, sw, sh },
+            { floor(body.x + ox + rw/2), floor(body.y + oy + rh/2), sw, sh },
             Vector2{rw/2, rh/2},
             sprite.rotation,
             tint

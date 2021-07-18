@@ -10,6 +10,7 @@ enum class FeatureType {
   Checkpoint,
   Kill,
   Banner,
+  Barrier,
   Water,
 };
 
@@ -31,5 +32,15 @@ struct Feature : Rectangle {
 
   int timerLoc = -1;
 };
+
+inline Feature MakeFeature(FeatureType which, Vector2 pos, Vector2 size) {
+  auto self = Feature { };
+  self.type = which;
+  self.x = pos.x;
+  self.y = pos.y;
+  self.width = size.x;
+  self.height = size.y;
+  return self;
+}
 
 #endif//ISLESOFCHAOS_TILEMAP_FEATURES_HPP

@@ -44,7 +44,10 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& actor = game->reg.emplace<Actor>(self);
     actor.actorName = ActorName::Player;
 
-    game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+    auto& inv = game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+
+    chr.equip(Assets::I()->getItemInfo("small-sword"));
+    inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
 
     return self;
 }
@@ -269,6 +272,7 @@ entt::entity SpawnSmallWorm(const uptr<Game>& game, const Vector2 position) {
   spr.region = {72, 98, 6, 6};
   spr.number_of_frames = 5;
   spr.offset.x = 0;
+  spr.offset.y = 1.5;
   spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
 
   auto& physics = game->reg.emplace<Physics>(self);
@@ -517,12 +521,6 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             SpawnItemWithId(game->reg, {x, y}, obj.id);
         } else if (obj.type == EntType::Npc) {
             SpawnNpcWithId(game, {x,y}, obj.id);
-//        Water is no longer an entity
-//        } else if (obj.type == EntType::Water) {
-//            const auto ent = SpawnWater(game, {x, y});
-//            auto& body = game->reg.get<Body>(ent);
-//            body.width = obj.width;
-//            body.height = obj.height;
         } else if (obj.type == EntType::Chest){
             auto chest = Spawn(obj.type, game, {x, y});
             if (obj.props.find("loot") == obj.props.end())
@@ -542,6 +540,59 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             Spawn(obj.type, game, {x, y});
           };
         }
+    }
+
+    auto *tilemap = GetTilemap(game->level);
+
+    float playerHeight = 64;
+    game->reg.view<Player, Body, Character, Inventory>().each([&game, &playerHeight](auto &p, auto &body, Character &character, Inventory &inv) {
+      game->respawnLocation = Vector2{body.x, body.y};
+      playerHeight = body.height;
+      // TODO(Dustin): Move to player spawn function
+    });
+
+    // Spawn checkpoints and kill zones
+    for (auto &feat : tilemap->features) {
+      if (feat.type == FeatureType::Checkpoint) {
+        auto e = game->reg.create();
+        auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&game, playerHeight](auto e, entt::registry &reg) {
+            const auto &b = reg.get<Body>(e);
+            game->respawnLocation = Vector2{b.x + b.width / 2, b.y + b.height - playerHeight};
+        };
+      }
+
+      if (feat.type == FeatureType::Kill) {
+        auto e = game->reg.create();
+        auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&](auto e, entt::registry &reg) {
+          game->reg.view<Player, Body>().each([&game](auto &p, auto &body) {
+              body.x = game->respawnLocation.x;
+              body.y = game->respawnLocation.y;
+          });
+        };
+      }
+
+      if (feat.type == FeatureType::Banner) {
+        auto e = game->reg.create();
+        auto bounds = feat.bounds();
+        auto &b = game->reg.emplace<Body>(e, Body{bounds.x, bounds.y, bounds.width, bounds.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&](auto e, entt::registry &reg) {
+          if (!feat.active) {
+            DoAreaBanner(game, feat.target);
+            feat.active = true;
+          }
+        };
+      }
     }
 
     map->spawnedEntities = true;

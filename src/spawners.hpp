@@ -8,6 +8,7 @@
 #include <entt.hpp>
 
 #include "game.hpp"
+#include "gui.hpp"
 #include "utils.hpp"
 #include "enttypes.hpp"
 #include "tilemap.hpp"

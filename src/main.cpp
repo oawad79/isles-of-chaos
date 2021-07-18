@@ -10,6 +10,7 @@
 #include "game.hpp"
 #include "player.hpp"
 #include "playwright.hpp"
+#include "storybook.hpp"
 #include "gui.hpp"
 
 #include "game_scene.hpp"
@@ -20,6 +21,9 @@ std::once_flag Assets::once;
 
 uptr<Input> Input::it;
 std::once_flag Input::once;
+
+uptr<Storybook> Storybook::it;
+std::once_flag Storybook::once;
 
 void Update(uptr<Game>& game) {
     UpdateAssets();

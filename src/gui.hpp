@@ -18,6 +18,6 @@ void RenderGui(const uptr<Game>& game);
 void ShowPauseMenu(const uptr<Game>& game);
 void ClosePauseMenu(const uptr<Game>& game);
 
-void DoAreaBanner(const uptr<Game>& game, const std::string& text);
+void DoAreaBanner(const uptr<Game>& game, const std::string text);
 
 #endif // SKYVAULT_GUI_HPP

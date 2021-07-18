@@ -54,6 +54,8 @@ struct Game {
     RenderTexture2D guiCanvas;
     GuiState guiState;
 
+    Vector2 respawnLocation;
+
     Stage stage;
     std::vector<std::vector<uint8_t>> totalFrames;
     float frameTimer = 0.0f;

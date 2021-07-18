@@ -3,8 +3,8 @@
 constexpr auto cellSize{16};
 constexpr auto margin{1};
 
-constexpr auto dialogWidth = GUI_CANVAS_WIDTH - (GUI_CANVAS_WIDTH / 4);
-constexpr auto dialogHeight = GUI_CANVAS_HEIGHT / 3;
+constexpr auto dialogWidth = (float)GUI_CANVAS_WIDTH - (GUI_CANVAS_WIDTH / 4.0f);
+constexpr auto dialogHeight = GUI_CANVAS_HEIGHT / 3.0f;
 
 const auto dialogX = GUI_CANVAS_WIDTH / 2 - dialogWidth / 2;
 const auto dialogY = GUI_CANVAS_HEIGHT - (dialogHeight + 16);
@@ -131,18 +131,6 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
             WHITE);
   };
 
-  auto drawEquipmentSquare = [&drawItem](float x, float y, std::optional<Item> o, Color border = BLACK) {
-    DrawRectangle(x, y, cellSize, cellSize, {0, 0, 0, 200});
-    DrawRectangleLines(x, y, cellSize, cellSize, border);
-    if (o) {
-      auto tex = Assets::I()->textures[Textures::TEX_EQUIPMENT];
-      if (o->catagory == ItemCatagory::Ability)
-        tex = Assets::I()->textures[Textures::TEX_ITEMS];
-      auto item = o.value();
-      drawItem(x, y, cellSize, tex, item);
-    }
-  };
-
   auto drawTooltip = [&](std::optional<Item> o, float cx, float cy) {
     if (!o) return;
 
@@ -238,19 +226,9 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
           .view<Player, Inventory, Character>()
           .each([&](auto &player, Inventory &inventory, Character &character) {
             if (state.playerInvOpen) {
-              const auto &equiped = character.equiped;
-
-              const auto sp = GetInvSpacial(inventory);
-              auto [ex, ey] = sp.equipStartPos;
-              const auto [wx, wy] = sp.weaponPos;
-
-              const auto consu = Assets::I()->textures[Textures::TEX_ITEMS];
-              const auto equip = Assets::I()->textures[Textures::TEX_EQUIPMENT];
-
-              auto [cx, cy] = sp.startPos;
-
+              auto [cx, cy] = GetInvSpacial(inventory).startPos;
               for (const auto &slot : inventory.slots) drawSlot(slot, cx, cy);
-              for (const auto &slot : equiped.slots) drawSlot(slot, cx, cy);
+              for (const auto &slot : character.equiped.slots) drawSlot(slot, cx, cy);
             }
           });
 }
@@ -259,10 +237,10 @@ void UpdateDialog(DialogTree &dialog, const uptr<Game> &game) {
   auto &branch = dialog.branches[dialog.currentId];
   if (IsKeyPressed(KEY_A)) branch.cursor -= 1;
   if (IsKeyPressed(KEY_D)) branch.cursor += 1;
-  branch.cursor %= (dialog.branches.size() + 1);
+  branch.cursor %= dialog.branches.size() + 1;
 
   if (Input::I()->Interact()) {
-    if (branch.choices.size() == 0) {
+    if (branch.choices.empty()) {
       if (branch.nextId == "" || branch.nextId == "exit") {
         game->state = AppState::Running;
         game->dialogTree = std::nullopt;
@@ -295,6 +273,37 @@ void UpdatePauseMenu(const uptr<Game> &game) {
   }
 }
 
+void UpdateBanner(BannerState& banner) {
+  if (banner.state == BFS_IN) {
+    banner.alpha += GetFrameTime();
+    if (banner.alpha >= 1.0f) {
+      banner.alpha = 1.0f;
+      banner.timeLeft = 1.0f;
+      banner.state = BFS_HOLD;
+    }
+  } else if (banner.state == BFS_HOLD) {
+    if (banner.timeLeft > 0.0f) {
+      banner.timeLeft -= GetFrameTime() * 0.75f;
+    } else {
+      banner.timeLeft = 0.0f;
+      banner.state = BFS_OUT;
+    }
+  } else if (banner.state == BFS_OUT) {
+    if (banner.alpha > 0.0f) {
+      banner.alpha -= GetFrameTime();
+      if (banner.alpha < 0.0f) { banner.alpha = 0.0f; }
+    } else {
+      banner.alpha = 0.0f;
+      banner.text = "";
+      banner.state = BFS_NONE;
+    }
+  }
+
+
+//    if (banner.timeLeft <= 0.0f)
+//      banner.text = "";
+}
+
 void UpdateGui(const uptr<Game> &game) {
   if (IsKeyPressed(KEY_ESCAPE)) {
     if (game->state != AppState::PauseMenu) {
@@ -310,20 +319,7 @@ void UpdateGui(const uptr<Game> &game) {
   }
 
   auto &state = game->guiState;
-
-  if (state.banner.timeLeft >= 0.0f) {
-    if (state.banner.color.a < 256 - 4) {
-      state.banner.color.a += 4;
-    } else {
-      state.banner.color.a = 255;
-    }
-
-    state.banner.timeLeft -= GetFrameTime();
-
-    if (state.banner.timeLeft <= 0.0f)
-      state.banner.text = "";
-  }
-
+  UpdateBanner(state.banner);
   UpdateHud(game, state);
 
   if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
@@ -344,28 +340,17 @@ void UpdateGui(const uptr<Game> &game) {
 
               const auto [cx, cy] = sp.startPos;
 
-              for (auto &slot : inventory.slots) {
-                const int rx = cx + slot.column * (cellSize + margin);
-                const int ry = cy + slot.row * (cellSize + margin);
-
-                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
-                                                                                ry,
-                                                                                cellSize,
-                                                                                cellSize});
-                if (!slot.it) continue;
-              }
-
               for (auto &slot : character.equiped.slots) {
                 const int rx = cx + slot.column * (cellSize + margin);
                 const int ry = cy + slot.row * (cellSize + margin);
 
-                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
-                                                                                ry,
+                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {(float)rx,
+                                                                                (float)ry,
                                                                                 cellSize,
                                                                                 cellSize});
                 if (!slot.it) continue;
 
-                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
+                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
                   inventory.putItem(slot.it.value());
                   slot.it = std::nullopt;
                 }
@@ -375,13 +360,13 @@ void UpdateGui(const uptr<Game> &game) {
                 const int rx = cx + slot.column * (cellSize + margin);
                 const int ry = cy + slot.row * (cellSize + margin);
 
-                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {rx,
-                                                                                ry,
+                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {(float)rx,
+                                                                                (float)ry,
                                                                                 cellSize,
                                                                                 cellSize});
                 if (!slot.it) continue;
-                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && character.equip(slot.it.value())) {
-                  slot.it = std::nullopt;
+                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                  slot.it = character.equip(slot.it.value());
                 }
               }
             }
@@ -439,31 +424,26 @@ void DrawDialog(DialogTree &dialog) {
   DrawBranch(branch);
 }
 
-
 void DrawBanner(BannerState &state) {
-  constexpr auto fontSize = 100.0f;
+  if (state.state == BFS_NONE) return;
+  constexpr auto fontSize = 20.0f;
 
   const auto &tex = Assets::I()->textures[TEX_GUI];
-  const auto font = GetFontDefault();
-  const auto [tw, th] = MeasureTextEx(font, state.text.c_str(), fontSize, 1.0f);
+  const auto font = Assets::I()->fonts[FONT_FANCY];
 
-  const auto x = GetScreenWidth() / 2 - tw / 2;
-  const auto y = GetScreenHeight() / 2 - th / 2 - GetScreenHeight() / 4.0f;
+  const auto [tw, th] = MeasureTextEx(font, state.text.c_str(), (int)fontSize, 1.0f);
+
+  const auto x = GUI_CANVAS_WIDTH / 2 - tw / 2;
+  const auto y = GUI_CANVAS_HEIGHT / 2 - th / 2 - GUI_CANVAS_HEIGHT / 4.0f;
 
   const auto tileSize = 8 * 6.0f;
 
-  DrawTexturePro(tex, {0, 45, 8, 38}, {x - tileSize, y, tileSize, th}, {0, 0}, 0.0f, state.color);
-  for (int i = 0; i < (int) (tw / tileSize); i++) {
-    DrawTexturePro(tex, {8, 45, 16, 38}, {x + i * tileSize, y, tileSize, th}, {0, 0}, 0.0f, state.color);
-  }
-  DrawTexturePro(tex, {0, 45, -8, 38}, {x + tw - 4, y, tileSize + 4, th}, {0, 0}, 0.0f, state.color);
+  float s = 255.0f * state.alpha * 0.75f;
+  const auto a = static_cast<uint8_t>(s);
+  DrawRectangle(0, y - th / 2, GUI_CANVAS_WIDTH, th*2, {0, 0, 0, a});
 
-  const Color textColor{0, 0, 0, state.color.a};
-  DrawTextRec(
-          font,
-          state.text.c_str(),
-          {x, y, tw * 2, th},
-          fontSize, 1.0f, true, textColor);
+  const Color textColor{255, 255, 255, static_cast<uint8_t>(255.0f * state.alpha * state.alpha * 0.9f)};
+  DrawTextEx(font, state.text.c_str(), Vector2{x, y}, fontSize, 1.0f, textColor);
 }
 
 void DrawPauseMenu(const uptr<Game> &game, GuiState &guiState) {
@@ -525,9 +505,7 @@ void DrawPauseMenu(const uptr<Game> &game, GuiState &guiState) {
 void RenderGui(const uptr<Game> &game) {
   auto &state = game->guiState;
 
-  if (state.banner.timeLeft >= 0.0f && state.banner.text != "") {
-    DrawBanner(state.banner);
-  }
+  DrawBanner(state.banner);
 
   const auto tex = Assets::I()->textures[Textures::TEX_GUI];
   DrawInventory(game, state);
@@ -546,9 +524,11 @@ void RenderGui(const uptr<Game> &game) {
     DrawPauseMenu(game, state);
 }
 
-void DoAreaBanner(const uptr<Game> &game, const std::string &text) {
+void DoAreaBanner(const uptr<Game> &game, const std::string text) {
   if (game->guiState.banner.text != "" || game->guiState.banner.timeLeft > 0.0f) return;
-  game->guiState.banner.color.a = 0.0f;
+  std::cout << " HEERE: " << std::endl;
+  game->guiState.banner.alpha = 0.0f;
+  game->guiState.banner.state = BFS_IN;
   game->guiState.banner.text = text;
   game->guiState.banner.timeLeft = BANNER_MAX_TIME;
 }

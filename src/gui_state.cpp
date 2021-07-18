@@ -6,7 +6,8 @@ void GuiState::setPadding(float newPadding) {
 }
 
 bool GuiState::doButton(Rectangle shape, const std::string& title, int fontSize, uint64_t flags) {
-  const auto& defFont = GetFontDefault();
+//  const auto& defFont = GetFontDefault();
+  const auto& defFont = Assets::I()->fonts[FONT_NONE];
 
   float x = shape.x - padding;
   float y = shape.y - padding;

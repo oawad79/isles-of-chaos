@@ -12,55 +12,6 @@ void GameScene::loadLevel(const uptr<Game> &game, const std::string &which) {
   SetPosition(tilemap, startGamePosition);
 
   SpawnEntitiesFromTileMap(tilemap, game);
-
-  float playerHeight = 64;
-  game->reg.view<Player, Body, Character, Inventory>().each([this, &playerHeight](auto &p, auto &body, Character &character, Inventory &inv) {
-    respawnLocation = Vector2{body.x, body.y};
-    playerHeight = body.height;
-    character.equip(Assets::I()->getItemInfo("small-sword"));
-    // character.equiped.weapon = Assets::I()->getItemInfo("small-sword");
-    inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
-  });
-
-  // Spawn checkpoints and kill zones
-  for (const auto &feat : tilemap->features) {
-    if (feat.type == FeatureType::Checkpoint) {
-      auto e = game->reg.create();
-      auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
-      auto &i = game->reg.emplace<Interaction>(e);
-      i.mode = InteractionMode::CALL_WHEN_ENTERED;
-      i.icon = ActionIcon::NONE;
-      i.action = [this, playerHeight](auto e, entt::registry &reg) {
-        const auto &b = reg.get<Body>(e);
-        respawnLocation = Vector2{b.x + b.width / 2, b.y + b.height - playerHeight};
-      };
-    }
-
-    if (feat.type == FeatureType::Kill) {
-      auto e = game->reg.create();
-      auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
-      auto &i = game->reg.emplace<Interaction>(e);
-      i.mode = InteractionMode::CALL_WHEN_ENTERED;
-      i.icon = ActionIcon::NONE;
-      i.action = [&](auto e, entt::registry &reg) {
-        game->reg.view<Player, Body>().each([this](auto &p, auto &body) {
-          body.x = respawnLocation.x;
-          body.y = respawnLocation.y;
-        });
-      };
-    }
-
-    if (feat.type == FeatureType::Banner) {
-      auto e = game->reg.create();
-      auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
-      auto &i = game->reg.emplace<Interaction>(e);
-      i.mode = InteractionMode::CALL_WHEN_ENTERED;
-      i.icon = ActionIcon::NONE;
-      i.action = [&](auto e, entt::registry &reg) {
-        DoAreaBanner(game, feat.target);
-      };
-    }
-  }
 }
 
 void GameScene::load(const uptr<Game> &game) {

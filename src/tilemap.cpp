@@ -196,21 +196,11 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                           map->billboards.push_back(billboard);
                         } else if (stype ==  "Water") {
-                          Feature feat;
-                          feat.type = FeatureType::Water;
-                          feat.x = polypos.x;
-                          feat.y = polypos.y;
-                          feat.width = size.x;
-                          feat.height = size.y;
-                          map->features.push_back(std::move(feat));
-
+                          map->features.push_back(MakeFeature(FeatureType::Water, polypos, size));
+                        } else if (stype ==  "Barrier") {
+                          map->features.push_back(MakeFeature(FeatureType::Barrier, polypos, size));
                         } else if (stype == "Banner") {
-                            Feature feat;
-                            feat.type = FeatureType::Banner;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y; 
+                            auto feat = MakeFeature(FeatureType::Banner, polypos, size);
 
                             const auto* props = object->FirstChildElement();
                             if (!props) {
@@ -228,34 +218,13 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                             map->features.push_back(std::move(feat));
                         } else if (stype == "Checkpoint") {
-                            Feature feat;
-                            feat.type = FeatureType::Checkpoint;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Checkpoint, polypos, size));
                         } else if (stype == "Kill") {
-                            Feature feat;
-                            feat.type = FeatureType::Kill;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Kill, polypos, size));
                         } else if (stype == "Room") {
-                            Feature feat;
-                            feat.type = FeatureType::Room;
-                            feat.x = polypos.x; feat.y = polypos.y;
-                            feat.width = size.x; feat.height = size.y;
-                            map->rooms.push_back(std::move(feat));
+                            map->rooms.push_back(MakeFeature(FeatureType::Room, polypos, size));
                         } else if (stype == "Port" || stype == "Door") {
-                            Feature feat;
-                            feat.type = stype == "Port" ? FeatureType::Port : FeatureType::Door;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
+                            auto feat = MakeFeature(stype == "Port" ? FeatureType::Port : FeatureType::Door, polypos, size);
 
                             const auto* props = object->FirstChildElement();
                             if (!props) {
@@ -279,13 +248,7 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                             map->features.push_back(std::move(feat));
                         } else if (stype == "Ladder") {
-                            Feature feat;
-                            feat.type = FeatureType::Ladder;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Ladder, polypos, size));
                         } else {
                             SpawnLocation loc;
                             loc.type = GetEntType(stype);
@@ -376,29 +339,50 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                         if (tile == 0) continue;
                         --tile;
 
-                        float rx = tile%(tileset->texture.width/tileset->tilewidth);
-                        float ry = tile/(tileset->texture.width/tileset->tilewidth);
+                        float rx = (tile%(tileset->texture.width/tileset->tilewidth)) * 1.0f;
+                        float ry = (tile/(tileset->texture.width/tileset->tilewidth)) * 1.0f;
 
                         Rectangle region{
-                            rx*tileset->tilewidth,
-                            ry*tileset->tileheight,
+                            rx*(float)tileset->tilewidth,
+                            ry*(float)tileset->tileheight,
                             (float)tileset->tilewidth,
                             (float)tileset->tileheight };
 
-                        const float cox = tileset->tilewidth * (chunk->offset.x);
-                        const float coy = tileset->tileheight * (chunk->offset.y);
+                        const float cox = (float)tileset->tilewidth * (chunk->offset.x);
+                        const float coy = (float)tileset->tileheight * (chunk->offset.y);
 
                         DrawTextureRec(
                             tileset->texture,
                             region,
                             Vector2{
-                                floor(cox + (float)x*tileset->tilewidth + ox),
-                                floor(coy + (float)y*tileset->tileheight + oy)
+                                floor(cox + (float)x*(float)tileset->tilewidth + ox),
+                                floor(coy + (float)y*(float)tileset->tileheight + oy)
                             },
                             tint);
                     }
                 }
             }
+        }
+
+        for (auto& feat : tilemap->features) {
+          if (feat.type == FeatureType::Barrier) {
+            const auto region = Rectangle{40, 0, 8, 8};
+            auto tw = (int)floor(feat.width / tileset->tilewidth);
+            auto th = (int)floor(feat.height / tileset->tileheight);
+
+            for (int y = 0; y < th; y++) {
+              for (int x = 0; x < tw; x++) {
+                DrawTextureRec(
+                    tileset->texture,
+                    region,
+                    Vector2{
+                      floor(feat.x + (float)x*(float)tileset->tilewidth + ox),
+                      floor(feat.y + (float)y*(float)tileset->tileheight + oy)
+                    },
+                    WHITE);
+              }
+            }
+          }
         }
 
         EndMode2D();

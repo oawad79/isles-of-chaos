@@ -6,6 +6,7 @@
 
 #include "raylib.h"
 
+#include "assets.hpp"
 #include "consts.hpp"
 #include "item.hpp"
 #include "window_sizing.hpp"
@@ -29,10 +30,18 @@ struct Button {
   std::string title;
 };
 
+enum BannerFadeState {
+  BFS_NONE,
+  BFS_IN,
+  BFS_HOLD,
+  BFS_OUT,
+};
+
 struct BannerState {
   std::string text{""};
+  BannerFadeState state{BFS_NONE};
   float timeLeft{0.0f};
-  Color color{WHITE};
+  float alpha{0.0f};
 };
 
 struct GuiState {

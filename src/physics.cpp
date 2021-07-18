@@ -163,7 +163,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
             for (const auto& obj : tilemap->features) {
                 if (obj.type == FeatureType::Ladder) {
                     if (CheckCollisionRecs(body, obj.bounds())) {
-                        if (body.y + body.height / 2 < obj.y + obj.height / 2) {
+                        if (body.y + body.height < obj.y + obj.height) {
 //                            const auto depth = (ybody.y + body.height) - obj.y;
 //                            if (depth < 1.0f) {
 //                                SetOnGround(physics);
@@ -226,6 +226,11 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
         if (obj.type == FeatureType::Port) {
             color = BLUE;
             text = "Port:" + obj.target;
+        }
+
+        if (obj.type == FeatureType::Banner) {
+          color = LIGHTGRAY;
+          text = "Banner";
         }
 
         const auto b = obj.bounds();

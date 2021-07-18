@@ -170,6 +170,8 @@ void LoadAllAssets() {
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 
     Assets::I()->fonts[Fonts::FONT_NONE] = GetFontDefault();
+    Assets::I()->fonts[Fonts::FONT_SMALL] = LoadFont("resources/fonts/small-font.png");
+    Assets::I()->fonts[Fonts::FONT_FANCY] = LoadFont("resources/fonts/alagard.png");
 
     auto loadDynShader = [&](Shaders which, std::string pathVS, std::string pathFS) {
       Assets::I()->shaders[which] = LoadShader(pathVS.c_str(), pathFS.c_str());
