@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 #include "game.hpp"
+#include "hud.hpp"
 #include "gui_state.hpp"
 #include "menu_scene.hpp"
 #include "input.hpp"

@@ -9,77 +9,6 @@ constexpr auto dialogHeight = GUI_CANVAS_HEIGHT / 3.0f;
 const auto dialogX = GUI_CANVAS_WIDTH / 2 - dialogWidth / 2;
 const auto dialogY = GUI_CANVAS_HEIGHT - (dialogHeight + 16);
 
-void UpdateHud(const uptr<Game> &game, GuiState &state) {
-  game->reg.view<Player, Health>().each([&](auto &p, auto &health) {
-    const auto d = Input::I()->GetMovementVector();
-    state.frameTarget = d.x * 2.0f;
-    state.frameScaler = lerp(state.frameScaler, state.frameTarget, GetFrameTime() * state.speed);
-
-    const float sign = state.frameScaler < 0 ? -1 : 1;
-    const float f = sign < 0 ? -state.frameScaler : state.frameScaler;
-    if (f < 0.1) state.frameScaler = 0.0f;
-    if (f > 1.8 && sign > 1) state.frameScaler = 2.0f;
-  });
-}
-
-void DrawHud(const uptr<Game> &game, GuiState &state, const Texture &tex) {
-  const auto full = Rectangle{32, 8, 8, 8};
-  const auto fullTip = Rectangle{40, 8, 8, 8};
-  const auto empty = Rectangle{48, 8, 8, 8};
-  const auto emptyTip = Rectangle{56, 8, 8, 8};
-
-  game->reg.view<Player, Health>().each([&](auto &p, auto &health) {
-    const auto &tex = Assets::I()->textures[TEX_GUI];
-
-    DrawTexturePro(tex, {0, 96, 16, 16}, {2, 2, 16, 16}, {0, 0}, 0.0f, WHITE);
-
-    const float percent = (float) health.max / (float) health.amount;
-
-    constexpr int length = 8;
-    constexpr float startX = 2 + 16 + 2;
-
-    auto reg = full;
-    reg.x -= 8;
-    DrawTexturePro(tex, reg, {startX - 8, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
-
-    const auto totalWidth = 8 * (float) length;
-    const auto dx = totalWidth - (totalWidth * percent);
-
-    BeginScissorMode(startX, 2, totalWidth, 8);
-    for (int i = 0; i < length; i++) {
-
-      auto reg = i == length - 1 ? fullTip : full;
-
-      reg.x += 16;
-      DrawTexturePro(tex, reg, {startX + 8 * (float) i, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
-
-      reg.x -= 16;
-      DrawTexturePro(tex, reg, {startX + (8 * (float) i) + dx, 2, 8, 8}, {0, 0}, 0.0f, {169, 59, 59, 255});
-    }
-    EndScissorMode();
-
-    //int frame = floor(state.frameScaler);
-    //if (state.frameScaler > 1.8) frame = 2;
-    //const auto [rx, ry, rw, rh] = state.healthRegion;
-
-    //        const float dist = health.max - health.amount;
-    //        DrawRectangle(0, dist, 16, health.max - dist, RED);
-
-
-    //DrawTexturePro(
-    //    tex,
-    //    {rx + frame * 32,
-    //     ry,
-    //     rw,
-    //     rh},
-    //    {8, 8, 32, 16},
-    //    {0, 0},
-    //    0.0f,
-    //    WHITE);
-  });
-}
-
-
 struct InvSpacial {
   Vector2 startPos;
   Vector2 equipStartPos;
@@ -214,7 +143,7 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
       drawItem(rx, ry, cellSize, tex, o);
 
       // Amount display
-      const char *text = FormatText("%d", o.amount);
+      const char *text = TextFormat("%d", o.amount);
       DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
       DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
 
@@ -320,7 +249,7 @@ void UpdateGui(const uptr<Game> &game) {
 
   auto &state = game->guiState;
   UpdateBanner(state.banner);
-  UpdateHud(game, state);
+  UpdateHud(game);
 
   if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
     auto &dialog = game->dialogTree.value();
@@ -513,7 +442,7 @@ void RenderGui(const uptr<Game> &game) {
   const auto [cx, cy] = MousePositionCanvasSpace();
   DrawCircle(cx, cy, 2, BLUE);
 
-  DrawHud(game, state, tex);
+  DrawHud(game);
 
   if (game->state == AppState::InDialog && game->dialogTree.has_value()) {
     auto dialog = game->dialogTree.value();
@@ -526,7 +455,6 @@ void RenderGui(const uptr<Game> &game) {
 
 void DoAreaBanner(const uptr<Game> &game, const std::string text) {
   if (game->guiState.banner.text != "" || game->guiState.banner.timeLeft > 0.0f) return;
-  std::cout << " HEERE: " << std::endl;
   game->guiState.banner.alpha = 0.0f;
   game->guiState.banner.state = BFS_IN;
   game->guiState.banner.text = text;

@@ -86,6 +86,7 @@ int main(const int argc, const char *argv[]) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(1280, 720, "DevWindow");
+    SetWindowPosition(1280 + 100, 100);
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
     SetTargetFPS(85);
     SetExitKey(0);

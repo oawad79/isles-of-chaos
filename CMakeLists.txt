@@ -75,7 +75,8 @@ if(MSVC)
 else()
     target_link_libraries(${PROJECT_NAME}
             ${CMAKE_THREAD_LIBS_INIT}
-            raylib)
+            raylib
+	    dl)
 endif()
 
 #target_include_directories(${PROJECT_NAME} PUBLIC ${LUA_INCLUDE_DIR})

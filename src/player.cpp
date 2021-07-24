@@ -205,6 +205,7 @@ void UpdatePlayerNormalState(
             
             if (CheckCollisionRecs(body, ebody) && health.canHit()) {
                 health.hit(eactor.enemyStats.damage);
+                game->guiState.showHud();
 
                 // Do knockback
                 float side = body.center().x > ebody.center().x ? 1.f : -1.f;

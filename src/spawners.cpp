@@ -572,9 +572,12 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
         i.mode = InteractionMode::CALL_WHEN_ENTERED;
         i.icon = ActionIcon::NONE;
         i.action = [&](auto e, entt::registry &reg) {
-          game->reg.view<Player, Body>().each([&game](auto &p, auto &body) {
+          game->reg.view<Player, Body, Health>().each([&game](auto &p, auto &body, auto& health) {
               body.x = game->respawnLocation.x;
               body.y = game->respawnLocation.y;
+
+              health.hit(10);
+              game->guiState.showHud();
           });
         };
       }

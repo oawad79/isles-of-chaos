@@ -234,7 +234,7 @@ void UpdateGame(uptr<Game>& game) {
 
   if (game->recordingGif) {
 //    if (game->frameTimer >= 0.1f) {
-      Image screenImage = GetScreenData();
+      Image screenImage = LoadImageFromScreen();
       ImageResizeNN(&screenImage, GIF_WIDTH, GIF_HEIGHT);
       std::vector<uint8_t> buffer;
       buffer.resize(GIF_WIDTH * GIF_HEIGHT * 4);

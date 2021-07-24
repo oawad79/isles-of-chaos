@@ -12,6 +12,9 @@
 #include "window_sizing.hpp"
 
 constexpr auto BANNER_MAX_TIME { 4.0f };
+constexpr auto HUD_HIDE {-32};
+constexpr auto HUD_MARGIN{8};
+constexpr auto HUD_HIDE_TIMER{4.0f};
 
 constexpr Color BTN_FG { 200, 200, 180, 255 };
 constexpr Color BTN_BG { 20, 20, 18, 255 };
@@ -55,12 +58,19 @@ struct GuiState {
     float frameScaler{0.0f}; // Goes from -2.0 to 2.0
     float frameTarget{0.0f};
 
+    float hudMargin{HUD_HIDE};
+    float hudHideTimer{HUD_HIDE_TIMER};
+
     BannerState banner;
 
     std::optional<Item> dragItem;
 
     void setPadding(float newPadding);
     bool doButton(Rectangle shape, const std::string& title, int fontSize=10, uint64_t flags=GUI_FLAG_NONE);
+
+    inline void showHud() {
+      hudHideTimer = HUD_HIDE_TIMER;
+    }
 
 private:
     float padding{2.0f};
