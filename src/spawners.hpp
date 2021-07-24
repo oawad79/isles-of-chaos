@@ -8,6 +8,7 @@
 #include <entt.hpp>
 
 #include "game.hpp"
+#include "gui.hpp"
 #include "utils.hpp"
 #include "enttypes.hpp"
 #include "tilemap.hpp"
@@ -37,16 +38,18 @@ entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnTest(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnMimic(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnGhost(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnDreadShark(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnKiwiBird(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnPot(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position);
-entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnNpc(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, const std::string& id);
+entt::entity SpawnShopKeeper(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position);
+entt::entity SpawnSmallWorm(const uptr<Game>& game, const Vector2 position);
 
 entt::entity SpawnItem(const uptr<Game>& game, const Vector2 position);
 entt::entity SpawnItemWithId(

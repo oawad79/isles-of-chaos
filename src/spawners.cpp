@@ -18,12 +18,10 @@ entt::entity SpawnNone(const uptr<Game>& game, const Vector2 position) {
 entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto self = game->reg.create();
 
-    std::cout << "Spawning Player\n" << std::endl;
-
     auto& body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 10;
+    body.width = 8;
     body.height = 18;
 
     auto& spr = game->reg.emplace<AdvancedAnimation>(self);
@@ -31,19 +29,25 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     spr.tint = WHITE;
     spr.texture = Assets::I()->textures[Textures::TEX_PLAYER];
     spr.offset.y -= 2;
+    spr.offset.x -= 3;
 
     spr.currentAnimation = "moving"; 
     spr.animations["moving"] = CreateUniformAnimation({ 0, 0, 12, 20 }, 4);
     spr.animations["rolling"] = CreateUniformAnimation({ 0, 28, 16, 20 }, 6, 200.0f / 3.0f); 
+    spr.animations["jumping"] = CreateUniformAnimation({ 48, 0, 12, 20 }, 3, 0); 
 
     auto& player = game->reg.emplace<Player>(self);
     auto& physics = game->reg.emplace<Physics>(self);
     auto& health = game->reg.emplace<Health>(self);
 
     auto& chr = game->reg.emplace<Character>(self);
-    // chr.equiped.weapon = std::optional{Assets::I()->getItemInfo("small-sword")};
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.actorName = ActorName::Player;
 
-    game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+    auto& inv = game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+
+    chr.equip(Assets::I()->getItemInfo("small-sword"));
+    inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
 
     return self;
 }
@@ -197,6 +201,8 @@ entt::entity SpawnNpc(const uptr<Game>& game, const Vector2 position) {
 
 entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, const std::string& id) {
     const auto self = SpawnNpc(game, position);
+    auto& ent = game->reg.emplace<Ent>(self);
+    ent.entType = EntType::Npc;
 
     if (id == "old-man") {
         auto convo = DialogTree{
@@ -207,12 +213,12 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
                     {"less-rude", {"Um im not even that old..."}}},
         };
 
+        game->reg.get<Actor>(self).actorName = ActorName::OldMan;
         game->reg.emplace<DialogTree>(self, convo);
 
         auto &inter = game->reg.emplace<Interaction>(self);
         inter.action = [&](auto e, entt::registry &r) {
-            const auto &dialog = r.get<DialogTree>(e);
-            std::cout << "HERE!" << std::endl;
+            const auto dialog = r.get<DialogTree>(e);
             DoDialog(game, dialog);
         };
 
@@ -229,6 +235,55 @@ entt::entity SpawnNpcWithId(const uptr<Game>& game, const Vector2 position, cons
     }
 
     return self;
+}
+
+entt::entity SpawnShopKeeper(const uptr<Game>& game, const Vector2 position) {
+  auto self = game->reg.create();
+
+  auto& body = game->reg.emplace<Body>(self);
+  body.x = position.x;
+  body.y = position.y;
+  body.width = 16;
+  body.height = 18;
+
+  auto& spr = game->reg.emplace<SimpleAnimation>(self);
+  spr.T = Type::SPRITE;
+  spr.tint = WHITE;
+  spr.region = {104, 48, 24, 16};
+  spr.offset.x = 0;
+  spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+  spr.number_of_frames = 1;
+
+  return self;
+}
+
+entt::entity SpawnSmallWorm(const uptr<Game>& game, const Vector2 position) {
+  auto self = game->reg.create();
+
+  auto& body = game->reg.emplace<Body>(self);
+  body.x = position.x;
+  body.y = position.y;
+  body.width = 6;
+  body.height = 6;
+
+  auto& spr = game->reg.emplace<SimpleAnimation>(self);
+  spr.T = Type::ANIMATION;
+  spr.tint = WHITE;
+  spr.region = {72, 98, 6, 6};
+  spr.number_of_frames = 5;
+  spr.offset.x = 0;
+  spr.offset.y = 1.5;
+  spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+  auto& physics = game->reg.emplace<Physics>(self);
+  game->reg.emplace<Health>(self);
+
+  auto& actor = game->reg.emplace<Actor>(self);
+  actor.type = ActorType::BUG;
+
+//  game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
+  return self;
 }
 
 entt::entity SpawnZambie(const uptr<Game>& game, const Vector2 position) {
@@ -265,18 +320,19 @@ entt::entity SpawnSmallBoat(const uptr<Game>& game, const Vector2 position) {
     auto &body = game->reg.emplace<Body>(self);
     body.x = position.x;
     body.y = position.y;
-    body.width = 32;
-    body.height = 16;
+    body.width = 64;
+    body.height = 24;
 
     auto& spr = game->reg.emplace<Sprite>(self);
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
-    spr.region = {0, 96, 64, 24};
+    spr.region = {0, 128, 64, 24};
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
-    spr.offset.x -= 16;
-    spr.offset.y -= 8;
 
     auto& physics = game->reg.emplace<Physics>(self);
+    physics.type = PhysicsType::KINEMATIC;
+    physics.gravityScale.y = 0.0f;
+
     return self;
 }
 
@@ -293,6 +349,32 @@ entt::entity SpawnShroomba(const uptr<Game>& game, const Vector2 position) {
     spr.T = Type::SPRITE;
     spr.tint = WHITE;
     spr.region = {32, 0, 16, 16};
+    spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
+
+    auto& physics = game->reg.emplace<Physics>(self);
+    game->reg.emplace<Health>(self);
+
+    auto& actor = game->reg.emplace<Actor>(self);
+    actor.type = ActorType::SHROOMBA;
+
+    game->reg.emplace<Loot>(self, Assets::I()->getLootInfo("zambie"));
+
+    return self;
+}
+
+entt::entity SpawnMimic(const uptr<Game>& game, const Vector2 position) {
+    auto self = game->reg.create();
+
+    auto& body = game->reg.emplace<Body>(self);
+    body.x = position.x;
+    body.y = position.y;
+    body.width = 16;
+    body.height = 16;
+
+    auto& spr = game->reg.emplace<Sprite>(self);
+    spr.T = Type::SPRITE;
+    spr.tint = WHITE;
+    spr.region = {16, 32, 13, 13};
     spr.texture = Assets::I()->textures[Textures::TEX_ENTITIES];
 
     auto& physics = game->reg.emplace<Physics>(self);
@@ -349,20 +431,6 @@ entt::entity SpawnChest(const uptr<Game>& game, const Vector2 position) {
     return self;
 }
 
-entt::entity SpawnWater(const uptr<Game>& game, const Vector2 position) {
-    auto self = game->reg.create();
-
-    auto& body = game->reg.emplace<Body>(self);
-    body.x = position.x;
-    body.y = position.y;
-    body.width = 16;
-    body.height = 16;
-
-    game->reg.emplace<Water>(self);
-
-    return self;
-}
-
 entt::entity SpawnParticle(const uptr<Game>& game, const Vector2 position) {
     return game->reg.create();
 }
@@ -376,6 +444,8 @@ entt::entity SpawnItemWithId(
   const Vector2 position,
   const std::string& id) {
     auto self = reg.create();
+    auto& ent = reg.emplace<Ent>(self);
+    ent.entType = EntType::Item;
 
     const auto itemData = Assets::I()->getItemInfo(id);
     reg.emplace<Item>(self, itemData);
@@ -451,11 +521,6 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             SpawnItemWithId(game->reg, {x, y}, obj.id);
         } else if (obj.type == EntType::Npc) {
             SpawnNpcWithId(game, {x,y}, obj.id);
-        } else if (obj.type == EntType::Water) {
-            const auto ent = SpawnWater(game, {x, y});
-            auto& body = game->reg.get<Body>(ent);
-            body.width = obj.width;
-            body.height = obj.height;
         } else if (obj.type == EntType::Chest){
             auto chest = Spawn(obj.type, game, {x, y});
             if (obj.props.find("loot") == obj.props.end())
@@ -463,13 +528,82 @@ void SpawnEntitiesFromTileMap(Tilemap* map, const uptr<Game>& game) {
             else
                 game->reg.emplace<Loot>(chest, Assets::I()->getLootInfo(obj.props["loot"]));
         } else {
+          if (obj.type == EntType::Player)  {
+            bool playerExists = false;
+            game->reg.view<Player>().each([&playerExists](auto _p){
+              playerExists = true;
+            });
+            if (!playerExists) {
+              Spawn(obj.type, game, {x, y});
+            }
+          } else {
             Spawn(obj.type, game, {x, y});
+          };
         }
+    }
+
+    auto *tilemap = GetTilemap(game->level);
+
+    float playerHeight = 64;
+    game->reg.view<Player, Body, Character, Inventory>().each([&game, &playerHeight](auto &p, auto &body, Character &character, Inventory &inv) {
+      game->respawnLocation = Vector2{body.x, body.y};
+      playerHeight = body.height;
+      // TODO(Dustin): Move to player spawn function
+    });
+
+    // Spawn checkpoints and kill zones
+    for (auto &feat : tilemap->features) {
+      if (feat.type == FeatureType::Checkpoint) {
+        auto e = game->reg.create();
+        auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&game, playerHeight](auto e, entt::registry &reg) {
+            const auto &b = reg.get<Body>(e);
+            game->respawnLocation = Vector2{b.x + b.width / 2, b.y + b.height - playerHeight};
+        };
+      }
+
+      if (feat.type == FeatureType::Kill) {
+        auto e = game->reg.create();
+        auto &b = game->reg.emplace<Body>(e, Body{feat.x, feat.y, feat.width, feat.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&](auto e, entt::registry &reg) {
+          game->reg.view<Player, Body, Health>().each([&game](auto &p, auto &body, auto& health) {
+              body.x = game->respawnLocation.x;
+              body.y = game->respawnLocation.y;
+
+              health.hit(10);
+              game->guiState.showHud();
+          });
+        };
+      }
+
+      if (feat.type == FeatureType::Banner) {
+        auto e = game->reg.create();
+        auto bounds = feat.bounds();
+        auto &b = game->reg.emplace<Body>(e, Body{bounds.x, bounds.y, bounds.width, bounds.height});
+        auto &i = game->reg.emplace<Interaction>(e);
+        i.mode = InteractionMode::CALL_WHEN_ENTERED;
+        i.icon = ActionIcon::NONE;
+        i.action = [&](auto e, entt::registry &reg) {
+          if (!feat.active) {
+            DoAreaBanner(game, feat.target);
+            feat.active = true;
+          }
+        };
+      }
     }
 
     map->spawnedEntities = true;
 }
 
 entt::entity Spawn(const EntType which, const uptr<Game>& game, const Vector2 position) {
-    return SpawnerMap[(int)which](game, position);
+  auto self = SpawnerMap[(int)which](game, position);
+  if (self != entt::entity(0))
+    game->reg.emplace<Ent>(self, which);
+  return self;
 }

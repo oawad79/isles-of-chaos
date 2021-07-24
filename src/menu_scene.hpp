@@ -8,7 +8,7 @@
 #include "art.hpp"
 
 #define FIRE_WIDTH (256)
-#define FIRE_HEIGHT (144/2)
+#define FIRE_HEIGHT (144)
 
 static const int rgbs[] = {
   0x07, 0x07, 0x07, 0x1F, 0x07, 0x07, 0x2F, 0x0F, 0x07, 0x47, 0x0F, 0x07,
@@ -29,10 +29,10 @@ class MenuScene : public SceneLayer {
 public:
     MenuScene(entt::registry& reg);
 
-    void load(uptr<Game>& game) override;
-    void update(uptr<Game>& game) override;
+    void load(const uptr<Game>& game) override;
+    void update(const uptr<Game>& game) override;
     void render(const uptr<Game>& game) override;
-    void destroy(uptr<Game>& game) override;
+    void destroy(const uptr<Game>& game) override;
 
 private:
     void spreadFire(int src);
@@ -40,4 +40,6 @@ private:
     int firePixels[FIRE_WIDTH * FIRE_HEIGHT];
     Color palette[NUM_RGBS / 3];
     RenderTexture2D target;
+
+    Texture2D menuBg;
 };

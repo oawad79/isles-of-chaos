@@ -11,17 +11,19 @@
     E(None)            \
     E(Npc)             \
     E(Player)          \
-    E(KiwiBird)       \
+    E(KiwiBird)        \
+    E(ShopKeeper)      \
     E(Test)            \
     E(Zambie)          \
     E(Ghost)           \
     E(Shroomba)        \
     E(Pot)             \
-    E(Water)           \
     E(DreadShark)      \
+    E(Mimic)           \
     E(Chest)           \
     E(Particle)        \
-    E(SmallBoat)      \
+    E(SmallBoat)       \
+    E(SmallWorm)       \
     E(Item)
 
 enum class EntType {X_ENT_TYPES(GENERATE_ENUM)};
@@ -43,5 +45,15 @@ static EntType GetEntType(const std::string& tstr) {
 struct Disabled { int mapId {0}; };
 
 #undef GENERATE_MAP
+
+enum class ActorName {
+    Anon,
+    Player,
+    OldMan,
+};
+
+struct Ent {
+  EntType entType{EntType::None};
+};
 
 #endif // SKYVAULT_ENTTYPES_HPP

@@ -1,23 +1,17 @@
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <set>
 #include <raylib.h>
 
+#include "window_sizing.hpp"
 #include "utils.hpp"
 #include "level.hpp"
 #include "game.hpp"
-#include "tilemap.hpp"
 #include "player.hpp"
-#include "physics.hpp"
-#include "spawners.hpp"
-#include "timed.hpp"
-#include "character.hpp"
-#include "actor.hpp"
-#include "interaction.hpp"
-#include "assets.hpp"
+#include "playwright.hpp"
+#include "storybook.hpp"
 #include "gui.hpp"
-#include "input.hpp"
-#include "enttypes.hpp"
 
 #include "game_scene.hpp"
 #include "menu_scene.hpp"
@@ -28,52 +22,56 @@ std::once_flag Assets::once;
 uptr<Input> Input::it;
 std::once_flag Input::once;
 
-void Update(uptr<Game>& game) {
-    UpdateGame(game);
-    UpdateGui(game);
+uptr<Storybook> Storybook::it;
+std::once_flag Storybook::once;
 
-    if (game->state == AppState::Running) {
-        UpdateSprites(game->reg);
-        UpdatePlayer(game, game->reg);
-        UpdatePhysics(game, game->reg);
-        UpdateTimed(game->reg);
-        UpdateCharacter(game->reg);
-        UpdateActor(game->reg);
-        UpdateWater(game->reg);
-        UpdateInteraction(game, game->reg);
-    }
+void Update(uptr<Game>& game) {
+    UpdateAssets();
+    UpdateGame(game);
+    auto* tilemap = GetTilemap(game->level);
+    if (tilemap != nullptr) UpdateTilemap(tilemap);
+    UpdateGui(game);
 }
 
 void Render(const uptr<Game>& game) {
     const auto* tilemap = GetTilemap(game->level);
-    if (tilemap != nullptr)
-        DrawTilemapToTarget(tilemap, game->mainCamera, game->spriteRenderer);
+
+    GetWindowSize(true);
+
+    Camera2D cameraCopy = game->mainCamera;
+    cameraCopy.target.x = floor(cameraCopy.target.x);
+    cameraCopy.target.y = floor(cameraCopy.target.y);
+
+  if (tilemap != nullptr)
+        DrawTilemapToTarget(tilemap, cameraCopy, game->spriteRenderer);
+
     BeginTextureMode(game->mainCanvas);
         if (tilemap != nullptr) game->backgroundClearColor = tilemap->backgroundColor;
         ClearBackground(game->backgroundClearColor);
 
         if (tilemap && tilemap->backgroundColor.a == 0) {
             DrawTextureEx(
-                    Assets::I()->textures[TEX_BG],
-                    {-256*4, -256*2},
-                    0.0f,
-                    12.0f,
-                    WHITE);
+                Assets::I()->textures[TEX_BG],
+                {0, -25},
+                0.0f,
+                1.0f,
+                WHITE);
         }
 
         if (tilemap != nullptr) DrawTilemap(tilemap);
+
         BeginMode2D(game->mainCamera);
-
-//            BeginShaderMode(Assets::I()->shaders[SPRITE_SHADER]);
-                DrawSprites(game->spriteRenderer, game->reg);
-//            EndShaderMode();
-
-            DrawWater(game->reg);
+            DrawSprites(game->spriteRenderer, game->reg);
             DrawInteraction(game, game->reg);
+
             if (IsKeyDown(KEY_TAB))
                 DrawDebugPhysicsInfo(game, game->reg);
-        EndMode2D(); 
-    EndTextureMode();
+
+            DrawPlaywright(game->stage);
+        EndMode2D();
+
+        if (tilemap != nullptr) DrawTilemapForeground(tilemap);
+  EndTextureMode();
 
     BeginTextureMode(game->guiCanvas); 
         ClearBackground({0, 0, 0, 0});
@@ -88,11 +86,10 @@ int main(const int argc, const char *argv[]) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(1280, 720, "DevWindow");
+    SetWindowPosition(1280 + 100, 100);
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
     SetTargetFPS(85);
-    //HideCursor();
-
-//    SetExitKey(0);
+    SetExitKey(0);
 
     auto game = std::make_unique<Game>();
 
@@ -101,26 +98,83 @@ int main(const int argc, const char *argv[]) {
 
     LoadSpriteRenderer(game->spriteRenderer);
 
-//    GotoScene(game, new MenuScene(game->reg));
-    GotoScene(game, new GameScene(game->reg));
+    GotoScene(game, new MenuScene(game->reg));
+//    GotoScene(game, new GameScene(game->reg));
+
+    const std::set<ActorName> actors { ActorName::Player, ActorName::OldMan };
+
+    Play play;
+    play.script = Script{
+        {
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (actor.timer[0] < 2.0f) {
+                        physics.velocity.x = 20;
+                        actor.timer[0] += GetFrameTime();
+                        return false;
+                    } else {
+                        actor.timer[0] = 0.0f;
+                        return true;
+                    }
+                }
+                return false;
+            } },
+
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (actor.timer[0] < 2.0f) {
+                        physics.velocity.x = -20;
+                        actor.timer[0] += GetFrameTime();
+                        return false;
+                    } else {
+                        physics.velocity.y = -300.0f;
+                        physics.on_ground = false;
+                        return true;
+                    }
+                }
+                return false;
+            } },
+
+            Action{ actors, [](entt::registry& reg, const entt::entity self){
+                auto& actor = reg.get<Actor>(self);
+                auto& physics = reg.get<Physics>(self);
+                if (actor.actorName == ActorName::Player) {
+                    if (physics.on_ground) return true;
+                }
+                return false;
+            } },
+        },
+        [](entt::registry& reg, const entt::entity& self){
+            auto& actor = reg.get<Actor>(self);
+            actor.timer[0] = 0.0f;
+            return true;
+        }
+    };
 
     while (!WindowShouldClose() && game->state != AppState::Stopped) {
         const auto screenWidth = GetScreenWidth();
         const auto screenHeight = GetScreenHeight();
 
-        if (IsWindowFocused() || true) {
+        if (true) {
+            if (IsKeyPressed(KEY_Y))
+                DoScreenPlay(game->reg, game->stage, play);
+
             Update(game);
             Render(game);
 
             BeginDrawing();
             ClearBackground(BLACK);
             // DrawTexture(game->mainCanvas.texture, 0, 0, WHITE);
-            const float aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
-            const float width = GetScreenWidth();
-            const float height = width * aspect;
+            const auto aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
 
-            const float x = screenWidth / 2.0f - width / 2.0f;
-            const float y = screenHeight / 2.0f - height / 2.0f;
+            const auto width = (float) GetScreenWidth();
+            const auto height = width * aspect;
+            const auto x = screenWidth / 2.0f - width / 2.0f;
+            const auto y = screenHeight / 2.0f - height / 2.0f;
 
             {
                 const auto tex = game->mainCanvas.texture;
@@ -142,7 +196,7 @@ int main(const int argc, const char *argv[]) {
                 DrawTexturePro(
                         tex,
                         {0, 0, (float) tex.width, -(float) tex.height},
-                        {0, 0, (GetScreenHeight() * aspect), (float) GetScreenHeight()},
+                        {0, 0, (float) GetScreenHeight() * aspect, (float) GetScreenHeight()},
                         Vector2Zero(),
                         0.0f,
                         WHITE);

@@ -1,6 +1,8 @@
 #include "physics.hpp"
+#include "player.hpp"
 
 constexpr float GRAVITY {1000.0f};
+constexpr float MAX_GRAVITY {200.0f};
 
 float IntervalDistance(float min_a, float max_a, float min_b, float max_b) {
     if (max_a < min_b) return min_a - max_a;
@@ -73,18 +75,22 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
 
     const auto* tilemap = GetTilemap(game->level);
 
+    static float high = 0.0f;
+
     for (auto& e : view) {
         auto& physics = reg.get<Physics>(e);
         auto& body = reg.get<Body>(e);
 
         if (!physics.on_ladder) {
             physics.velocity.y += GRAVITY * dt * physics.gravityScale.y;
+            if (physics.velocity.y > MAX_GRAVITY) physics.velocity.y = MAX_GRAVITY;
         }
 
         Rectangle xbody {body.x + physics.velocity.x * dt, body.y, body.width, body.height};
         Rectangle ybody {body.x, body.y + physics.velocity.y * dt, body.width, body.height};
+        Rectangle ybody_half_vel {body.x, body.y + (physics.velocity.y * 0.25f) * dt, body.width, body.height};
 
-        physics.colliding_with_solid = false;
+      physics.colliding_with_solid = false;
 
         if (physics.on_ground_timer <= 0)
             physics.on_ground = false;
@@ -115,7 +121,8 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                     }
                 } else {
                     const auto xcoll = CheckCollisionRecs(xbody, poly.bounds());
-                    const auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
+                    auto ycoll = CheckCollisionRecs(ybody, poly.bounds());
+                    ycoll = ycoll || CheckCollisionRecs(ybody_half_vel, poly.bounds());
 
                     if (xcoll && poly.height != 0 && physics.type != PhysicsType::KINEMATIC) {
                         const float depth = body.y + body.height - poly.bounds().y;
@@ -146,7 +153,6 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
                                 ybody.y = poly.bounds().y + poly.height;
                             }
                         }
-
                     }
 
                     if (xcoll || ycoll) physics.colliding_with_solid = true;
@@ -157,7 +163,7 @@ void UpdatePhysics(uptr<Game>& game, entt::registry& reg) {
             for (const auto& obj : tilemap->features) {
                 if (obj.type == FeatureType::Ladder) {
                     if (CheckCollisionRecs(body, obj.bounds())) {
-                        if (body.y + body.height / 2 < obj.y + obj.height / 2) {
+                        if (body.y + body.height < obj.y + obj.height) {
 //                            const auto depth = (ybody.y + body.height) - obj.y;
 //                            if (depth < 1.0f) {
 //                                SetOnGround(physics);
@@ -222,6 +228,11 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
             text = "Port:" + obj.target;
         }
 
+        if (obj.type == FeatureType::Banner) {
+          color = LIGHTGRAY;
+          text = "Banner";
+        }
+
         const auto b = obj.bounds();
 
         DrawRectangleLines(b.x, b.y, b.width, b.height, color);
@@ -249,5 +260,11 @@ void DrawDebugPhysicsInfo(const uptr<Game>& game, entt::registry& reg) {
                 body.x+body.width-1,
                 body.y+body.height-1, BLUE);
         }
+    }
+
+    auto view2 = reg.view<Body, PlayerHit>(entt::exclude<Disabled>);
+    for (auto e : view2) {
+      auto& body = reg.get<Body>(e);
+      DrawRectangleLinesEx(body, 1, BLUE);
     }
 }

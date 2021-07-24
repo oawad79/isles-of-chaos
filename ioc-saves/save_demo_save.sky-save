@@ -1,0 +1,23 @@
+<save name="demo_save">
+    <entities>
+        <entity name="Chest" entType="10">
+            <c typeName="Physics" type="0" velocity.x="0" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="1"/>
+            <c typeName="Body" x="-184" y="-273" width="24" height="17"/>
+        </entity>
+        <entity name="KiwiBird" entType="3">
+            <c typeName="Physics" type="1" velocity.x="-58.795639" velocity.y="-7.4992881" friction="0.0099999998" gravityScale.x="1" gravityScale.y="0" on_ground="false" on_ladder="false" on_ground_timer="0" colliding_with_solid="false" facingX="-1"/>
+            <c typeName="Body" x="36.585697" y="-90.803535" width="8" height="8"/>
+        </entity>
+        <entity name="Player" entType="2">
+            <c typeName="Physics" type="0" velocity.x="-34.864521" velocity.y="0" friction="0.0099999998" gravityScale.x="1" gravityScale.y="1" on_ground="true" on_ladder="false" on_ground_timer="0.1" colliding_with_solid="true" facingX="-1"/>
+            <c typeName="Body" x="22.067444" y="-82.0252" width="8" height="18"/>
+        </entity>
+    </entities>
+    <world current="StartIsland1" position.x="0" position.y="0">
+        <loaded-tilemap name="StartCaveDungeonDoor" path="resources/maps/StartCaveDungeonDoor.tmx" position-updated="false"/>
+        <loaded-tilemap name="StartIslandForkIndoors" path="resources/maps/StartIslandForkIndoors.tmx" position-updated="false"/>
+        <loaded-tilemap name="StartIslandFork" path="resources/maps/StartIslandFork.tmx" position-updated="false"/>
+        <loaded-tilemap name="StartIsland1Bg" path="resources/maps/StartIsland1Bg.tmx" position-updated="false"/>
+        <loaded-tilemap name="StartIsland1" path="resources/maps/StartIsland1.tmx" position-updated="false"/>
+    </world>
+</save>

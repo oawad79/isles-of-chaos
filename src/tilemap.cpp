@@ -1,4 +1,5 @@
 #include "tilemap.hpp"
+#include "water.hpp"
 
 Tilemap::~Tilemap() {
     for (auto& layer : layers) {
@@ -42,7 +43,9 @@ Tilemap* LoadTilemap(const std::string& path) {
 
     map->path = path;
     map->name = std::filesystem::path(path).stem().string();
+
     map->target = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
+    map->foregroundTarget = LoadRenderTexture(CANVAS_WIDTH, CANVAS_HEIGHT);
 
     using namespace tinyxml2;
 
@@ -168,37 +171,36 @@ Tilemap* LoadTilemap(const std::string& path) {
                     if (type) {
                         const auto stype = std::string{type};
                         if (stype == "billboard") {
-                            Billboard billboard;
+                          Billboard billboard;
 
-                            billboard.texture = map->tileset.texture;
-                            billboard.T = Type::SPRITE;
-                            billboard.position.x = polypos.x;
-                            billboard.position.y = polypos.y;
+                          billboard.texture = map->tileset.texture;
+                          billboard.T = Type::SPRITE;
+                          billboard.position.x = polypos.x;
+                          billboard.position.y = polypos.y;
 
-                            const auto* props = object->FirstChildElement();
-                            auto* prop = props->FirstChildElement();
-                            while (prop) {
-                                const auto* name = prop->Attribute("name");
+                          const auto *props = object->FirstChildElement();
+                          auto *prop = props->FirstChildElement();
+                          while (prop) {
+                            const auto *name = prop->Attribute("name");
 
-                                if (strcmp(name, "region") == 0) {
-                                    std::stringstream ss(prop->Attribute("value"));
-                                    ss >> billboard.region.x;
-                                    ss >> billboard.region.y;
-                                    ss >> billboard.region.width;
-                                    ss >> billboard.region.height;
-                                }
-
-                                prop = prop->NextSiblingElement();
+                            if (strcmp(name, "region") == 0) {
+                              std::stringstream ss(prop->Attribute("value"));
+                              ss >> billboard.region.x;
+                              ss >> billboard.region.y;
+                              ss >> billboard.region.width;
+                              ss >> billboard.region.height;
                             }
 
-                            map->billboards.push_back(billboard);
-                        } else if (stype == "Banner") { 
-                            Feature feat;
-                            feat.type = FeatureType::Banner;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y; 
+                            prop = prop->NextSiblingElement();
+                          }
+
+                          map->billboards.push_back(billboard);
+                        } else if (stype ==  "Water") {
+                          map->features.push_back(MakeFeature(FeatureType::Water, polypos, size));
+                        } else if (stype ==  "Barrier") {
+                          map->features.push_back(MakeFeature(FeatureType::Barrier, polypos, size));
+                        } else if (stype == "Banner") {
+                            auto feat = MakeFeature(FeatureType::Banner, polypos, size);
 
                             const auto* props = object->FirstChildElement();
                             if (!props) {
@@ -216,34 +218,13 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                             map->features.push_back(std::move(feat));
                         } else if (stype == "Checkpoint") {
-                            Feature feat;
-                            feat.type = FeatureType::Checkpoint;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Checkpoint, polypos, size));
                         } else if (stype == "Kill") {
-                            Feature feat;
-                            feat.type = FeatureType::Kill;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Kill, polypos, size));
                         } else if (stype == "Room") {
-                            Feature feat;
-                            feat.type = FeatureType::Room;
-                            feat.x = polypos.x; feat.y = polypos.y;
-                            feat.width = size.x; feat.height = size.y;
-                            map->rooms.push_back(std::move(feat));
+                            map->rooms.push_back(MakeFeature(FeatureType::Room, polypos, size));
                         } else if (stype == "Port" || stype == "Door") {
-                            Feature feat;
-                            feat.type = stype == "Port" ? FeatureType::Port : FeatureType::Door;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
+                            auto feat = MakeFeature(stype == "Port" ? FeatureType::Port : FeatureType::Door, polypos, size);
 
                             const auto* props = object->FirstChildElement();
                             if (!props) {
@@ -267,13 +248,7 @@ Tilemap* LoadTilemap(const std::string& path) {
 
                             map->features.push_back(std::move(feat));
                         } else if (stype == "Ladder") {
-                            Feature feat;
-                            feat.type = FeatureType::Ladder;
-                            feat.x = polypos.x;
-                            feat.y = polypos.y;
-                            feat.width = size.x;
-                            feat.height = size.y;
-                            map->features.push_back(std::move(feat));
+                            map->features.push_back(MakeFeature(FeatureType::Ladder, polypos, size));
                         } else {
                             SpawnLocation loc;
                             loc.type = GetEntType(stype);
@@ -327,6 +302,12 @@ void DrawTilemapToTarget(const uptr<Tilemap>& tilemap, const Camera2D camera, Sp
     DrawTilemapToTarget(tilemap.get(), camera, ren);
 }
 
+void UpdateTilemap(Tilemap* tilemap) {
+  for (auto& feat : tilemap->features)
+    if (feat.type == FeatureType::Water)
+      UpdateWater(feat);
+}
+
 void DrawTilemap(const uptr<Tilemap>& tilemap) {
     DrawTilemap(tilemap.get());
 }
@@ -337,18 +318,6 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
         BeginMode2D(camera);
         ClearBackground({0,0,0,0});
         const auto* tileset = &tilemap->tileset;
-
-        // for (const auto& bill : tilemap->billboards) {
-        //     DrawSprite(
-        //         ren,
-        //         (Sprite)bill,
-        //         Body{
-        //             bill.position.x + ox,
-        //             bill.position.y + oy,
-        //             bill.region.width,
-        //             bill.region.height,
-        //         });
-        // }
 
 //        bool roomActive = false;
 //        for (auto& room : tilemap->rooms) {
@@ -370,47 +339,83 @@ void DrawTilemapToTarget(const Tilemap* tilemap, const Camera2D camera, SpriteRe
                         if (tile == 0) continue;
                         --tile;
 
-                        float rx = tile%(tileset->texture.width/tileset->tilewidth);
-                        float ry = tile/(tileset->texture.width/tileset->tilewidth);
+                        float rx = (tile%(tileset->texture.width/tileset->tilewidth)) * 1.0f;
+                        float ry = (tile/(tileset->texture.width/tileset->tilewidth)) * 1.0f;
 
                         Rectangle region{
-                            rx*tileset->tilewidth,
-                            ry*tileset->tileheight,
+                            rx*(float)tileset->tilewidth,
+                            ry*(float)tileset->tileheight,
                             (float)tileset->tilewidth,
                             (float)tileset->tileheight };
 
-                        const float cox = tileset->tilewidth * (chunk->offset.x);
-                        const float coy = tileset->tileheight * (chunk->offset.y);
+                        const float cox = (float)tileset->tilewidth * (chunk->offset.x);
+                        const float coy = (float)tileset->tileheight * (chunk->offset.y);
 
                         DrawTextureRec(
                             tileset->texture,
                             region,
                             Vector2{
-                                floor(cox + (float)x*tileset->tilewidth + ox),
-                                floor(coy + (float)y*tileset->tileheight + oy)},
+                                floor(cox + (float)x*(float)tileset->tilewidth + ox),
+                                floor(coy + (float)y*(float)tileset->tileheight + oy)
+                            },
                             tint);
                     }
                 }
             }
         }
 
-//        if (roomActive) {
-//            EndScissorMode();
-//        }
+        for (auto& feat : tilemap->features) {
+          if (feat.type == FeatureType::Barrier) {
+            const auto region = Rectangle{40, 0, 8, 8};
+            auto tw = (int)floor(feat.width / tileset->tilewidth);
+            auto th = (int)floor(feat.height / tileset->tileheight);
+
+            for (int y = 0; y < th; y++) {
+              for (int x = 0; x < tw; x++) {
+                DrawTextureRec(
+                    tileset->texture,
+                    region,
+                    Vector2{
+                      floor(feat.x + (float)x*(float)tileset->tilewidth + ox),
+                      floor(feat.y + (float)y*(float)tileset->tileheight + oy)
+                    },
+                    WHITE);
+              }
+            }
+          }
+        }
 
         EndMode2D();
+    EndTextureMode();
+
+    BeginTextureMode(tilemap->foregroundTarget);
+      ClearBackground({0,0,0,0});
+      BeginMode2D(camera);
+        for (const auto& feat : tilemap->features)
+          if (feat.type == FeatureType::Water)
+            DrawWater(feat);
+      EndMode2D();
     EndTextureMode();
 }
 
 void DrawTilemap(const Tilemap* tilemap) {
     DrawTexturePro(
-        tilemap->target.texture,
-        {0,0,CANVAS_WIDTH,-CANVAS_HEIGHT},
-        {0,0,CANVAS_WIDTH,CANVAS_HEIGHT},
-        Vector2Zero(),
-        0.0f,
-        {255, 255, 255,
-         static_cast<unsigned char>(255.0f * tilemap->alpha)});
+      tilemap->target.texture,
+      {0,0,CANVAS_WIDTH,-CANVAS_HEIGHT},
+      {0,0,CANVAS_WIDTH,CANVAS_HEIGHT},
+      Vector2Zero(),
+      0.0f,
+      {255, 255, 255, static_cast<unsigned char>(255.0f * tilemap->alpha)});
+}
+
+void DrawTilemapForeground(const Tilemap* tilemap) {
+  DrawTexturePro(
+    tilemap->foregroundTarget.texture,
+    {0,0,CANVAS_WIDTH,-CANVAS_HEIGHT},
+    {0,0,CANVAS_WIDTH,CANVAS_HEIGHT},
+    Vector2Zero(),
+    0.0f,
+    {255, 255, 255, static_cast<unsigned char>(255.0f * tilemap->alpha)});
 }
 
 std::optional<Feature> GetPortWithTarget(

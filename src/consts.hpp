@@ -1,11 +1,17 @@
 #ifndef SKYVAULT_CONSTS
 #define SKYVAULT_CONSTS
 
-constexpr auto CANVAS_WIDTH { 256 * 12 };
-constexpr auto CANVAS_HEIGHT { 144 * 12 };
+#include <string_view>
 
-constexpr auto GUI_CANVAS_WIDTH { 256 };
-constexpr auto GUI_CANVAS_HEIGHT { 144 };
+void LoadSettingsFile(const std::string_view& path);
+
+constexpr auto START_GAME_LEVEL { "StartIsland1" };
+
+constexpr auto CANVAS_WIDTH { 256.0f };
+constexpr auto CANVAS_HEIGHT { 144.0f };
+
+constexpr auto GUI_CANVAS_WIDTH { 256.0f };
+constexpr auto GUI_CANVAS_HEIGHT { 144.0f };
 
 constexpr auto CAMERA_ZOOM {12.0f};
 

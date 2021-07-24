@@ -1,6 +1,7 @@
 #include "sprite.hpp"
 
 #include <variant>
+#include "actor.hpp"
 
 struct SpriteBody {
     Sprite sprite;
@@ -43,29 +44,37 @@ void UpdateSprites(entt::registry& reg) {
     auto sprites = reg.view<Body, Sprite>(entt::exclude<Disabled>);
     auto items = reg.view<Sprite, Item, Physics>(entt::exclude<Disabled>);
 
-    for (auto& ent : sprites) {
-        auto& sprite = reg.get<Sprite>(ent);
+    const auto get_tint = [&](entt::entity ent) {
+		Color tint = WHITE;
         if (reg.has<Health>(ent)) {
             auto& health = reg.get<Health>(ent);
             if (!health.canHit()) {
-                sprite.tint2 = RED;
+                tint = RED;
             } else {
-                sprite.tint2 = WHITE;
+                tint = WHITE;
             }
         }
+
+        if (reg.has<Actor>(ent)) {
+          auto &actor = reg.get<Actor>(ent);
+          if (actor.stunTimer > BASE_STUN_TIME - 0.05f) {
+            tint = YELLOW;
+          }
+        }
+
+        return tint;
+    };
+
+    for (auto& ent : sprites) {
+        auto& sprite = reg.get<Sprite>(ent);
+		sprite.tint2 = get_tint(ent); 
+		sprite.tint  = get_tint(ent); 
     }
 
     for (auto& ent : sim_anims) {
-        auto& sprite = reg.get<SimpleAnimation>(ent);
-
-        if (reg.has<Health>(ent)) {
-            auto& health = reg.get<Health>(ent);
-            if (!health.canHit()) {
-                sprite.tint2 = RED;
-            } else {
-                sprite.tint2 = WHITE;
-            }
-        }
+        auto& sprite = reg.get<SimpleAnimation>(ent); 
+        sprite.tint2 = get_tint(ent);
+		sprite.tint  = get_tint(ent); 
 
         if (sprite.T != Type::ANIMATION) continue;
 
@@ -82,14 +91,8 @@ void UpdateSprites(entt::registry& reg) {
 
     for (auto& ent : adv_anims) {
         auto& sprite = reg.get<AdvancedAnimation>(ent);
-        if (reg.has<Health>(ent)) {
-            auto& health = reg.get<Health>(ent);
-            if (!health.canHit()) {
-                sprite.tint2 = RED;
-            } else {
-                sprite.tint2 = WHITE;
-            }
-        }
+        sprite.tint2 = get_tint(ent);
+		sprite.tint  = get_tint(ent); 
 
         if (sprite.T != Type::ANIMATION || sprite.currentAnimation == "") continue;
         if (sprite.playback == Playback::FORWARD) {
@@ -142,8 +145,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
 
         if (sprite.T == Type::RECTANGLE) {
             DrawRectangle(
-                ceil(body.x),
-                ceil(body.y),
+                int(body.x),
+                int(body.y),
                 body.width,
                 body.height,
                 tint);
@@ -159,8 +162,8 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                     sprite.region.width * sprite.scale.x,
                     sprite.region.height * sprite.scale.y,
                 },
-                {ceil(body.x + ox + rw/2),
-                 ceil(body.y + oy + rh/2),
+                {(float)int(body.x + ox + rw/2),
+                 (float)int(body.y + oy + rh/2),
                  sprite.region.width,
                  sprite.region.height},
                 Vector2{rw/2, rh/2},
@@ -169,12 +172,6 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             );
         }
     };
-
-    for (auto e : sprites){
-        const auto& sprite = reg.get<Sprite>(e);
-        const auto& body = reg.get<Body>(e);
-        drawSprite(body, sprite);
-    }
 
     for (auto e : sim_anims) {
         const auto& sprite = reg.get<SimpleAnimation>(e);
@@ -201,7 +198,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
                 sprite.region.width * sprite.scale.x,
                 sprite.region.height * sprite.scale.y,
             },
-            { (body.x + ox + rw/2), (body.y + oy + rh/2), sw, sh },
+            { floor(body.x + ox + rw/2), floor(body.y + oy + rh/2), sw, sh },
             Vector2{rw/2, rh/2},
             sprite.rotation,
             tint
@@ -223,7 +220,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
 
         const auto& animation = sprite.animations[sprite.currentAnimation];
 
-        auto frame = animation.frames[sprite.currentFrame]; 
+        const auto& frame = animation.frames[sprite.currentFrame]; 
 
         int rw = frame.width;
         int rh = frame.height;
@@ -232,7 +229,7 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
         const auto sh = frame.height;
 
         const auto [ox, oy] = sprite.offset;
-        const Rectangle rec = { (float)(int)(body.x + ox + rw/2), (float)(int)(body.y + oy + rh/2), sw, sh };
+        const Rectangle rec = { body.x + ox + rw/2 + 1, body.y + oy + rh/2 + 1, sw, sh };
 
         DrawTexturePro(
             sprite.texture,
@@ -243,6 +240,13 @@ void DrawSprites(SpriteRenderer& self, entt::registry& reg) {
             tint
         );
     }
+
+    for (auto e : sprites){
+        const auto& sprite = reg.get<Sprite>(e);
+        const auto& body = reg.get<Body>(e);
+        drawSprite(body, sprite);
+    }
+
 
     for (auto e : items){
         const auto& sprite = reg.get<Sprite>(e);

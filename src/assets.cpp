@@ -39,13 +39,14 @@ void LoadItemDB() {
 
         itemXml->QueryFloatAttribute("effectValue", &item.effectValue);
         itemXml->QueryIntAttribute("value", &item.value);
+        itemXml->QueryFloatAttribute("cooloff", &item.usageCooloff);
 
         std::stringstream ss(itemXml->Attribute("region"));
         ss >> item.region.x;
         ss >> item.region.y;
         ss >> item.region.width;
         ss >> item.region.height;
-
+ 
         if (catagory == ItemCatagory::Consumable) {
             std::string consumableEffect
                 = std::string{itemXml->Attribute("consumableEffect")};
@@ -169,31 +170,59 @@ void LoadAllAssets() {
     // Assets::I()->fonts[Fonts::FONT_DIALOG_1] = LoadFont("resources/fonts/alpha_beta.png");
 
     Assets::I()->fonts[Fonts::FONT_NONE] = GetFontDefault();
-
-//    std::cout << "HERE!!" << "\n\n" << std::endl;
     Assets::I()->fonts[Fonts::FONT_SMALL] = LoadFont("resources/fonts/small-font.png");
-//    std::cout << "\n\n" << std::endl;
+    Assets::I()->fonts[Fonts::FONT_FANCY] = LoadFont("resources/fonts/alagard.png");
 
-    Assets::I()->shaders[SPRITE_SHADER] = LoadShader(
-            "resources/shaders/base.vs.glsl",
-            "resources/shaders/base.fs.glsl"
-    );
+    auto loadDynShader = [&](Shaders which, std::string pathVS, std::string pathFS) {
+      Assets::I()->shaders[which] = LoadShader(pathVS.c_str(), pathFS.c_str());
+      Assets::I()->shaders_info[which] = {
+              std::filesystem::last_write_time(pathVS),
+              std::filesystem::last_write_time(pathFS),
+              pathVS, pathFS,
+              which
+      };
+    };
 
-    // auto loadDynShader = [&](Shaders which, const char* pathVS, const char* pathFS) {
-    //     Assets::I()->shaders[which] = LoadShader(pathVS, pathFS);
-    //     Assets::I()->shaders_info[which] = {
-    //         std::filesystem::last_write_time(pathVS),
-    //         std::filesystem::last_write_time(pathFS),
-    //         pathVS, pathFS, which
-    //     };
-    // };
-
-    // loadDynShader(Shaders::SHADER_PLANETS, "resources/shaders/base_vs.glsl", "resources/shaders/planet_fs.glsl");
-    // loadDynShader(Shaders::SHADER_SKY, "resources/shaders/sky_vs.glsl", "resources/shaders/sky_fs.glsl");
-    // loadDynShader(Shaders::SHADER_SPACE, "resources/shaders/sky_vs.glsl", "resources/shaders/space_fs.glsl");
-    // loadDynShader(Shaders::SHADER_CHARACTERS, "resources/shaders/base_vs.glsl", "resources/shaders/characters_fs.glsl");
-    // loadDynShader(Shaders::SHADER_MAIN_SHADING, "resources/shaders/base_vs.glsl", "resources/shaders/main_shading_fs.glsl");
+    loadDynShader(SPRITE_SHADER, "resources/shaders/base.vs.glsl", "resources/shaders/base.fs.glsl");
+    loadDynShader(WATER_SHADER, "resources/shaders/water.vs.glsl", "resources/shaders/water.fs.glsl");
 }
 
 void UpdateAssets() {
+  static float timer = 0;
+  timer += GetFrameTime();
+
+  if (timer > 0.2f) {
+    timer = 0;
+  } else {
+    return;
+  }
+
+  for (int i = 0; i < SHADER_NUM_SHADERS; i++) {
+    auto& info = Assets::I()->shaders_info[i];
+
+    const auto vs_time = std::filesystem::last_write_time(info.pathVS);
+    const auto fs_time = std::filesystem::last_write_time(info.pathFS);
+
+    bool reload = false;
+
+    if (vs_time != info.vs_write_time) {
+      std::cout << "Reloading shader " << info.pathVS << std::endl;
+      info.vs_write_time = vs_time;
+      reload = true;
+    }
+
+    if (fs_time != info.fs_write_time) {
+      std::cout << "Reloading shader " << info.pathFS << std::endl;
+      info.fs_write_time = fs_time;
+      reload = true;
+    }
+
+    if (reload) {
+      UnloadShader(Assets::I()->shaders[i]);
+      Assets::I()->shaders[i] = LoadShader(info.pathVS.string().c_str(), info.pathFS.string().c_str());
+      Assets::I()->shaders[i].locs[SHADER_RELOAD_SLOT] = 1;
+    } else {
+      Assets::I()->shaders[i].locs[SHADER_RELOAD_SLOT] = -1;
+    }
+  }
 }

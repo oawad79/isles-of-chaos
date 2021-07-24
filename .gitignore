@@ -30,6 +30,9 @@
 *.exe
 *.out
 *.app
+*.idea/
+
+*site-packages*
 
 CMakeCache.txt
 CMakeFiles/

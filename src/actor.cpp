@@ -19,7 +19,7 @@ void UpdateZambieAi(entt::registry& reg, entt::entity self, Body& body, Physics&
 
     auto& sprite = reg.get<SimpleAnimation>(self);
     
-    if (distToPlayer < TRACKING_DIST) {
+    if (distToPlayer < TRACKING_DIST && actor.state != ActorState::STUNNED) {
       actor.state = ActorState::TRACKING;
     }
 
@@ -334,9 +334,7 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
                 vel.x *= (5000.0f + dist * 4) * dt;
                 vel.y *= (3000.0f + dist * 4) * dt;
                 physics.velocity = vel;
-            } else {
             }
-
 
             break;
         }
@@ -346,12 +344,73 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
     }
 }
 
+void UpdateBug(entt::registry& reg, const entt::entity& self) {
+  auto& actor = reg.get<Actor>(self);
+  auto& body = reg.get<Body>(self);
+  auto& physics = reg.get<Physics>(self);
+  auto& sprite = reg.get<SimpleAnimation>(self);
+
+  auto playerBody = Body{0};
+
+  reg.view<Body, Player>().each([&](auto& body, auto& _p){
+    playerBody = body;
+  });
+
+  constexpr auto speed = 20;
+
+  switch (actor.state) {
+    case ActorState::IDLE: {
+      actor.target[0] = Vector2{body.center().x + -100 + RandFloat() * 200, body.center().y};
+      actor.timer[0] = RandFloat(0.2f, 2.0f);
+      actor.state = ActorState::WONDER;
+      break;
+    }
+    case ActorState::WONDER: {
+      physics.velocity.x += (1.0f + (0.5f * cosf(GetTime()))) * (body.center().x > actor.target[0].x ? -1 : 1) * speed * GetFrameTime();
+      if (Vector2Distance(body.center(), actor.target[0]) < body.width / 2.f || actor.timer[0] <= 0.0f) {
+        actor.state = ActorState::IDLE;
+      }
+      actor.timer[0] -= GetFrameTime();
+      break;
+    }
+    case ActorState::DEAD: {
+      physics.velocity.x = 0;
+      sprite.playback = Playback::PAUSED;
+      sprite.current_frame = 5;
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (CheckCollisionRecs(playerBody, body)) {
+    actor.state = ActorState::DEAD;
+  }
+}
+
 bool IsEnemy(Actor actor) {
   return actor.type > ActorType::ENEMY_START 
     && actor.type < ActorType::ENEMY_END;
 }
 
+void Stun(Actor& actor) {
+  actor.stunTimer = BASE_STUN_TIME;
+  actor.last = actor.state;
+  actor.state = ActorState::STUNNED;
+}
+
 void UpdateActor(entt::registry& reg) {
+    bool playerExists = false;
+    Body playerBody = Body{0};
+
+    Player* playerState = NULL;
+
+    reg.view<Player,Body>().each([&playerBody, &playerExists, &playerState](auto& player, Body &body){
+      playerBody = body;
+      playerExists = true;
+      playerState = &player;
+    });
+
     auto view = reg.view<Actor, Physics, Body>(entt::exclude<Disabled>);
 
     for (auto& ent : view) {
@@ -362,23 +421,29 @@ void UpdateActor(entt::registry& reg) {
         if (physics.velocity.x > 0) physics.facingX = RIGHT;
         else physics.facingX = LEFT;
 
-        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END) { 
+        if (actor.type > ActorType::ENEMY_START && actor.type < ActorType::ENEMY_END && actor.state != ActorState::STUNNED) {
             reg.view<PlayerHit, Body, Item>().each([&](auto& phit, auto& obody, auto& item){
                 const auto damage = item.effectValue;
                 if (CheckCollisionRecs(body, obody)) {
-                    const auto dir = body.center().x > obody.center().x ? 1 : -1;
+                    const auto dir = body.center().x > playerBody.center().x ? 1 : -1;
                     if (reg.has<Health>(ent)) {
                         auto& health = reg.get<Health>(ent);
 
                         if (health.canHit()) {
                             SpawnHitParticles(reg, body.center());
-                            physics.velocity.x = 4000 * dir * GetFrameTime();
-                            physics.velocity.y = 9000 * dir * GetFrameTime();
+                            physics.velocity.x = 40 * dir;
+                            physics.velocity.y = 90 * dir;
+                            Stun(actor);
                         }
 
                         health.hit(damage);
 
                         if (health.shouldDie()) {
+
+                            // Giving the player an extra attack after killing a monster
+                            // @MECHANIC
+                            playerState->attackCooloff = 0.0f;
+
                             // Handle loot dropping from enemies w/ loot
                             if (reg.has<Loot>(ent)) {
                                 SpawnLoot(
@@ -396,6 +461,17 @@ void UpdateActor(entt::registry& reg) {
                     }
                 }
             });
+        }
+
+      if (actor.state == ActorState::STUNNED) {
+          if (actor.stunTimer > 0.0f)  {
+            actor.stunTimer -= GetFrameTime();
+          } else {
+            actor.stunTimer = 0.0f;
+            auto tmp = actor.state;
+            actor.state = actor.last;
+            actor.last = tmp;
+          };
         }
 
         switch (actor.type) {
@@ -420,6 +496,10 @@ void UpdateActor(entt::registry& reg) {
             case ActorType::SHROOMBA: {
                 auto& sprite = reg.get<Sprite>(ent);
                 UpdateShroombaAi(reg, body, physics, actor, sprite);
+                break;
+            }
+            case ActorType::BUG: {
+                UpdateBug(reg, ent);
                 break;
             }
             default: break;

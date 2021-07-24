@@ -64,32 +64,19 @@ set(INCLUDE_DIR src)
 set(APP_SRC src)
 
 file(GLOB_RECURSE FILES
-        "${INCLUDE_DIR}/*.h"
+        "${INCLUDE_DIR}/*.hpp"
         "${APP_SRC}/*.cpp"
         )
 
 add_executable(${PROJECT_NAME} ${FILES})
 
-# COPY RESOURCES
-# we don't want to copy if we're building in the source dir
-#if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-#    message(STATUS "Copying resources to output directory ${CMAKE_CURRENT_BINARY_DIR}/Resources")
-#
-#    # list of files for which we add a copy rule
-#    set(resources background.png lester.png ProggyClean.ttf)
-#
-#    foreach(item IN LISTS resources)
-#        message(STATUS "Copying Resources/${item}")
-#        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Resources/${item}" "${CMAKE_CURRENT_BINARY_DIR}/Resources/${item}" COPYONLY)
-#    endforeach()
-#endif()
-
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} raylib)
+    target_link_libraries(${PROJECT_NAME} raylib) 
 else()
     target_link_libraries(${PROJECT_NAME}
             ${CMAKE_THREAD_LIBS_INIT}
-            raylib)
+            raylib
+	    dl)
 endif()
 
 #target_include_directories(${PROJECT_NAME} PUBLIC ${LUA_INCLUDE_DIR})

@@ -7,9 +7,7 @@
 #include "physics.hpp"
 #include "assets.hpp"
 
-struct Water {};
-
-void UpdateWater(entt::registry& reg);
-void DrawWater(entt::registry& reg);
+void UpdateWater(Feature& water);
+void DrawWater(const Feature& water);
 
 #endif // SKYVAULT_WATER_HPP

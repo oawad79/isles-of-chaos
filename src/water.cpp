@@ -1,40 +1,37 @@
 #include "water.hpp"
 
-void UpdateWater(entt::registry& reg) {
+void UpdateWater(Feature& water) {
+  const auto& shader = Assets::I()->shaders[Shaders::WATER_SHADER];
 
+  float timer[] = { (float)GetTime() };
+
+  if (water.timerLoc == -1 || shader.locs[32 - 1] == 1) {
+    water.timerLoc = GetShaderLocation(shader, "timer");
+  }
+
+  SetShaderValue(shader, water.timerLoc, timer, SHADER_UNIFORM_FLOAT);
 }
 
-void DrawWater(entt::registry& reg) {
-  auto view = reg.view<Water, Body>(entt::exclude<Disabled>);
-  const auto tex = Assets::I()->textures[Textures::TEX_ENTITIES];
-  const auto region = Rectangle{0, 80, 32, 16};
+void DrawWater(const Feature& water) {
+  const auto& tex = Assets::I()->textures[Textures::TEX_ENTITIES];
+  const auto& shader = Assets::I()->shaders[Shaders::WATER_SHADER];
 
-  view.each([&](auto& w, auto &b){
+  constexpr auto waterRes = 4.0f;
+  const auto wx = water.x + water.offset.x;
+  const auto wy = water.y + water.offset.y;
 
-    // Handle splashes
-    // TODO(Dustin): Actually why not use interaction to spawn splash particles?
-    reg.view<Physics, Body>(entt::exclude<Particle, Water, Disabled>)
-      .each([&](auto& physics, auto& body) {
-      if (std::abs(physics.velocity.y) > 50.0f) {
-        if (CheckCollisionRecs(b, body)){
-          const float depth = body.y + body.height - b.y;
-          if (depth < 20) {
-            SpawnWaterParticles(reg, body.center(), 40 * std::abs(physics.velocity.y));
-          }
-        }
-      }
-    });
+  const auto region = Rectangle{0, 80, waterRes, 32};
 
-    for (int x = 0; x < (int)(b.width / 32); x++) {
+  DrawRectangle(wx, wy+16.0f, water.width, water.height-16.0f, {91, 110, 225, 255});
+  BeginShaderMode(shader);
+    for (int x = 0; x < (int)(water.width / waterRes); x++) {
       DrawTexturePro(
         tex,
         region,
-        {b.x + 32 * x, b.y, 32, 16},
+        {wx + waterRes * x, wy, waterRes, 32},
         {0, 0},
         0.0f,
         WHITE);
     }
-
-    DrawRectangle(b.x, b.y+16.0f, b.width, b.height-16.0f, {91, 110, 225, 255});
-  });
+  EndShaderMode();
 }
