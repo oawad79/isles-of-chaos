@@ -10,11 +10,11 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "ActorPalette.tmx": {
-            "scale": 5.5,
+            "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 217.1818181818182,
-                "y": -35.45454545454545
+                "x": 73,
+                "y": -3.25
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -43,44 +43,44 @@
             "scaleInDock": 3
         },
         "StartCaveDungeonDoor.tmx": {
-            "scale": 4,
+            "scale": 3,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 64,
-                "y": -64
+                "x": 144.16666666666669,
+                "y": -50.5
             }
         },
         "StartCaveDungeonDoor.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIsland1.tmx": {
-            "scale": 2,
+            "scale": 1,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 95.75,
-                "y": -78
+                "x": -366.5,
+                "y": -103.5
             }
         },
         "StartIsland1.tmx#Tileset": {
             "scaleInDock": 8
         },
         "StartIsland1Bg.tmx": {
-            "scale": 2,
-            "selectedLayer": 4,
+            "scale": 4,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": -384,
-                "y": -128
+                "x": -731.375,
+                "y": -83.875
             }
         },
         "StartIsland1Bg.tmx#OverworldTileset": {
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 9,
             "viewCenter": {
-                "x": 0,
-                "y": 0
+                "x": -255.25,
+                "y": 138.75
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
@@ -90,8 +90,8 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 256,
-                "y": 0
+                "x": 161,
+                "y": 0.5
             }
         },
         "StartIslandForkIndoors.tmx#OverworldTileset": {
@@ -135,12 +135,12 @@
     ],
     "project": "resources.tiled-project",
     "recentFiles": [
-        "StartIslandFork.tmx",
-        "StartIsland1.tmx",
-        "ActorPalette.tmx",
         "StartIslandForkIndoors.tmx",
-        "StartCaveDungeonDoor.tmx",
+        "StartIsland1.tmx",
         "StartIsland1Bg.tmx",
+        "StartIslandFork.tmx",
+        "ActorPalette.tmx",
+        "StartCaveDungeonDoor.tmx",
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx",
         "C:/home/dustin/Repos/unknown/resources/maps/test-level.tmx",
         "CaveDungeonEntrance.tmx",

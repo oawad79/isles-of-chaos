@@ -1471,10 +1471,6 @@
     <property name="banner" value="The Isles of Chaos"/>
    </properties>
   </object>
-  <object id="176" name="Kiwi" type="KiwiBird" x="81.18" y="-88.199" width="8" height="8"/>
-  <object id="177" name="Kiwi" type="KiwiBird" x="81.18" y="-88.199" width="8" height="8"/>
-  <object id="178" name="Player" type="Player" x="58.82" y="-85.801" width="16" height="24"/>
-  <object id="179" name="Player" type="Player" x="58.82" y="-85.801" width="16" height="24"/>
   <object id="180" x="-264" y="-184">
    <polygon points="0,0 16,8 0,8"/>
   </object>

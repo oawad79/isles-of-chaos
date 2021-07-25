@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="217">
+<map version="1.5" tiledversion="1.7.1" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="8" tileheight="8" infinite="1" nextlayerid="12" nextobjectid="222">
  <tileset firstgid="1" name="OverworldTileset" tilewidth="8" tileheight="8" tilecount="4096" columns="64">
   <image source="../textures/OverworldTileset.png" width="512" height="512"/>
  </tileset>
@@ -2927,6 +2927,11 @@
     <property name="banner" value="Mycelium Woods"/>
    </properties>
   </object>
+  <object id="217" name="Kill" type="Kill" x="-254.333" y="79.1667" width="34.667" height="121.167"/>
+  <object id="218" name="Kiwi" type="KiwiBird" x="-135.82" y="-32.199" width="8" height="8"/>
+  <object id="219" name="Kiwi" type="KiwiBird" x="-135.82" y="-32.199" width="8" height="8"/>
+  <object id="220" name="Player" type="Player" x="-158.18" y="-29.801" width="16" height="24"/>
+  <object id="221" name="Player" type="Player" x="-158.18" y="-29.801" width="16" height="24"/>
  </objectgroup>
  <objectgroup id="3" name="Solids">
   <object id="4" x="128" y="80" width="192" height="120"/>
