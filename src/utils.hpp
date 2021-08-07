@@ -34,6 +34,10 @@ union Range2D {
 
 #define ARR_LEN(a) (sizeof((a))/sizeof((a)[0]))
 
+constexpr float MINUTE { 60.0f };
+constexpr float HOUR { 60.0f * MINUTE };
+constexpr float DAY { 24.0f * HOUR };
+
 // Defer
 template <typename F>
 struct DeferStruct {

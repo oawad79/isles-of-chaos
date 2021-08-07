@@ -49,6 +49,8 @@ struct Game {
 
     std::vector<SceneLayer*> scenes;
 
+    float timeInGame{60.0f};
+
     Camera2D mainCamera = {0};
     RenderTexture2D mainCanvas;
     RenderTexture2D guiCanvas;
@@ -64,6 +66,8 @@ struct Game {
 
     bool recordingGif{false};
     GifWriter gifWriter;
+
+    int shaderTimeLoc = -1;
 
     std::optional<DialogTree> dialogTree{std::nullopt};
 };

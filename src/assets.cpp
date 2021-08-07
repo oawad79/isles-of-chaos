@@ -185,6 +185,7 @@ void LoadAllAssets() {
 
     loadDynShader(SPRITE_SHADER, "resources/shaders/base.vs.glsl", "resources/shaders/base.fs.glsl");
     loadDynShader(WATER_SHADER, "resources/shaders/water.vs.glsl", "resources/shaders/water.fs.glsl");
+    loadDynShader(MAIN_SHADER, "resources/shaders/main.vs.glsl", "resources/shaders/main.fs.glsl");
 }
 
 void UpdateAssets() {

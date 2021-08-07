@@ -13,8 +13,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 73,
-                "y": -3.25
+                "x": -4,
+                "y": 4.25
             }
         },
         "C:/home/dustin/Repos/ProjectDegen/Content/Maps/test-map.tmx": {
@@ -46,7 +46,7 @@
             "scale": 3,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 144.16666666666669,
+                "x": 144.33333333333331,
                 "y": -50.5
             }
         },
@@ -54,11 +54,11 @@
             "scaleInDock": 3
         },
         "StartIsland1.tmx": {
-            "scale": 1,
+            "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": -366.5,
-                "y": -103.5
+                "x": -412,
+                "y": -189.25
             }
         },
         "StartIsland1.tmx#Tileset": {
@@ -68,7 +68,7 @@
             "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": -731.375,
+                "x": -731.25,
                 "y": -83.875
             }
         },
@@ -76,21 +76,21 @@
             "scaleInDock": 3
         },
         "StartIslandFork.tmx": {
-            "scale": 2,
-            "selectedLayer": 9,
+            "scale": 8,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": -255.25,
-                "y": 138.75
+                "x": 634.375,
+                "y": 107.6875
             }
         },
         "StartIslandFork.tmx#OverworldTileset": {
-            "scaleInDock": 3
+            "scaleInDock": 2
         },
         "StartIslandForkIndoors.tmx": {
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 161,
+                "x": 256,
                 "y": 0.5
             }
         },

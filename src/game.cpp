@@ -215,6 +215,8 @@ void UpdateGame(uptr<Game>& game) {
 
   constexpr int delay = -0.1f;
 
+  game->timeInGame += GetFrameTime() / MINUTES_IN_A_DAY;
+
   if (IsKeyPressed(KEY_F1)) {
     if (game->recordingGif) {
       std::cout << "Ending Recording" << std::endl;

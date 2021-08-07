@@ -24,8 +24,8 @@ InvSpacial GetInvSpacial(Inventory &inv) {
   constexpr auto cwh = GUI_CANVAS_WIDTH / 2;
   constexpr auto chh = GUI_CANVAS_HEIGHT * (0.75);
 
-  const auto scx = cwh - width / 2;
-  const auto scy = chh - height / 2;
+  const auto scx = cwh + width / 2 + cellSize;
+  const auto scy = chh - height / 2 - height / 2;
   float cx = scx;
   float cy = scy;
 

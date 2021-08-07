@@ -88,7 +88,7 @@ int main(const int argc, const char *argv[]) {
     InitWindow(1280, 720, "DevWindow");
     SetWindowPosition(1280 + 100, 100);
     SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
-    SetTargetFPS(85);
+    SetTargetFPS(60);
     SetExitKey(0);
 
     auto game = std::make_unique<Game>();
@@ -171,20 +171,37 @@ int main(const int argc, const char *argv[]) {
             // DrawTexture(game->mainCanvas.texture, 0, 0, WHITE);
             const auto aspect = (float) CANVAS_HEIGHT / (float) CANVAS_WIDTH;
 
+            const float scale = GetScreenWidth() / CANVAS_WIDTH;
+
             const auto width = (float) GetScreenWidth();
             const auto height = width * aspect;
             const auto x = screenWidth / 2.0f - width / 2.0f;
-            const auto y = screenHeight / 2.0f - height / 2.0f;
+            auto y = screenHeight / 2.0f - height / 2.0f;
+
+            //if (y < 0) {
+            //    y = 0;
+            //}
 
             {
                 const auto tex = game->mainCanvas.texture;
-                DrawTexturePro(
+
+                auto& shader = Assets::I()->shaders[MAIN_SHADER];
+
+                BeginShaderMode(shader);
+                    if (game->shaderTimeLoc < 0) game->shaderTimeLoc = GetShaderLocation(shader, "time");
+
+                    float time[1] = {cosf(game->timeInGame)};
+                    SetShaderValue(shader, game->shaderTimeLoc, time, SHADER_UNIFORM_FLOAT);
+
+                    DrawTexturePro(
                         tex,
                         {0, 0, (float) tex.width, -(float) tex.height},
                         {x, y, width, height},
                         Vector2Zero(),
                         0.0f,
                         WHITE);
+
+                EndShaderMode();
             }
 
             DrawRectangleRec({0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
@@ -203,6 +220,7 @@ int main(const int argc, const char *argv[]) {
             }
 
             DrawFPS(GetScreenWidth() - 100, 0);
+
             EndDrawing();
         } else {
             BeginDrawing();

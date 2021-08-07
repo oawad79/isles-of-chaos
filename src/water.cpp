@@ -28,7 +28,7 @@ void DrawWater(const Feature& water) {
       DrawTexturePro(
         tex,
         region,
-        {wx + waterRes * x, wy, waterRes, 32},
+        {floor(wx + waterRes * x), floor(wy), waterRes, 32},
         {0, 0},
         0.0f,
         WHITE);

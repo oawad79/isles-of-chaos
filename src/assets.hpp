@@ -41,6 +41,7 @@ enum Fonts {
 enum Shaders {
     SPRITE_SHADER,
     WATER_SHADER,
+    MAIN_SHADER,
     SHADER_NUM_SHADERS,
 };
 
