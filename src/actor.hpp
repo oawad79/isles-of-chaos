@@ -2,6 +2,7 @@
 #define SKYVAULT_ACTOR_HPP
 
 #include <entt.hpp>
+#include <cmath>
 
 #include "enttypes.hpp"
 #include "physics_type.hpp"
@@ -41,6 +42,8 @@ enum class ActorState {
     ATTACKING,
     DEAD,
     STUNNED,
+    SITTING,
+    LOOKING_TO_SIT,
 };
 
 enum class AiType {
@@ -57,7 +60,9 @@ struct Actor {
     Enemy enemyStats{};
 
     Vector2 target[8];
-    float timer[8] = {0.0f};
+
+    //float values[4] = {0.0f};
+    float timer[4] = {0.0f};
 
     float stunTimer = 0.0f;
     ActorState last{ActorState::IDLE};

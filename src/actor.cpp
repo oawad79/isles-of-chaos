@@ -304,19 +304,23 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
 
     float dist = 9999.0f;
     float angleToPlayer = 0.0f;
-    Vector2 playerPos = {0, 0};
+    Vector2 playerTargetPos = {0, 0};
+    Vector2 playerCenter = {0, 0};
+    float playerSpeed = 0.0f;
 
     sprite.scale.x = physics.facingX;
 
-    auto players = reg.view<Player, Body>();
-    players.each([&body, &dist, &angleToPlayer, &playerPos](auto &player, auto& playerBody) {
+    auto players = reg.view<Player, Body, Physics>();
+    players.each([&](auto &player, auto& playerBody, auto& physics) {
         const auto a = body.center();
         auto b = playerBody.center();
         b.y -= playerBody.height * 2;
 
         dist = Vector2Distance(a, b);
         angleToPlayer = atan2f(b.y - a.y, b.x - a.x) - PI/4;
-        playerPos = b;
+        playerTargetPos = b;
+        playerSpeed = Vector2Length(physics.velocity);
+        playerCenter = playerBody.center();
     });
 
     switch(actor.state) {
@@ -325,15 +329,79 @@ void UpdateKiwiBirdAi(entt::registry& reg, const entt::entity& self) {
             break;
         }
 
+        case ActorState::WONDER: {
+            actor.target[0].x += GetFrameTime() * 1.2f;
+            float angle = actor.target[0].x;
+            auto vel = Vector2{
+                cosf(angle) * 2.3f,
+                sinf(angle + cosf(angle / 3.0f) * 0.5f)
+            };
+            physics.velocity.x += vel.x * 50.0f * GetFrameTime();
+            physics.velocity.y += vel.y * 50.0f * GetFrameTime();
+            if (dist > 50) { actor.state = ActorState::TRACKING; }
+            // TODO(Dustin): check if player vel is zero
+            if (actor.timer[0] <= 0.0f && playerSpeed <= 0.1f) {
+                actor.state = ActorState::LOOKING_TO_SIT;
+            }
+            actor.timer[0] -= GetFrameTime();
+            break;
+        }
+
+        case ActorState::LOOKING_TO_SIT: {
+            if (playerSpeed > 0.25f) {
+                actor.state = ActorState::TRACKING;
+                break;
+            }
+
+            Vector2 t = playerCenter;
+            t.x -= 2;
+            t.y -= 7;
+
+            float d = Vector2Distance(t, body.center());
+
+            float angle = atan2f(t.y - body.center().y, t.x - body.center().x) - PI/4;
+
+            auto vel = Vector2{
+                cosf(angle),
+                sinf(angle)
+            };
+
+            vel.x *= 3500.0f * dt;
+            vel.y *= 2500.0f * dt;
+            physics.velocity = vel;
+
+            if (d <= 1.0) {
+                physics.velocity.x = 0;
+                physics.velocity.y = 0;
+                body.x = t.x - body.width / 2.0f;
+                body.y = t.y - body.height / 2.0f;
+                actor.state = ActorState::SITTING;
+            }
+
+            break;
+        }
+
+        case ActorState::SITTING: {
+            if (playerSpeed > 0.25f) {
+                actor.state = ActorState::TRACKING;
+                break;
+            }
+            break;
+        }
+
         case ActorState::TRACKING: {
+            auto vel = Vector2{
+                cosf(angleToPlayer),
+                sinf(angleToPlayer)
+            };
             if (dist > 20) {
-                auto vel = Vector2{
-                    cosf(angleToPlayer),
-                    sinf(angleToPlayer)
-                };
-                vel.x *= (5000.0f + dist * 4) * dt;
-                vel.y *= (3000.0f + dist * 4) * dt;
+                vel.x *= (4200.0f + dist * 4) * dt;
+                vel.y *= (2500.0f + dist * 4) * dt;
                 physics.velocity = vel;
+            } else {
+                actor.state = ActorState::WONDER;
+                actor.target[0].x = atan2f(vel.y, vel.x) - M_PI / 2;
+                actor.timer[0] = 4.0f;
             }
 
             break;

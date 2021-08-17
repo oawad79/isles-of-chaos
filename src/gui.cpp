@@ -143,9 +143,11 @@ void DrawInventory(const uptr<Game> &game, GuiState &state) {
       drawItem(rx, ry, cellSize, tex, o);
 
       // Amount display
-      const char *text = TextFormat("%d", o.amount);
-      DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
-      DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
+      if (o.amount > 1) {
+        const char *text = TextFormat("%d", o.amount);
+        DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
+        DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
+      }
 
       drawTooltip(o, cx, cy);
     }
