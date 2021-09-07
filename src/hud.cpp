@@ -62,6 +62,51 @@ void DrawQuickButtonControls(Vector2 where, const uptr<Game> &game, Texture2D te
   DrawTexturePro(tex, thumbPadRegion, {where.x, where.y + GUI_CANVAS_HEIGHT-16, 16, 16}, Vector2Zero(), 0.0f, WHITE);
 }
 
+void DrawEquippedItems(Vector2 where, const uptr<Game> &game, Texture2D tex) {
+  Vector2 pos = {where.x + GUI_CANVAS_WIDTH - 24, where.y};
+
+  DrawRectangle(pos.x, pos.y, 24, 24, {0,0,0,255});
+  DrawRectangleLines(pos.x, pos.y, 24, 24, WHITE);
+
+  DrawRectangle(pos.x - (16 + 2), pos.y, 16, 16, {0,0,0,255});
+  DrawRectangleLines(pos.x - (16 + 2), pos.y, 16, 16, WHITE);
+
+  game->reg.view<Player, Character>().each([&](auto &p, auto &character) {
+    auto itemTex = Assets::I()->textures[TEX_EQUIPMENT];
+
+    auto weaponO = character.getWeapon();
+    auto abilityO = character.getAbility();
+
+    if (weaponO) {
+      auto weapon = *weaponO;
+      const auto w = weapon.region.width;
+      const auto h = weapon.region.height;
+
+      DrawTexturePro(
+          itemTex,
+          weapon.region,
+          {pos.x + 24 / 2.0f - w / 2, pos.y + 24 /2.0f - h / 2, w, h},
+          {0, 0},
+          0.0,
+          WHITE);
+    }
+
+    if (abilityO) {
+      auto ability = *abilityO;
+      const auto w = ability.region.width;
+      const auto h = ability.region.height;
+
+      DrawTexturePro(
+          itemTex,
+          ability.region,
+          {pos.x + 16 / 2.0f - w / 2 - (16 + 2), pos.y + 24 / 2.0f - h / 2, w, h},
+          {0, 0},
+          0.0,
+          WHITE);
+    }
+  });
+}
+
 void UpdateHud(const uptr<Game> &game) {
   auto& state = game->guiState;
 
@@ -95,4 +140,5 @@ void DrawHud(const uptr<Game> &game) {
   const float m = floor(state.hudMargin);
   DrawHealth(Vector2{m, m}, game, tex);
   DrawQuickButtonControls(Vector2{m, -m}, game, tex);
+  DrawEquippedItems(Vector2{-m,m}, game, tex);
 }

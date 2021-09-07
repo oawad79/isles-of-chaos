@@ -12,6 +12,7 @@
 #include "playwright.hpp"
 #include "storybook.hpp"
 #include "gui.hpp"
+#include "art.hpp"
 
 #include "game_scene.hpp"
 #include "menu_scene.hpp"
@@ -24,6 +25,9 @@ std::once_flag Input::once;
 
 uptr<Storybook> Storybook::it;
 std::once_flag Storybook::once;
+
+uptr<Art> Art::it;
+std::once_flag Art::once;
 
 void Update(uptr<Game>& game) {
     UpdateAssets();
@@ -42,7 +46,7 @@ void Render(const uptr<Game>& game) {
     cameraCopy.target.x = floor(cameraCopy.target.x);
     cameraCopy.target.y = floor(cameraCopy.target.y);
 
-  if (tilemap != nullptr)
+    if (tilemap != nullptr)
         DrawTilemapToTarget(tilemap, cameraCopy, game->spriteRenderer);
 
     BeginTextureMode(game->mainCanvas);
