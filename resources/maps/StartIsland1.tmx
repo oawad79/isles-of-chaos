@@ -1488,7 +1488,6 @@
   <object id="188" name="Kiwi" type="KiwiBird" x="-566.82" y="-244.699" width="8" height="8"/>
   <object id="189" name="Player" type="Player" x="-589.18" y="-242.301" width="16" height="24"/>
   <object id="190" name="Player" type="Player" x="-589.18" y="-242.301" width="16" height="24"/>
-  <object id="191" name="Shop Keeper" type="ShopKeeper" x="-608.5" y="-221.25" width="24" height="16"/>
   <object id="192" name="Coin" type="Item" x="-608" y="-239.375" width="8" height="8">
    <properties>
     <property name="id" value="gem"/>

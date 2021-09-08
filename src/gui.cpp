@@ -208,14 +208,16 @@ void UpdateGui(const uptr<Game> &game) {
         if (!slot.it) continue;
 
         if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
-          inventory.putItem(slot.it.value());
-          slot.it = std::nullopt;
+          if (inventory.putItem(slot.it.value()))
+            slot.it = std::nullopt;
         }
       }
 
       for (auto &slot : inventory.slots) {
         const auto [cx, cy] = sp.startPos;
         if (!slot.it) continue;
+
+        const auto& item = slot.it;
 
         const float rx = cx + slot.column * cellSize;
         const float ry = cy + slot.row * cellSize;
@@ -226,7 +228,17 @@ void UpdateGui(const uptr<Game> &game) {
         );
 
         if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-          slot.it = character.equip(slot.it.value());
+
+          if (item->catagory == ItemCatagory::Weapon
+              || item->catagory == ItemCatagory::Armor
+              || item->catagory == ItemCatagory::Ability) {
+            slot.it = character.equip(slot.it.value());
+          }
+        }
+
+        if (hot && IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+          SpawnItemWithId(game->reg, body.center(), item->id);
+          slot.it = std::nullopt;
         }
       }
     }
