@@ -80,6 +80,7 @@ void Render(const uptr<Game>& game) {
     BeginTextureMode(game->guiCanvas); 
         ClearBackground({0, 0, 0, 0});
         RenderGui(game);
+        Art::I()->paint();
         RenderGame(game);
     EndTextureMode();
 }

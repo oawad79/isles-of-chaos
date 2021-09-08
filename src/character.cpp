@@ -20,12 +20,12 @@ bool Health::canHit() {
 }
 
 Character::Character() {
-  equiped.slots.emplace_back(Slot{-1, 0, std::nullopt});
-  equiped.slots.emplace_back(Slot{-1, 1, std::nullopt});
-  equiped.slots.emplace_back(Slot{-1, 2, std::nullopt});
-  equiped.slots.emplace_back(Slot{-1, 3, std::nullopt});
-  equiped.slots.emplace_back(Slot{-2, 1, std::nullopt});
-  equiped.slots.emplace_back(Slot{-2, 2, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 0, 0, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 0, 1, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 0, 2, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 0, 3, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 1, 1, std::nullopt});
+  equiped.slots.emplace_back(Slot{ 1, 2, std::nullopt});
   equiped.maxColumns = 1;
   equiped.maxRows = equiped.slots.size();
 }

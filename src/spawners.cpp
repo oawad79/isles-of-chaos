@@ -44,10 +44,10 @@ entt::entity SpawnPlayer(const uptr<Game>& game, const Vector2 position) {
     auto& actor = game->reg.emplace<Actor>(self);
     actor.actorName = ActorName::Player;
 
-    auto& inv = game->reg.emplace<Inventory>(self, Inventory((size_t)4, (size_t)6));
+    auto& inv = game->reg.emplace<Inventory>(self, Inventory((size_t)6, (size_t)4));
+    inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
 
     chr.equip(Assets::I()->getItemInfo("small-sword"));
-    inv.putItem(Assets::I()->getItemInfo("flippy-feather"));
 
     return self;
 }

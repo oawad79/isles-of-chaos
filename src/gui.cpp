@@ -1,13 +1,14 @@
 #include "gui.hpp"
 
 constexpr auto cellSize{16};
-constexpr auto margin{1};
 
 constexpr auto dialogWidth = (float)GUI_CANVAS_WIDTH - (GUI_CANVAS_WIDTH / 4.0f);
 constexpr auto dialogHeight = GUI_CANVAS_HEIGHT / 3.0f;
 
 const auto dialogX = GUI_CANVAS_WIDTH / 2 - dialogWidth / 2;
 const auto dialogY = GUI_CANVAS_HEIGHT - (dialogHeight + 16);
+
+constexpr auto margin{0};
 
 struct InvSpacial {
   Vector2 startPos;
@@ -24,19 +25,17 @@ InvSpacial GetInvSpacial(Inventory &inv) {
   constexpr auto cwh = GUI_CANVAS_WIDTH / 2;
   constexpr auto chh = GUI_CANVAS_HEIGHT * (0.75);
 
-  const auto scx = cwh + width / 2 + cellSize;
-  const auto scy = chh - height / 2 - height / 2;
-  float cx = scx;
-  float cy = scy;
+  const auto scx = cwh - width / 2;
+  const auto scy = chh - height / 2;
 
-  float ex = cx - cellSize - margin * 4;
-  float ey = cy;
+  float ex = scx + width;
+  float ey = scy;
 
   float wx = ex - cellSize - margin;
   float wy = ey + cellSize + margin;
 
-  return {{cx, cy},
-          {ex, ey},
+  return {{scx, (float)scy},
+          {ex + 2, ey},
           {width, height},
           {wx, wy}};
 }
@@ -44,124 +43,53 @@ InvSpacial GetInvSpacial(Inventory &inv) {
 constexpr auto fntSize = 10.0f;
 constexpr auto spacing = 1.0f;
 
+void DrawSlot(const Slot& slot, float cx, float cy, bool isEquip = false) {
+  const float x = cx + slot.column * cellSize;
+  const float y = cy + slot.row * cellSize;
+  const int index = slot.column + slot.row * 5;
+  const bool even = index % 2 == 0;
+
+  Art::I()->drawRect(x, y, cellSize, cellSize, Color{0, 0, 0, (unsigned char)(even?230:250)}, 1.0f);
+
+  if (slot.it) {
+    const auto& item = *slot.it;
+    const auto w = (isEquip ? 1 : item.width) * cellSize;
+    const auto h = (isEquip ? 1 : item.height) * cellSize;
+    const auto rw = item.region.width;
+    const auto rh = item.region.height;
+    const auto xx = x + w / 2 - rw / 2;
+    const auto yy = y + h / 2 - rw / 2;
+
+    const auto hot = CheckCollisionPointRec(
+      GetMouseGuiPosition(),
+      {(float)x, (float)y, (float)w, (float)h}
+    );
+
+    if (hot) {
+      Art::I()->drawRectL(x, y, w, h, Art::I()->strobeLight(), 2.0f);
+    } else {
+      Art::I()->drawRectL(x, y, w, h, Color{255, 255, 255, 20}, 2.0f);
+    }
+
+    if (slot.it->catagory == ItemCatagory::Weapon)
+      Art::I()->drawEquipSprite({xx, yy, rw, rh}, item.region, WHITE, 3.0f);
+    else
+      Art::I()->drawItemSprite({xx, yy, rw, rh}, item.region, WHITE, 3.0f);
+  }
+}
+
 void DrawInventory(const uptr<Game> &game, GuiState &state) {
-  auto drawItem = [&state](float x, float y, float size, Texture2D &tex, Item &item) {
-    const auto pos = Vector2{
-            x + cellSize / 2 - item.region.width / 2,
-            y + cellSize / 2 - item.region.height / 2,
-    };
-
-    DrawTexturePro(
-            tex,
-            item.region,
-            {pos.x, pos.y, item.region.width, item.region.height},
-            {0, 0},
-            0.0,
-            WHITE);
-  };
-
-  auto drawTooltip = [&](std::optional<Item> o, float cx, float cy) {
-    if (!o) return;
-
-    if (CheckCollisionPointRec(GetMouseGuiPosition(), {cx, cy, cellSize, cellSize})) {
-      // Show tooltip
-      auto item = o.value();
-
-      const char *name = TextFormat("Name: %s", item.name.c_str());
-      const char *catagory = TextFormat("Type: %s", ItemCatagoryS[(int) item.catagory].c_str());
-      const char *value = TextFormat("Value: %d$", item.value);
-
-      const auto nameH = MeasureTextEx(GetFontDefault(), name, fntSize, spacing).y;
-      const auto categoryH = MeasureTextEx(GetFontDefault(), catagory, fntSize, spacing).y;
-      const auto effectH = MeasureTextEx(GetFontDefault(), "Effect", fntSize, spacing).y;
-      const auto valueH = MeasureTextEx(GetFontDefault(), value, fntSize, spacing).y;
-      auto totalHeight = nameH + categoryH + valueH + effectH;
-
-      const auto toolTipX = cx + 32.0f;
-      auto toolTipY = cy;
-
-      const auto xx = toolTipX;
-      auto yy = toolTipY + 2 - totalHeight / 2.0f;
-
-      DrawRectangle(
-              toolTipX, toolTipY - totalHeight / 2.0f,
-              GUI_CANVAS_WIDTH,
-              totalHeight + 4,
-              {0, 0, 0, 240});
-
-      DrawTextEx(GetFontDefault(), name, {xx + 4, yy}, fntSize, spacing, WHITE);
-      yy += nameH;
-      DrawTextEx(GetFontDefault(), catagory, {xx + 4, yy}, fntSize, spacing, WHITE);
-      yy += categoryH;
-
-      switch (item.catagory) {
-        case ItemCatagory::Consumable: {
-          const char *effect = TextFormat("Effect: %s", ConsumableEffectS[(int) item.consumableEffect].c_str());
-          DrawTextEx(GetFontDefault(), effect, {xx + 4, yy}, fntSize, spacing, WHITE);
-          yy += MeasureTextEx(GetFontDefault(), effect, fntSize, spacing).y;
-          break;
-        }
-        case ItemCatagory::Weapon: {
-          const char *damage = TextFormat("Damage: %f", item.effectValue);
-          DrawTextEx(GetFontDefault(), damage, {xx + 4, yy}, fntSize, spacing, WHITE);
-          yy += MeasureTextEx(GetFontDefault(), damage, fntSize, spacing).y;
-          break;
-        }
-        case ItemCatagory::Armor: {
-          const char *armor = TextFormat("Armor: %f", item.effectValue);
-          DrawTextEx(GetFontDefault(), armor, {xx + 4, yy}, fntSize, spacing, WHITE);
-          yy += MeasureTextEx(GetFontDefault(), armor, fntSize, spacing).y;
-          break;
-        }
-        default:
-          break;
-      }
-
-      DrawTextEx(GetFontDefault(), value, {xx + 4, yy}, fntSize, spacing, WHITE);
+  const auto drawSlots = [&](auto &player, Inventory &inventory, Character &character) {
+    if (state.playerInvOpen) {
+      const auto spacial = GetInvSpacial(inventory);
+      const auto [cx, cy] = spacial.startPos;
+      const auto [ex, ey] = spacial.equipStartPos;
+      for (const auto &slot : inventory.slots) DrawSlot(slot, cx, cy);
+      for (const auto &slot : character.equiped.slots) DrawSlot(slot, ex, ey, true);
     }
   };
 
-  const auto consu = Assets::I()->textures[Textures::TEX_ITEMS];
-  const auto equip = Assets::I()->textures[Textures::TEX_EQUIPMENT];
-
-  const auto drawSlot = [&](Slot slot, float cx, float cy) {
-    const int rx = cx + slot.column * (cellSize + margin);
-    const int ry = cy + slot.row * (cellSize + margin);
-    DrawRectangle(rx, ry, cellSize, cellSize, {0, 0, 0, 200});
-
-    auto color = BLACK;
-    if (slot.column < 0.0f) { color = GOLD; }
-    DrawRectangleLines(rx, ry, cellSize, cellSize, color);
-
-    if (CheckCollisionPointRec(GetMouseGuiPosition(), {(float) rx, (float) ry, cellSize, cellSize})) {
-      DrawRectangleLines(rx, ry, cellSize, cellSize, WHITE);
-    }
-
-    if (slot.it) {
-      Item o = slot.it.value();
-      auto tex = (o.catagory == ItemCatagory::Consumable || o.catagory == ItemCatagory::Money || o.catagory == ItemCatagory::Ability) ? consu : equip;
-      drawItem(rx, ry, cellSize, tex, o);
-
-      // Amount display
-      if (o.amount > 1) {
-        const char *text = TextFormat("%d", o.amount);
-        DrawRectangle(cx + cellSize - 8, cy + cellSize - 5, 8, 8, WHITE);
-        DrawTextEx(GetFontDefault(), text, {cx + cellSize - 6, cy + cellSize - 5}, 8.0f, 8.0f, BLACK);
-      }
-
-      drawTooltip(o, cx, cy);
-    }
-  };
-
-  game->reg
-          .view<Player, Inventory, Character>()
-          .each([&](auto &player, Inventory &inventory, Character &character) {
-            if (state.playerInvOpen) {
-              auto [cx, cy] = GetInvSpacial(inventory).startPos;
-              for (const auto &slot : inventory.slots) drawSlot(slot, cx, cy);
-              for (const auto &slot : character.equiped.slots) drawSlot(slot, cx, cy);
-            }
-          });
+  game->reg.view<Player, Inventory, Character>().each(drawSlots);
 }
 
 void UpdateDialog(DialogTree &dialog, const uptr<Game> &game) {
@@ -258,50 +186,53 @@ void UpdateGui(const uptr<Game> &game) {
     UpdateDialog(dialog, game);
   }
 
-  game->reg
-          .view<Player, Body, Inventory, Character>()
-          .each([&state, &game](auto &player, auto &body, Inventory &inventory, Character &character) {
-            if (Input::I()->OpenInv()) {
-              state.playerInvOpen = !state.playerInvOpen;
-              game->state = state.playerInvOpen ? AppState::InDialog : AppState::Running;
-            }
+  const auto updatePlayerInventory = [&state, &game](auto &player, auto &body, Inventory &inventory, Character &character){
+    if (Input::I()->OpenInv()) {
+      state.playerInvOpen = !state.playerInvOpen;
+      game->state = state.playerInvOpen ? AppState::InDialog : AppState::Running;
+    }
 
-            if (state.playerInvOpen) {
-              const auto sp = GetInvSpacial(inventory);
+    if (state.playerInvOpen) {
+      const auto sp = GetInvSpacial(inventory);
 
-              const auto [cx, cy] = sp.startPos;
+      for (auto &slot : character.equiped.slots) {
+        const auto [cx, cy] = sp.equipStartPos;
+        const float rx = cx + slot.column * cellSize;
+        const float ry = cy + slot.row * cellSize;
 
-              for (auto &slot : character.equiped.slots) {
-                const int rx = cx + slot.column * (cellSize + margin);
-                const int ry = cy + slot.row * (cellSize + margin);
+        const auto hot = CheckCollisionPointRec(
+          GetMouseGuiPosition(),
+          {(float)rx, (float)ry, cellSize, cellSize}
+        );
 
-                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {(float)rx,
-                                                                                (float)ry,
-                                                                                cellSize,
-                                                                                cellSize});
-                if (!slot.it) continue;
+        if (!slot.it) continue;
 
-                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
-                  inventory.putItem(slot.it.value());
-                  slot.it = std::nullopt;
-                }
-              }
+        if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !inventory.isFull()) {
+          inventory.putItem(slot.it.value());
+          slot.it = std::nullopt;
+        }
+      }
 
-              for (auto &slot : inventory.slots) {
-                const int rx = cx + slot.column * (cellSize + margin);
-                const int ry = cy + slot.row * (cellSize + margin);
+      for (auto &slot : inventory.slots) {
+        const auto [cx, cy] = sp.startPos;
+        if (!slot.it) continue;
 
-                const auto hot = CheckCollisionPointRec(GetMouseGuiPosition(), {(float)rx,
-                                                                                (float)ry,
-                                                                                cellSize,
-                                                                                cellSize});
-                if (!slot.it) continue;
-                if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                  slot.it = character.equip(slot.it.value());
-                }
-              }
-            }
-          });
+        const float rx = cx + slot.column * cellSize;
+        const float ry = cy + slot.row * cellSize;
+
+        const auto hot = CheckCollisionPointRec(
+          GetMouseGuiPosition(),
+          {(float)rx, (float)ry, (float)cellSize * slot.it->width, (float)cellSize * slot.it->height}
+        );
+
+        if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+          slot.it = character.equip(slot.it.value());
+        }
+      }
+    }
+  };
+
+  game->reg.view<Player, Body, Inventory, Character>().each(updatePlayerInventory);
 }
 
 void DrawChoices(const std::vector<Choice> &choices, const int cursor) {

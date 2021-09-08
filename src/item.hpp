@@ -95,6 +95,9 @@ struct Item {
     float usageCooloff{0.0f};
 
     int amount{1}; // Items can also be a stack
+
+    int width{1};
+    int height{1};
 };
 
 #endif // SKYVAULT_ITEM_HPP

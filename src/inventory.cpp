@@ -14,8 +14,29 @@ Inventory::Inventory(size_t _maxColumns, size_t _maxRows)
 }
 
 bool Inventory::putItem(Item item){
+  auto intersects = [&](Slot& slot) -> bool {
+    const auto width = slot.it ? slot.it->width : 1;
+    const auto height = slot.it ? slot.it->height : 1;
+    for (const auto &other : slots) {
+      if (!other.it) continue;
+      if (
+        slot.column + width >= other.column && slot.column < other.column + other.it->width &&
+        slot.row + height >= other.row && slot.row < other.row + other.it->height
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   for (auto& slot : slots) {
-    if (slot.it == std::nullopt) {
+    if (slot.it == std::nullopt && !intersects(slot)) {
+      if (slot.column + item.width >= maxColumns) {
+        continue;
+      } else if (slot.row + item.height >= maxRows) {
+        continue;
+      }
       slot.it = item;
       return true;
     } else {

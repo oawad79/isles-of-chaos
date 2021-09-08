@@ -41,6 +41,9 @@ void LoadItemDB() {
         itemXml->QueryIntAttribute("value", &item.value);
         itemXml->QueryFloatAttribute("cooloff", &item.usageCooloff);
 
+        itemXml->QueryIntAttribute("width", &item.width);
+        itemXml->QueryIntAttribute("height", &item.height);
+
         std::stringstream ss(itemXml->Attribute("region"));
         ss >> item.region.x;
         ss >> item.region.y;

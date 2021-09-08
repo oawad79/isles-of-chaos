@@ -264,6 +264,7 @@ Tilemap* LoadTilemap(const std::string& path) {
                                     const auto* name = prop->Attribute("name");
                                     if (strcmp(name, "id") == 0) {
                                         loc.id = std::string{prop->Attribute("value")};
+                                        std::cout << "ID: " << loc.id << std::endl;
                                     } else {
                                         loc.props[std::string{name}] = std::string{prop->Attribute("value")};
                                     }
