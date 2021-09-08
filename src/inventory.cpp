@@ -32,11 +32,13 @@ bool Inventory::putItem(Item item){
 
   for (auto& slot : slots) {
     if (slot.it == std::nullopt && !intersects(slot)) {
-      if (slot.column + item.width >= maxColumns) {
+
+      if (slot.column + item.width > maxColumns) {
         continue;
-      } else if (slot.row + item.height >= maxRows) {
+      } else if (slot.row + item.height > maxRows) {
         continue;
       }
+
       slot.it = item;
       return true;
     } else {
